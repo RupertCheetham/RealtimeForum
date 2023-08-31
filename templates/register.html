@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+        integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Sign Up</title>
+</head>
+
+<body>
+    <header>
+        <div class="header">
+            <h2><a href="/" class="header-link">Connectify</a></h2>
+        </div>
+    </header>
+
+    <img src="/static/uploadFiles/images/Connectify.jpg" alt="connectify-logo" class="logo-img">
+    <p>Connecting people, one click at a time.</p>
+
+    <div class="container">
+        <div class="sign-in-content">
+            <div class="title">Sign Up</div>
+            <form action="/registerauth" method="POST">
+                <div class="row">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="nickname" placeholder="Nickname" required>
+                    <div class="question-icon">
+                        <div class="tooltip">
+                            <span data-tooltip="Nickname must contain at least 5 characters, with no spaces"><i
+                                    class="fas fa-question" id="question"></i></span>
+                        </div>
+                    </div>
+                </div>
+                                <div class="row">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="age" placeholder="Age" required>
+                    <div class="question-icon">
+                        <div class="tooltip">
+                            <span data-tooltip="Username must contain at least 5 characters, with no spaces"><i
+                                    class="fas fa-question" id="question"></i></span>
+                        </div>
+                    </div>
+                </div>
+                                <div class="row">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="gender" placeholder="Gender" required>
+                    <div class="question-icon">
+                        <div class="tooltip">
+                            <span data-tooltip="Username must contain at least 5 characters, with no spaces"><i
+                                    class="fas fa-question" id="question"></i></span>
+                        </div>
+                    </div>
+                </div>
+                                <div class="row">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="firstName" placeholder="First Name" required>
+                    <div class="question-icon">
+                        <div class="tooltip">
+                            <span data-tooltip="Username must contain at least 5 characters, with no spaces"><i
+                                    class="fas fa-question" id="question"></i></span>
+                        </div>
+                    </div>
+                </div>
+                                <div class="row">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="lastName" placeholder="Last Name" required>
+                    <div class="question-icon">
+                        <div class="tooltip">
+                            <span data-tooltip="Username must contain at least 5 characters, with no spaces"><i
+                                    class="fas fa-question" id="question"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" name="user_email" placeholder="Email" required>
+                    <div class="question-icon">
+                        <div class="tooltip">
+                            <span
+                                data-tooltip="A valid email should contain a username followed by '@' symbol and a domain name."><i
+                                    class="fas fa-question" id="question"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="user_password" placeholder="Password" required>
+                    <div class="question-icon">
+                        <div class="tooltip">
+                            <span
+                                data-tooltip="Password must be at least 8 characters long with no spaces and must contain at least 1 number and symbol"><i
+                                    class="fas fa-question" id="question"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="confirm_password" placeholder="Re-Enter Password" required>
+                    <div class="question-icon">
+                        <div class="tooltip">
+                            <span data-tooltip="Please confirm your password"><i class="fas fa-question"
+                                    id="question"></i></span>
+                        </div>
+                    </div>
+                </div>
+                {{if .UsernameError}}
+                <div class="error-message" class="size">
+                    <p>{{.UsernameError}}</p>
+                </div>
+                {{else if .EmailError}}
+                <div class="error-message" class="size">
+                    <p>{{.EmailError}}</p>
+                </div>
+                {{else if .PasswordError}}
+                <div class="error-message" class="size">
+                    <p>{{.PasswordError}}</p>
+                </div>
+                {{else if .ConfirmError}}
+                <div class="error-message" class="size">
+                    <p>{{.ConfirmError}}</p>
+                </div>
+                {{else if .AlreadySigneUp}}
+                <div class="error-message" class="size">
+                    <p>{{.AlreadySigneUp}}</p>
+                </div>
+                {{end}}
+                <div class="row button">
+                    <input type="submit" value="Sign Up" class="btn">
+                </div>
+                <div class="member-link">
+                    Already a member? <a href="./sign-in.html">Log In</a>
+                </div>
+                or:
+
+                <a href="/google-login" class="google btn">
+                    <i class="fab fa-google fa-fw"></i> Login with Google
+                </a>
+
+                <a href="/github-login" class="github btn">
+                    <i class="fab fa-github fa-fw"></i> Login with Github
+                </a>
+
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <!-- <div class="container">
+        <div class="sign-in-content">
+            <div class="title">Or use another account</div>
+            <div class="row">
+                <a href="#" class="fb btn">
+                    <i class="fab fa-facebook fa-fw"></i> Login with Facebook
+                </a>
+            </div>
+            <div class="row">
+                <a href="#" class="twitter btn">
+                    <i class="fab fa-twitter fa-fw"></i> Login with Twitter
+                </a>
+            </div>
+            <div class="row">
+                <a href="#" class="google btn">
+                    <i class="fab fa-google fa-fw"></i> Login with Google+
+                </a>
+            </div>
+        </div>
+    </div>
+    </div> -->
+</body>
+
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+    integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/static/css/home.css">
+  <title>Connectify</title>
+</head>
+
+<body>
+  <header>
+    <div class="header">
+      <h2><a href="/" class="header-link">Connectify</a></h2>
+
+
+      <nav>
+        <li class="dropdown">
+          <span class="dropdown-toggle"><b>Categories</b></span>
+          <ul class="dropdown-menu">
+            <form action="/category" method="POST">
+              <li><button type="submit">Dogs</button></li>
+              <input type="hidden" name="category" value="Dogs">
+            </form>
+            <form action="/category" method="POST">
+              <li><button type="submit">Sausages</button></li>
+              <input type="hidden" name="category" value="Sausages">
+            </form>
+            <form action="/category" method="POST">
+              <li><button type="submit">Cats</button></li>
+              <input type="hidden" name="category" value="Cats">
+            </form>
+            <form action="/category" method="POST">
+              <li><button type="submit">Meows</button></li>
+              <input type="hidden" name="category" value="Meows">
+            </form>
+          </ul>
+        </li>
+
+        <ul class="nav-links">
+          {{if eq .LoggedInUsername "You are not logged in"}}
+          <li><span class="username">{{.LoggedInUsername}}</span></li>
+          <form action="/sign-in.html" class="log-in" method="POST">
+            <button class="hide">
+              <li><i class="fas fa-sign-out-alt"></i>Log In</li>
+            </button>
+          </form>
+          {{else}}
+          <form action="/myActivity" class="log-in" method="POST">
+            <button class="logout-button">
+              <li><span class="username">{{.LoggedInUsername}}</span></li>
+            </button>
+            <input type="hidden" name="LoggedInUsername" value="{{.LoggedInUsername}}">
+          </form>
+          <form action="/logout" class="log-in" method="POST">
+            <button class="logout-button">
+              <li><i class="fas fa-sign-out-alt"></i>Log Out</li>
+            </button>
+          </form>
+          {{end}}
+
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="line"></div>
+  <br>
+  <div class="centered-text">
+    <b>
+      <h2> {{.LoggedInUsername}}'s Posts </h2>
+    </b>
+    <br>
+    {{.NoPostsMessage}}
+  </div>
+
+
+  {{range .MyPosts}}
+  <section class="main-container">
+    <div class="post-container-activity">
+      <div class="post-box-activity">
+        <div class="post-top">
+          <div class="post-profile">
+            <i class="fa-solid fa-user" id="user-icon"></i>
+            <h3 class="profile-name">{{.Username}}</h3>
+            <div class="time">
+              <p>{{.CreationDate}}</p>
+            </div>
+          </div>
+
+        </div>
+        {{if ne .Img "static/uploadFiles/images/Connectify.jpg"}}
+        <img src={{.Img}} class="img">
+        {{end}}
+        <div class="prof-line"></div>
+        <div class="post-text">
+          {{.Body}}
+        </div>
+        <div class="prof-line"></div>
+        {{range .Categories}}
+        {{if ne . "None"}}
+        <form method="POST" action="/category">
+          <button class="category-action-btn">
+            <b> {{.}}</b>
+            <input type="hidden" name="category" value="{{.}}">
+          </button>
+        </form>
+        {{end}}
+        {{end}}
+        <div class="post-bottom">
+          <div class="action-icons">
+            <form method="POST" action="/likeOrDislike">
+              <button class="action-btn">
+
+                <i class="fa fa-thumbs-up"></i> {{.Likes}}
+                <input type="hidden" name="postNum" value="{{.PostID}}">
+                <input type="hidden" name="type" value="myActivity">
+                <input type="hidden" name="likeOrDislike" value="like">
+              </button>
+            </form>
+            <form method="POST" action="/likeOrDislike">
+              <button class="action-btn">
+                <i class="fa fa-thumbs-down"></i> {{.Dislikes}}
+                <input type="hidden" name="postNum" value="{{.PostID}}">
+                <input type="hidden" name="type" value="myActivity">
+                <input type="hidden" name="likeOrDislike" value="dislike">
+              </button>
+            </form>
+            <button class="action-btn">
+              <i class="fa-solid fa-comment"></i> {{.CommentCount}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="suggest-container">
+  </section>
+  {{end}}
+  <div class="line"></div>
+  <br>
+
+  <div class="centered-text">
+  <b><h2> {{.LoggedInUsername}}'s Liked Posts</h2></b> 
+    <br>
+    {{.NoLikedPostsMessage}}
+  </div>
+
+  {{range .MyLikedPosts}}
+  <section class="main-container">
+    <div class="post-container-activity">
+      <div class="post-box-activity">
+        <div class="post-top">
+          <div class="post-profile">
+            <i class="fa-solid fa-user" id="user-icon"></i>
+            <h3 class="profile-name">{{.Username}}</h3>
+            <div class="time">
+              <p>{{.CreationDate}}</p>
+            </div>
+          </div>
+
+        </div>
+        {{if ne .Img "static/uploadFiles/images/Connectify.jpg"}}
+        <img src={{.Img}} class="img">
+        {{end}}
+        <div class="prof-line"></div>
+        <div class="post-text">
+          {{.Body}}
+        </div>
+        <div class="prof-line"></div>
+        {{range .Categories}}
+        {{if ne . "None"}}
+        <form method="POST" action="/category">
+          <button class="category-action-btn">
+            <b> {{.}}</b>
+            <input type="hidden" name="category" value="{{.}}">
+          </button>
+        </form>
+        {{end}}
+        {{end}}
+        <div class="post-bottom">
+          <div class="action-icons">
+            <form method="POST" action="/likeOrDislike">
+              <button class="action-btn">
+
+                <i class="fa fa-thumbs-up"></i> {{.Likes}}
+                <input type="hidden" name="postNum" value="{{.PostID}}">
+                <input type="hidden" name="type" value="myActivity">
+                <input type="hidden" name="likeOrDislike" value="like">
+              </button>
+            </form>
+            <form method="POST" action="/likeOrDislike">
+              <button class="action-btn">
+                <i class="fa fa-thumbs-down"></i> {{.Dislikes}}
+                <input type="hidden" name="postNum" value="{{.PostID}}">
+                <input type="hidden" name="type" value="myActivity">
+                <input type="hidden" name="likeOrDislike" value="dislike">
+              </button>
+            </form>
+            <button class="action-btn">
+              <i class="fa-solid fa-comment"></i> {{.CommentCount}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="suggest-container">
+  </section>
+  {{end}}
+  <br>
+  <br>
+</body>
+
+</html>
