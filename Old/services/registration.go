@@ -2,6 +2,7 @@ package forum
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -17,7 +18,6 @@ func RegisterUserAuth(w http.ResponseWriter, r *http.Request) {
 	}
 	//parse the form
 	err := r.ParseForm()
-	HandleError(err)
 
 	//get user info from the form
 	userName := r.FormValue("user_name")
@@ -76,7 +76,9 @@ func RegisterUser(username, useremail, userpass string) {
 	var hash []byte
 	hash, err = bcrypt.GenerateFromPassword([]byte(userpass), bcrypt.DefaultCost) //generates hash for user password
 	stmt, err := Database.Prepare(query)
-	HandleError(err)
+	if err != nil {
+		log.Println("There was a problem with preparing the database in RegisterUser:", err)
+	}
 
 	defer stmt.Close()
 	stmt.Exec(username, useremail, hash)
