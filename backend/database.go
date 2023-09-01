@@ -35,8 +35,8 @@ func initDatabase() {
 }
 
 func addRegistrationToDatabase(nickname string, age int, gender string, firstName string, lastName string, email string, password string) error {
-	_, err := db.Exec("INSERT INTO registration (nickname, age, gender, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)" , nickname, age, gender, firstName, lastName, email, password)
-	
+	_, err := db.Exec("INSERT INTO registration (nickname, age, gender, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)", nickname, age, gender, firstName, lastName, email, password)
+
 	if err != nil {
 		log.Println("Error adding score to database:", err)
 	}
