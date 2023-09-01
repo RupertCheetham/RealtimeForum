@@ -9,15 +9,17 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type RegistrationEntry struct {
-	ID        int    `json:"id"`
-	Nickname  string `json:"nickname"`
-	Age       int    `json:"age"`
-	Gender    string `json:"gender"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+type PostEntry struct {
+	Id           int    `json:"Id"`
+	Nickname     string `json:"Nickname"`
+	Img          string `json:"Img"`
+	Body         string `json:"Body"`
+	Categories   string `json:"Categories"`
+	CreationDate string `json:"CreationDate"`
+	Likes        int    `json:"Likes"`
+	Dislikes     int    `json:"Dislikes"`
+	WhoLiked     string `json:"WhoLiked"`
+	WhoDisliked  string `json:"WhoDisliked"`
 }
 
 func setupCORS(w *http.ResponseWriter, req *http.Request) {
@@ -26,22 +28,22 @@ func setupCORS(w *http.ResponseWriter, req *http.Request) {
 	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
-func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
+func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	setupCORS(&w, r)
 
 	if r.Method == "POST" {
-		var registration RegistrationEntry
-		err := json.NewDecoder(r.Body).Decode(&registration)
+		var post PostEntry
+		err := json.NewDecoder(r.Body).Decode(&post)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		log.Println("Received registration:", registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
+		log.Println("Received post:", post.Nickname, post.Img, post.Body, post.Categories)
 
-		err = addRegistrationToDatabase(registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
+		err = addPostToDatabase(post.Nickname, post.Img, post.Body, post.Categories)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -50,16 +52,16 @@ func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		registrations, err := getRegistrationFromDatabase()
+		posts, err := getPostFromDatabase()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		if len(registrations) > 0 {
-			json.NewEncoder(w).Encode(registrations)
+		if len(posts) > 0 {
+			json.NewEncoder(w).Encode(posts)
 		} else {
-			w.Write([]byte("No registrations available"))
+			w.Write([]byte("No posts available"))
 		}
 	}
 
@@ -73,8 +75,9 @@ func main() {
 	initDatabase()
 	log.Println("Database initialized successfully")
 
+	addPostToDatabase("Ardek", "no-image", "This is the message body", "various, categories")
 	http.HandleFunc("/", HomeHandler)
-	http.HandleFunc("/registrations", AddRegistrationHandler)
+	http.HandleFunc("/posts", AddPostHandler)
 
 	fmt.Printf("Starting server at port 8080\n")
 	log.Fatal(http.ListenAndServe(":8080", nil))
