@@ -11,18 +11,22 @@ var db *sql.DB
 
 func initDatabase() {
 	var err error
-	db, err = sql.Open("sqlite3", "scores.db")
+	db, err = sql.Open("sqlite3", "registration.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Create the scores table if it doesn't exist
+	// Create the registration table if it doesn't exist
 	_, err = db.Exec(`
-		CREATE TABLE IF NOT EXISTS scores (
+		CREATE TABLE IF NOT EXISTS registration (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT,
-			score INTEGER,
-			time INTEGER
+			nickname TEXT,
+			age INTEGER,
+			gender TEXT,
+			first_name Text,
+			last_name TEXT,
+			email TEXT,
+			password TEXT
 		);
 	`)
 	if err != nil {
@@ -30,32 +34,32 @@ func initDatabase() {
 	}
 }
 
-func addScoreToDatabase(name string, score int, time int) error {
-	_, err := db.Exec("INSERT INTO scores (name, score, time) VALUES (?, ?, ?)", name, score, time)
+func addRegistrationToDatabase(nickname string, age int, gender string, firstName string, lastName string, email string, password string) error {
+	_, err := db.Exec("INSERT INTO registration (nickname, age, gender, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)", nickname, age, gender, firstName, lastName, email, password)
 	if err != nil {
-		log.Println("Error adding score to database:", err)
+		log.Println("Error adding registration to database:", err)
 	}
 	return err
 }
 
-func getScoresFromDatabase() ([]ScoreEntry, error) {
-	rows, err := db.Query("SELECT name, score, time FROM scores ORDER BY score DESC")
+func getRegistrationFromDatabase() ([]RegistrationEntry, error) {
+	rows, err := db.Query("SELECT nickname, age, gender, first_name, last_name, email, password FROM registration ORDER BY id ASC")
 	if err != nil {
-		log.Println("Error querying scores from database:", err)
+		log.Println("Error querying registrations from database:", err)
 		return nil, err
 	}
 	defer rows.Close()
 
-	var scores []ScoreEntry
+	var registrations []RegistrationEntry
 	for rows.Next() {
-		var entry ScoreEntry
-		err := rows.Scan(&entry.Name, &entry.Score, &entry.Time)
+		var entry RegistrationEntry
+		err := rows.Scan(&entry.Nickname, &entry.Age, &entry.Gender, &entry.FirstName, &entry.LastName, &entry.Email, &entry.Password)
 		if err != nil {
 			log.Println("Error scanning row from database:", err)
 			return nil, err
 		}
-		scores = append(scores, entry)
+		registrations = append(registrations, entry)
 	}
 
-	return scores, nil
+	return registrations, nil
 }
