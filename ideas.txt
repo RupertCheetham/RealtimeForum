@@ -19,5 +19,5 @@ project-root/
 |   |   |-- schema.sql        (Database schema)
 |   |-- utils/
 |   |   |-- helper.go         (Helper functions and utilities)
-|-- go.mod                    (Your Go module file)
+|   |-- go.mod                (Your Go module file)
 |-- README.md                 (Project documentation)
