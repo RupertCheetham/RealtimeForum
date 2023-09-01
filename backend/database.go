@@ -23,8 +23,8 @@ func initDatabase() {
 			nickname TEXT,
 			age INTEGER,
 			gender TEXT,
-			first name Text,
-			last name TEXT,
+			first_name Text,
+			last_name TEXT,
 			email TEXT,
 			password TEXT
 		);
@@ -35,7 +35,7 @@ func initDatabase() {
 }
 
 func addRegistrationToDatabase(nickname string, age int, gender string, firstName string, lastName string, email string, password string) error {
-	_, err := db.Exec("INSERT INTO registration (nickname, age, gender, first name, last name, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)", nickname, age, gender, firstName, lastName, email, password)
+	_, err := db.Exec("INSERT INTO registration (nickname, age, gender, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)", nickname, age, gender, firstName, lastName, email, password)
 	if err != nil {
 		log.Println("Error adding registration to database:", err)
 	}
@@ -43,7 +43,7 @@ func addRegistrationToDatabase(nickname string, age int, gender string, firstNam
 }
 
 func getRegistrationFromDatabase() ([]RegistrationEntry, error) {
-	rows, err := db.Query("SELECT nickname, age, gender, first name, last name, email, password FROM registration ORDER BY id ASC")
+	rows, err := db.Query("SELECT nickname, age, gender, first_name, last_name, email, password FROM registration ORDER BY id ASC")
 	if err != nil {
 		log.Println("Error querying registrations from database:", err)
 		return nil, err

@@ -14,8 +14,8 @@ type RegistrationEntry struct {
 	Nickname  string `json:"nickname"`
 	Age       int    `json:"age"`
 	Gender    string `json:"gender"`
-	FirstName string `json:"first name"`
-	LastName  string `json:"last name"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 }
@@ -39,7 +39,7 @@ func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("Received score:", registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
+		log.Println("Received registration:", registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
 
 		err = addRegistrationToDatabase(registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
 		if err != nil {
