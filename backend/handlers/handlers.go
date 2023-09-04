@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"realtimeForum/backend/db"
+	"realtimeForum/db"
 )
 
 func SetupCORS(w *http.ResponseWriter, req *http.Request) {
@@ -29,9 +29,9 @@ func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("Received registration:", registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
+		log.Println("Received registration:", registration.Username, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
 
-		err = db.AddRegistrationToDatabase(registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
+		err = db.AddRegistrationToDatabase(registration.Username, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -69,9 +69,9 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("Received post:", post.Nickname, post.Img, post.Body, post.Categories)
+		log.Println("Received post:", post.Username, post.Img, post.Body, post.Categories)
 
-		err = db.AddPostToDatabase(post.Nickname, post.Img, post.Body, post.Categories)
+		err = db.AddPostToDatabase(post.Username, post.Img, post.Body, post.Categories)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

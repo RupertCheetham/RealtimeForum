@@ -2,7 +2,7 @@ package db
 
 type RegistrationEntry struct {
 	ID        int    `json:"id"`
-	Nickname  string `json:"nickname"`
+	Username  string `json:"username"`
 	Age       int    `json:"age"`
 	Gender    string `json:"gender"`
 	FirstName string `json:"first_name"`
@@ -12,14 +12,14 @@ type RegistrationEntry struct {
 }
 
 type PostEntry struct {
-	Id           int    `json:"Id"`
-	Nickname     string `json:"Nickname"`
-	Img          string `json:"Img"`
-	Body         string `json:"Body"`
-	Categories   string `json:"Categories"`
-	CreationDate string `json:"CreationDate"`
-	Likes        int    `json:"Likes"`
-	Dislikes     int    `json:"Dislikes"`
-	WhoLiked     string `json:"WhoLiked"`
-	WhoDisliked  string `json:"WhoDisliked"`
+	Id           int    `json:"id"`
+	Username     string `json:"username"`
+	Img          string `json:"img"`
+	Body         string `json:"body"`
+	Categories   string `json:"categories"`
+	CreationDate string `json:"creationDate"`
+	Likes        int    `json:"likes"`
+	Dislikes     int    `json:"dislikes"`
+	WhoLiked     string `json:"WwhoLiked"`
+	WhoDisliked  string `json:"whoDisliked"`
 }

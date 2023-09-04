@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"io"
 	"log"
 	"os"
 
@@ -17,43 +18,27 @@ func InitDatabase() {
 
 	wipeDatabaseOnCommand()
 
-	Database, err = sql.Open("sqlite3", "../db/realtimeDatabase.db")
+	Database, err = sql.Open("sqlite3", "db/realtimeDatabase.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Create the post table if it doesn't exist
-	_, err = Database.Exec(`
-		CREATE TABLE IF NOT EXISTS posts (
-			Id INTEGER PRIMARY KEY AUTOINCREMENT,
-			Nickname TEXT,
-			Img TEXT,
-			Body TEXT,
-			Categories Text,
-			CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP,
-			Likes INTEGER,
-			Dislikes INTEGER,
-			WhoLiked TEXT,
-			WhoDisliked TEXT
-		);
-	`)
+	// Open the schema.sql file
+	schemaFile, err := os.Open("db/schema.sql")
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer schemaFile.Close()
 
-	// Create the registration table if it doesn't exist
-	_, err = Database.Exec(`
-	CREATE TABLE IF NOT EXISTS registration (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		nickname TEXT,
-		age INTEGER,
-		gender TEXT,
-		first_name Text,
-		last_name TEXT,
-		email TEXT,
-		password TEXT
-	);
-	`)
+	// Read the SQL statements from the file
+	schemaAsBytes, err := io.ReadAll(schemaFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	schema := string(schemaAsBytes)
+
+	// Execute the schema statements to create the tables
+	_, err = Database.Exec(schema)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -64,13 +49,13 @@ func InitDatabase() {
 func wipeDatabaseOnCommand() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "new" {
-			os.Remove("../db/realtimeDatabase.db")
+			os.Remove("db/realtimeDatabase.db")
 			fmt.Println("Deleted realtimeDatabase.db")
 		}
 	}
 }
 
-// adds example posts if first arg is 'new'
+// adds example entries if first arg is 'new'
 func addExampleEntries() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "new" {
@@ -85,16 +70,18 @@ func addExampleEntries() {
 	}
 }
 
-func AddRegistrationToDatabase(nickname string, age int, gender string, firstName string, lastName string, email string, password string) error {
-	_, err := Database.Exec("INSERT INTO registration (nickname, age, gender, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)", nickname, age, gender, firstName, lastName, email, password)
+// adds registration to the registrations table in database
+func AddRegistrationToDatabase(username string, age int, gender string, firstName string, lastName string, email string, password string) error {
+	_, err := Database.Exec("INSERT INTO REGISTRATION (username, age, gender, firstName, lastName, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)", username, age, gender, firstName, lastName, email, password)
 	if err != nil {
-		log.Println("Error adding registration to database:", err)
+		log.Println("Error adding registration to REGISTRATION in database:", err)
 	}
 	return err
 }
 
+// retrieves all registrations from database and returns them as an array of RegistrationEntry
 func GetRegistrationFromDatabase() ([]RegistrationEntry, error) {
-	rows, err := Database.Query("SELECT nickname, age, gender, first_name, last_name, email, password FROM registration ORDER BY id ASC")
+	rows, err := Database.Query("SELECT username, age, gender, firstName, lastName, email, password FROM registration ORDER BY id ASC")
 	if err != nil {
 		log.Println("Error querying registrations from database:", err)
 		return nil, err
@@ -104,7 +91,7 @@ func GetRegistrationFromDatabase() ([]RegistrationEntry, error) {
 	var registrations []RegistrationEntry
 	for rows.Next() {
 		var entry RegistrationEntry
-		err := rows.Scan(&entry.Nickname, &entry.Age, &entry.Gender, &entry.FirstName, &entry.LastName, &entry.Email, &entry.Password)
+		err := rows.Scan(&entry.Username, &entry.Age, &entry.Gender, &entry.FirstName, &entry.LastName, &entry.Email, &entry.Password)
 		if err != nil {
 			log.Println("Error scanning row from database:", err)
 			return nil, err
@@ -116,12 +103,12 @@ func GetRegistrationFromDatabase() ([]RegistrationEntry, error) {
 }
 
 // adds a post to the database
-func AddPostToDatabase(nickname string, img string, body string, categories string) error {
+func AddPostToDatabase(username string, img string, body string, categories string) error {
 	var likes = 0
 	var dislikes = 0
 	var whoLiked = ""
 	var whoDisliked = ""
-	_, err := Database.Exec("INSERT INTO posts (Nickname, Img, Body, Categories, Likes, Dislikes, WhoLiked, WhoDisliked) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", nickname, img, body, categories, likes, dislikes, whoLiked, whoDisliked)
+	_, err := Database.Exec("INSERT INTO POSTS (username, img, body, categories, likes, dislikes, whoLiked, whoDisliked) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", username, img, body, categories, likes, dislikes, whoLiked, whoDisliked)
 	if err != nil {
 		log.Println("Error adding post to database in addPostToDatabase:", err)
 	}
@@ -130,7 +117,7 @@ func AddPostToDatabase(nickname string, img string, body string, categories stri
 
 // retrieves all posts from database and returns them
 func GetPostFromDatabase() ([]PostEntry, error) {
-	rows, err := Database.Query("SELECT Id, Nickname, Img, Body, Categories, CreationDate, Likes, Dislikes, WhoLiked, WhoDisliked FROM posts ORDER BY Id ASC")
+	rows, err := Database.Query("SELECT id, username, img, Body, categories, creationDate, Llikes, dislikes, whoLiked, whoDisliked FROM POSTS ORDER BY Id ASC")
 	if err != nil {
 		log.Println("Error querying posts from database:", err)
 		return nil, err
@@ -140,7 +127,7 @@ func GetPostFromDatabase() ([]PostEntry, error) {
 	var posts []PostEntry
 	for rows.Next() {
 		var post PostEntry
-		err := rows.Scan(&post.Id, &post.Nickname, &post.Img, &post.Body, &post.Categories, &post.CreationDate, &post.Likes, &post.Dislikes, &post.WhoLiked, &post.WhoDisliked)
+		err := rows.Scan(&post.Id, &post.Username, &post.Img, &post.Body, &post.Categories, &post.CreationDate, &post.Likes, &post.Dislikes, &post.WhoLiked, &post.WhoDisliked)
 		if err != nil {
 			log.Println("Error scanning row from database:", err)
 			return nil, err
