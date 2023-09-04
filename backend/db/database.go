@@ -17,7 +17,7 @@ func InitDatabase() {
 
 	wipeDatabaseOnCommand()
 
-	Database, err = sql.Open("sqlite3", "../db/realtimeDatabase.db")
+	Database, err = sql.Open("sqlite3", "db/realtimeDatabase.db")
 	if err != nil {
 		log.Fatal(err)
 	}
