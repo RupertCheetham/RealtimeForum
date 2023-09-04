@@ -15,7 +15,7 @@ type RegistrationEntry struct {
 	Age       int    `json:"age"`
 	Gender    string `json:"gender"`
 	FirstName string `json:"first_name"`
-	LastName  string `json:"last name"`
+	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 }
@@ -38,17 +38,19 @@ func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+	
+		//for _, registration := range registrations {
+			log.Println("Received registration:", registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
 
-		log.Println("Received registration:", registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
-
-		err = addRegistrationToDatabase(registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.WriteHeader(http.StatusCreated)
+			err = addRegistrationToDatabase(registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			
+		//w.WriteHeader(http.StatusCreated)
 	}
-
+	}
+	
 	if r.Method == "GET" {
 		registrations, err := getRegistrationFromDatabase()
 		if err != nil {
