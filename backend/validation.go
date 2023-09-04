@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 )
 
 // make a function to validate nickname
@@ -12,11 +13,19 @@ func ValidUsername(username string) bool {
 	return usernameRegex.MatchString(username)
 }
 
-// make a funciton to validate first and last names
+// make a function to validate first and last names
 func ValidName(userFirstOrLastName string) bool {
 	var nameRegex = regexp.MustCompile("^[a-zA-Z- ]{1,}")
 	fmt.Println("first or last name validation: ", nameRegex.MatchString(userFirstOrLastName))
 	return nameRegex.MatchString(userFirstOrLastName)
+}
+
+func ValidAge(age int) bool {
+	ageStr := strconv.Itoa(age) // Convert the age to a string
+	var ageRegex = regexp.MustCompile(`^(?:[1-9]|[1-9][0-9]|100)$`)
+	isValidAge := ageRegex.MatchString(ageStr)
+	fmt.Println("Age validation:", isValidAge)
+	return isValidAge
 }
 
 // make a function to validate user email
