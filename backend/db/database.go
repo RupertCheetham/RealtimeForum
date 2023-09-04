@@ -12,7 +12,7 @@ import (
 var Database *sql.DB
 
 // initialises database
-func initDatabase() {
+func InitDatabase() {
 	var err error
 
 	wipeDatabaseOnCommand()
@@ -74,18 +74,18 @@ func wipeDatabaseOnCommand() {
 func addExampleEntries() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "new" {
-			addRegistrationToDatabase("Ardek", int(35), "male", "Rupert", "Cheetham", "cheethamthing@gmail.com", "password12345")
-			addRegistrationToDatabase("john_doe", 30, "Male", "John", "Doe", "john.doe@example.com", "password123")
+			AddRegistrationToDatabase("Ardek", int(35), "male", "Rupert", "Cheetham", "cheethamthing@gmail.com", "password12345")
+			AddRegistrationToDatabase("john_doe", 30, "Male", "John", "Doe", "john.doe@example.com", "password123")
 
-			addPostToDatabase("Ardek", "no-image", "This is the message body", "various, categories")
-			addPostToDatabase("Nikoi", "no-image", "This is the another message body", "various, categories")
-			addPostToDatabase("Martin", "no-image", "This is the third body", "category")
-			addPostToDatabase("Mike", "no-image", "giggle, giggle, giggle", "various, categories")
+			AddPostToDatabase("Ardek", "no-image", "This is the message body", "various, categories")
+			AddPostToDatabase("Nikoi", "no-image", "This is the another message body", "various, categories")
+			AddPostToDatabase("Martin", "no-image", "This is the third body", "category")
+			AddPostToDatabase("Mike", "no-image", "giggle, giggle, giggle", "various, categories")
 		}
 	}
 }
 
-func addRegistrationToDatabase(nickname string, age int, gender string, firstName string, lastName string, email string, password string) error {
+func AddRegistrationToDatabase(nickname string, age int, gender string, firstName string, lastName string, email string, password string) error {
 	_, err := Database.Exec("INSERT INTO registration (nickname, age, gender, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)", nickname, age, gender, firstName, lastName, email, password)
 	if err != nil {
 		log.Println("Error adding registration to database:", err)
@@ -93,7 +93,7 @@ func addRegistrationToDatabase(nickname string, age int, gender string, firstNam
 	return err
 }
 
-func getRegistrationFromDatabase() ([]RegistrationEntry, error) {
+func GetRegistrationFromDatabase() ([]RegistrationEntry, error) {
 	rows, err := Database.Query("SELECT nickname, age, gender, first_name, last_name, email, password FROM registration ORDER BY id ASC")
 	if err != nil {
 		log.Println("Error querying registrations from database:", err)
@@ -116,7 +116,7 @@ func getRegistrationFromDatabase() ([]RegistrationEntry, error) {
 }
 
 // adds a post to the database
-func addPostToDatabase(nickname string, img string, body string, categories string) error {
+func AddPostToDatabase(nickname string, img string, body string, categories string) error {
 	var likes = 0
 	var dislikes = 0
 	var whoLiked = ""
@@ -129,7 +129,7 @@ func addPostToDatabase(nickname string, img string, body string, categories stri
 }
 
 // retrieves all posts from database and returns them
-func getPostFromDatabase() ([]PostEntry, error) {
+func GetPostFromDatabase() ([]PostEntry, error) {
 	rows, err := Database.Query("SELECT Id, Nickname, Img, Body, Categories, CreationDate, Likes, Dislikes, WhoLiked, WhoDisliked FROM posts ORDER BY Id ASC")
 	if err != nil {
 		log.Println("Error querying posts from database:", err)

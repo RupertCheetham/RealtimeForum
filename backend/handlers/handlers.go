@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"backend/utils"
 	"encoding/json"
 	"log"
 	"net/http"
+	"realtimeForum/db"
 )
 
 func SetupCORS(w *http.ResponseWriter, req *http.Request) {
@@ -18,10 +18,10 @@ func SetupCORS(w *http.ResponseWriter, req *http.Request) {
 // registration, and interacting with the database.
 func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
-	utils.SetupCORS(&w, r)
+	SetupCORS(&w, r)
 
 	if r.Method == "POST" {
-		var registration RegistrationEntry
+		var registration db.RegistrationEntry
 		err := json.NewDecoder(r.Body).Decode(&registration)
 
 		if err != nil {
@@ -31,7 +31,7 @@ func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 
 		log.Println("Received registration:", registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
 
-		err = addRegistrationToDatabase(registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
+		err = db.AddRegistrationToDatabase(registration.Nickname, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -40,7 +40,7 @@ func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		registrations, err := getRegistrationFromDatabase()
+		registrations, err := db.GetRegistrationFromDatabase()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -58,10 +58,10 @@ func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 // Handler for posts page
 func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
-	setupCORS(&w, r)
+	SetupCORS(&w, r)
 
 	if r.Method == "POST" {
-		var post PostEntry
+		var post db.PostEntry
 		err := json.NewDecoder(r.Body).Decode(&post)
 
 		if err != nil {
@@ -71,7 +71,7 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 
 		log.Println("Received post:", post.Nickname, post.Img, post.Body, post.Categories)
 
-		err = addPostToDatabase(post.Nickname, post.Img, post.Body, post.Categories)
+		err = db.AddPostToDatabase(post.Nickname, post.Img, post.Body, post.Categories)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -80,7 +80,7 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		posts, err := getPostFromDatabase()
+		posts, err := db.GetPostFromDatabase()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

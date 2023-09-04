@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"realtimeforum/backend/handlers"
+	"realtimeForum/db"
+	"realtimeForum/handlers"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	db.initDatabase()
+	db.InitDatabase()
 	log.Println("Database initialized successfully")
 
 	http.HandleFunc("/", handlers.HomeHandler)
