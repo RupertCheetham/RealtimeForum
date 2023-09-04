@@ -28,6 +28,7 @@ func setupCORS(w *http.ResponseWriter, req *http.Request) {
 	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
+// Handler for posts page
 func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	setupCORS(&w, r)
@@ -67,6 +68,7 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Handler for homepage
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Welcome to Real Time Forum API"))
 }

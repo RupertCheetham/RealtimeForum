@@ -11,10 +11,11 @@ import (
 
 var Database *sql.DB
 
+// initialises database
 func initDatabase() {
 	var err error
 
-	wipeDatabase()
+	wipeDatabaseOnCommand()
 
 	Database, err = sql.Open("sqlite3", "../db/realtimeDatabase.db")
 	if err != nil {
@@ -42,7 +43,8 @@ func initDatabase() {
 	addExamplePosts()
 }
 
-func wipeDatabase() {
+// deletes database if first arg is 'new'
+func wipeDatabaseOnCommand() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "new" {
 			os.Remove("../db/realtimeDatabase.db")
@@ -51,6 +53,7 @@ func wipeDatabase() {
 	}
 }
 
+// adds example posts if first arg is 'new'
 func addExamplePosts() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "new" {
@@ -62,6 +65,7 @@ func addExamplePosts() {
 	}
 }
 
+// adds a post to the database
 func addPostToDatabase(nickname string, img string, body string, categories string) error {
 	var likes = 0
 	var dislikes = 0
@@ -74,6 +78,7 @@ func addPostToDatabase(nickname string, img string, body string, categories stri
 	return err
 }
 
+// retrieves all posts from database and returns them
 func getPostFromDatabase() ([]PostEntry, error) {
 	rows, err := Database.Query("SELECT Id, Nickname, Img, Body, Categories, CreationDate, Likes, Dislikes, WhoLiked, WhoDisliked FROM posts ORDER BY Id ASC")
 	if err != nil {
