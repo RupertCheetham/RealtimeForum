@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"realtimeForum/db"
-	"realtimeForum/handlers"
+	"realtimeForum/backend/db"
+	"realtimeForum/backend/handlers"
 
 	_ "github.com/mattn/go-sqlite3"
 )

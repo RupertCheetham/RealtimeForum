@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"realtimeForum/db"
+	"realtimeForum/backend/db"
 )
 
 func SetupCORS(w *http.ResponseWriter, req *http.Request) {
