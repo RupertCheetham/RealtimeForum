@@ -75,7 +75,6 @@ func main() {
 	initDatabase()
 	log.Println("Database initialized successfully")
 
-	addPostToDatabase("Ardek", "no-image", "This is the message body", "various, categories")
 	http.HandleFunc("/", HomeHandler)
 	http.HandleFunc("/posts", AddPostHandler)
 

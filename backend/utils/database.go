@@ -2,7 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -11,6 +13,9 @@ var Database *sql.DB
 
 func initDatabase() {
 	var err error
+
+	wipeDatabase()
+
 	Database, err = sql.Open("sqlite3", "../db/realtimeDatabase.db")
 	if err != nil {
 		log.Fatal(err)
@@ -33,6 +38,27 @@ func initDatabase() {
 	`)
 	if err != nil {
 		log.Fatal(err)
+	}
+	addExamplePosts()
+}
+
+func wipeDatabase() {
+	if len(os.Args) > 1 {
+		if os.Args[1] == "new" {
+			os.Remove("../db/realtimeDatabase.db")
+			fmt.Println("Deleted realtimeDatabase.db")
+		}
+	}
+}
+
+func addExamplePosts() {
+	if len(os.Args) > 1 {
+		if os.Args[1] == "new" {
+			addPostToDatabase("Ardek", "no-image", "This is the message body", "various, categories")
+			addPostToDatabase("Nikoi", "no-image", "This is the another message body", "various, categories")
+			addPostToDatabase("Martin", "no-image", "This is the third body", "category")
+			addPostToDatabase("Mike", "no-image", "giggle, giggle, giggle", "various, categories")
+		}
 	}
 }
 
