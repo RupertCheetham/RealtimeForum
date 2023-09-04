@@ -1,4 +1,4 @@
-package main
+package db
 
 type RegistrationEntry struct {
 	ID        int    `json:"id"`
