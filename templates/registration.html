@@ -7,12 +7,12 @@
     <title>Registration</title>
 </head>
 <body>
-    <form>
+    <form id="registration-form">
         <div>
             <h1>Register</h1>
         <p>Kindly fill in this form to register.</p>
          <!-- label and input for Username -->
-         <label for="nickname"><b>Username</b></label> 
+         <label for="username"><b>Username</b></label> 
          <input
            type="text"
            placeholder="Enter Username"
@@ -83,8 +83,11 @@
               id="password-repeat"
               required
             /><br>
+
+
              <!-- submit button -->
-        <button type="submit">Register</button>
+             
+        <button type="submit" id="submit">Register</button>
         </div>
          <!-- wrapping the text inside the p tag with a tag for routing to the login page URL-->
       <!-- the # must ideally be replaced by the login page URL -->
@@ -93,5 +96,7 @@
             <p>Already have an account? <a href="#">Log in</a>.</p>
         </div>
   </form>
+
+  <script src="../static/js/postToAPI.js"></script>
 </body>
 </html>
