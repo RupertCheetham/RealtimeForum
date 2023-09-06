@@ -21,7 +21,6 @@ func WriteMessageToLogFile(message interface{}) {
 	file, line, functionName := trace()
 	filename := strings.Split(file, "/")
 	stringMessage := fmt.Sprintf("%s on line %s in %s at file %s", message, strconv.Itoa(line), functionName, filename[len(filename)-1])
-	// stringMessage := string(AssertString(message)) + " on line " + strconv.Itoa(line) + " in " + functionName + " at file " + filename[len(filename)-1]
 	MessageWithFormatTime := formatTime + ": " + stringMessage + "\n"
 	WriteToLogFile(MessageWithFormatTime)
 }

@@ -1,2 +1,2 @@
 -- 002_create_posts_table_down.sql
-DROP TABLE IF EXISTS Posts;
+DROP TABLE IF EXISTS POSTS;

@@ -3,12 +3,12 @@ package db
 import "log"
 
 // adds a post to the database
-func AddPostToDatabase(username string, img string, body string, categories string) error {
+func AddCommentToDatabase(username string, postID int, body string) error {
 	var likes = 0
 	var dislikes = 0
 	var whoLiked = ""
 	var whoDisliked = ""
-	_, err := Database.Exec("INSERT INTO POSTS (Username, Img, Body, Categories, Likes, Dislikes, WhoLiked, WhoDisliked) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", username, img, body, categories, likes, dislikes, whoLiked, whoDisliked)
+	_, err := Database.Exec("INSERT INTO COMMENTS (Username, Body, Likes, Dislikes, WhoLiked, WhoDisliked) VALUES (?, ?, ?, ?, ?, ?)", username, body, likes, dislikes, whoLiked, whoDisliked)
 	if err != nil {
 		log.Println("Error adding post to database in addPostToDatabase:", err)
 	}
@@ -16,7 +16,7 @@ func AddPostToDatabase(username string, img string, body string, categories stri
 }
 
 // retrieves all posts from database and returns them
-func GetPostFromDatabase() ([]PostEntry, error) {
+func GetCommentsFromDatabase() ([]CommentEntry, error) {
 	rows, err := Database.Query("SELECT Id, Username, Img, Body, Categories, CreationDate, Likes, Dislikes, WhoLiked, WhoDisliked FROM Posts ORDER BY Id ASC")
 	if err != nil {
 		log.Println("Error querying posts from database:", err)
@@ -24,16 +24,16 @@ func GetPostFromDatabase() ([]PostEntry, error) {
 	}
 	defer rows.Close()
 
-	var posts []PostEntry
+	var comments []CommentEntry
 	for rows.Next() {
-		var post PostEntry
-		err := rows.Scan(&post.Id, &post.Username, &post.Img, &post.Body, &post.Categories, &post.CreationDate, &post.Likes, &post.Dislikes, &post.WhoLiked, &post.WhoDisliked)
+		var comment CommentEntry
+		err := rows.Scan(&comment.Id, &comment.PostID, &comment.Username, &comment.Body, &comment.CreationDate, &comment.Likes, &comment.Dislikes, &comment.WhoLiked, &comment.WhoDisliked)
 		if err != nil {
 			log.Println("Error scanning row from database:", err)
 			return nil, err
 		}
-		posts = append(posts, post)
+		comments = append(comments, comment)
 	}
 
-	return posts, nil
+	return comments, nil
 }

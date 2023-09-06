@@ -1,5 +1,5 @@
 -- 005_create_cookies_table_up.sql
-CREATE TABLE IF NOT EXISTS Cookies (
+CREATE TABLE IF NOT EXISTS COOKIES (
     SessionID TEXT NULL,
     UserID TEXT NOT NULL,
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP

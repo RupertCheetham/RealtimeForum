@@ -1,5 +1,5 @@
 -- 001_create_users_table_up.sql
-CREATE TABLE IF NOT EXISTS Users (
+CREATE TABLE IF NOT EXISTS USERS (
     UserID INTEGER PRIMARY KEY,
     Username TEXT NOT NULL,
     Email TEXT,

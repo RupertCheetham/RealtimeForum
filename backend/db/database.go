@@ -27,7 +27,7 @@ func InitDatabase() {
 	if err != nil {
 		log.Fatalf("Error applying 'up' migrations: %v", err)
 	}
-	schema := string(schemaAsBytes)
+	// schema := string(schemaAsBytes)
 
 	fmt.Println("Migrations applied successfully")
 	AddExampleEntries()
