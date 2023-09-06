@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"realtimeForum/db"
+	"realtimeForum/utils"
 )
 
 // Handler for posts page
@@ -21,6 +22,7 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		utils.WriteMessageToLogFile("Received post: " + "post.Body")
 		log.Println("Received post:", post.Username, post.Img, post.Body, post.Categories)
 
 		err = db.AddPostToDatabase(post.Username, post.Img, post.Body, post.Categories)

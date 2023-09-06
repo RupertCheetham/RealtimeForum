@@ -1,6 +1,6 @@
 package db
 
-import "log"
+import "realtimeForum/utils"
 
 // adds a post to the database
 func AddCommentToDatabase(username string, postID int, body string) error {
@@ -10,7 +10,7 @@ func AddCommentToDatabase(username string, postID int, body string) error {
 	var whoDisliked = ""
 	_, err := Database.Exec("INSERT INTO COMMENTS (Username, Body, Likes, Dislikes, WhoLiked, WhoDisliked) VALUES (?, ?, ?, ?, ?, ?)", username, body, likes, dislikes, whoLiked, whoDisliked)
 	if err != nil {
-		log.Println("Error adding post to database in addPostToDatabase:", err)
+		utils.HandleError("Error adding post to database in addPostToDatabase:", err)
 	}
 	return err
 }
@@ -19,7 +19,7 @@ func AddCommentToDatabase(username string, postID int, body string) error {
 func GetCommentsFromDatabase() ([]CommentEntry, error) {
 	rows, err := Database.Query("SELECT Id, Username, Img, Body, Categories, CreationDate, Likes, Dislikes, WhoLiked, WhoDisliked FROM Posts ORDER BY Id ASC")
 	if err != nil {
-		log.Println("Error querying posts from database:", err)
+		utils.HandleError("Error querying posts from database:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -29,7 +29,7 @@ func GetCommentsFromDatabase() ([]CommentEntry, error) {
 		var comment CommentEntry
 		err := rows.Scan(&comment.Id, &comment.PostID, &comment.Username, &comment.Body, &comment.CreationDate, &comment.Likes, &comment.Dislikes, &comment.WhoLiked, &comment.WhoDisliked)
 		if err != nil {
-			log.Println("Error scanning row from database:", err)
+			utils.HandleError("Error scanning row from database:", err)
 			return nil, err
 		}
 		comments = append(comments, comment)

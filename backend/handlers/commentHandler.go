@@ -2,46 +2,49 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"realtimeForum/db"
+	"realtimeForum/utils"
 )
 
-// Handler for posts page
+// Handler for comments page
 func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
 
 	if r.Method == "POST" {
-		var post db.PostEntry
-		err := json.NewDecoder(r.Body).Decode(&post)
+		var comment db.CommentEntry
+		err := json.NewDecoder(r.Body).Decode(&comment)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			utils.HandleError("Error whilst dealing with comment post in AddCommentHandler. ", err)
 			return
 		}
 
-		log.Println("Received post:", post.Username, post.Img, post.Body, post.Categories)
+		utils.WriteMessageToLogFile("Received comment: Username - " + comment.Username + "; Comment - " + comment.Body)
 
-		err = db.AddPostToDatabase(post.Username, post.Img, post.Body, post.Categories)
+		err = db.AddCommentToDatabase(comment.Username, comment.PostID, comment.Body)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			utils.HandleError("Error with AddCommentToDatabase in AddCommentHandler. ", err)
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
 	}
 
 	if r.Method == "GET" {
-		posts, err := db.GetPostFromDatabase()
+		comments, err := db.GetCommentsFromDatabase()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			utils.HandleError("Error whilst dealing with submitted comment get in AddCommentHandler. ", err)
 			return
 		}
 
-		if len(posts) > 0 {
-			json.NewEncoder(w).Encode(posts)
+		if len(comments) > 0 {
+			json.NewEncoder(w).Encode(comments)
 		} else {
-			w.Write([]byte("No posts available"))
+			w.Write([]byte("No comments available"))
 		}
 	}
 

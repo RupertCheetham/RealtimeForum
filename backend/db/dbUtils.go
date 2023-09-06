@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"realtimeForum/utils"
 )
 
 // files, err := os.ReadDir("./db/migrations")
@@ -19,6 +20,7 @@ func WipeDatabaseOnCommand() {
 			// Rollback the last migration (uncomment if needed)
 			err := RunMigrations(Database, "./db/migrations", "down")
 			if err != nil {
+				utils.HandleError("Error applying 'down' migrations: %v", err)
 				log.Fatalf("Error applying 'down' migrations: %v", err)
 			}
 			fmt.Println("Dropped all tables")
@@ -30,49 +32,20 @@ func WipeDatabaseOnCommand() {
 func AddExampleEntries() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "test" {
-			err := AddRegistrationToDatabase("Ardek", int(35), "male", "Rupert", "Cheetham", "cheethamthing@gmail.com", "password12345")
-			if err != nil {
-				log.Fatalf("Error adding entry to REGISTRATION table in AddExampleEntries: %v", err)
-			}
-			err = AddRegistrationToDatabase("john_doe", 30, "Male", "John", "Doe", "john.doe@example.com", "password123")
-			if err != nil {
-				log.Fatalf("Error adding entry to REGISTRATION table in AddExampleEntries: %v", err)
-			}
+			AddRegistrationToDatabase("Ardek", int(35), "male", "Rupert", "Cheetham", "cheethamthing@gmail.com", "password12345")
+			AddRegistrationToDatabase("john_doe", 30, "Male", "John", "Doe", "john.doe@example.com", "password123")
 
 			AddPostToDatabase("Ardek", "no-image", "This is the message body", "various, categories")
-			if err != nil {
-				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
-			}
 			AddPostToDatabase("Nikoi", "no-image", "This is the another message body", "various, categories")
-			if err != nil {
-				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
-			}
 			AddPostToDatabase("Martin", "no-image", "This is the third body", "category")
-			if err != nil {
-				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
-			}
 			AddPostToDatabase("Mike", "no-image", "giggle, giggle, giggle", "various, categories")
-			if err != nil {
-				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
-			}
 
 			AddCommentToDatabase("Ardek", 111, "This is an example comment")
-			if err != nil {
-				log.Fatalf("Error adding entry to COMMENT table in AddExampleEntries: %v", err)
-			}
 			AddCommentToDatabase("Nikoi", 111, "This is another example comment")
-			if err != nil {
-				log.Fatalf("Error adding entry to COMMENT table in AddExampleEntries: %v", err)
-			}
 			AddCommentToDatabase("Martin", 111, "This is the third comment")
-			if err != nil {
-				log.Fatalf("Error adding entry to COMMENT table in AddExampleEntries: %v", err)
-			}
 			AddCommentToDatabase("Mike", 111, "chuckle, chuckle, chuckle, chuckle")
-			if err != nil {
-				log.Fatalf("Error adding entry to COMMENT table in AddExampleEntries: %v", err)
-			}
+
 		}
-		log.Println("Example Database entries added successfully")
+		utils.WriteMessageToLogFile("Example Database entries added successfully")
 	}
 }
