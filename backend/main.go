@@ -6,13 +6,15 @@ import (
 	"net/http"
 	"realtimeForum/db"
 	"realtimeForum/handlers"
+	"realtimeForum/utils"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
 	db.InitDatabase()
-	log.Println("Database initialized successfully")
+	// log.Println("Database initialized successfully")
+	utils.WriteMessageToLogFile("Database initialized successfully")
 
 	http.HandleFunc("/", handlers.HomeHandler)
 	http.HandleFunc("/posts", handlers.AddPostHandler)

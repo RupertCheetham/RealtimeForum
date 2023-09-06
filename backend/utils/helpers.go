@@ -39,6 +39,11 @@ func HandleError(message string, err error) {
 }
 
 func WriteToLogFile(message string) {
+	_, err := os.Stat("./logfile.txt")
+	if err != nil {
+		os.Create("./logfile.txt")
+	}
+
 	file, err := os.OpenFile("./logfile.txt", os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	PrintErrOnCommandLine(err)
 
@@ -47,6 +52,7 @@ func WriteToLogFile(message string) {
 	if n != len(message) {
 		fmt.Println("message length not the same")
 	}
+
 }
 
 func trace() (string, int, string) {
