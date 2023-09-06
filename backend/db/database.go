@@ -42,7 +42,7 @@ func InitDatabase() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	addExampleEntries()
+	addExampleEntriesOnCommand()
 }
 
 // deletes database if first arg is 'new'
@@ -56,7 +56,7 @@ func wipeDatabaseOnCommand() {
 }
 
 // adds example entries if first arg is 'new'
-func addExampleEntries() {
+func addExampleEntriesOnCommand() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "new" {
 			AddRegistrationToDatabase("Ardek", int(35), "male", "Rupert", "Cheetham", "cheethamthing@gmail.com", "password12345")
@@ -66,6 +66,11 @@ func addExampleEntries() {
 			AddPostToDatabase("Nikoi", "no-image", "This is the another message body", "various, categories")
 			AddPostToDatabase("Martin", "no-image", "This is the third body", "category")
 			AddPostToDatabase("Mike", "no-image", "giggle, giggle, giggle", "various, categories")
+
+			AddCommentToDatabase(int(1), "Ardek", "This is a comment")
+			AddCommentToDatabase(int(3), "Nikoi", "This is another comment")
+			AddCommentToDatabase(int(111), "Martin", "This is the third comment")
+			AddCommentToDatabase(int(6), "Mike", "giggle, giggle, giggle")
 		}
 	}
 }
@@ -79,11 +84,23 @@ func AddRegistrationToDatabase(username string, age int, gender string, firstNam
 	return err
 }
 
+func AddCommentToDatabase(postID int, username string, body string) error {
+	var likes = 0
+	var dislikes = 0
+	var whoLiked = ""
+	var whoDisliked = ""
+	_, err := Database.Exec("INSERT INTO COMMENTS (postID, username, body, likes, dislikes, whoLiked, whoDisliked) VALUES (?, ?, ?, ?, ?, ?, ?)", postID, username, body, likes, dislikes, whoLiked, whoDisliked)
+	if err != nil {
+		log.Println("Error adding comment to COMMENTS in AddCommentToDatabase:", err)
+	}
+	return err
+}
+
 // retrieves all registrations from database and returns them as an array of RegistrationEntry
 func GetRegistrationFromDatabase() ([]RegistrationEntry, error) {
 	rows, err := Database.Query("SELECT username, age, gender, firstName, lastName, email, password FROM registration ORDER BY id ASC")
 	if err != nil {
-		log.Println("Error querying registrations from database:", err)
+		log.Println("Error querying registrations from database in GetRegistrationFromDatabase:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -129,7 +146,7 @@ func GetPostFromDatabase() ([]PostEntry, error) {
 		var post PostEntry
 		err := rows.Scan(&post.Id, &post.Username, &post.Img, &post.Body, &post.Categories, &post.CreationDate, &post.Likes, &post.Dislikes, &post.WhoLiked, &post.WhoDisliked)
 		if err != nil {
-			log.Println("Error scanning row from database:", err)
+			log.Println("Error scanning row from database in GetPostFromDatabase:", err)
 			return nil, err
 		}
 		posts = append(posts, post)

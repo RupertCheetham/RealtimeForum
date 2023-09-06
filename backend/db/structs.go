@@ -23,3 +23,15 @@ type PostEntry struct {
 	WhoLiked     string `json:"WwhoLiked"`
 	WhoDisliked  string `json:"whoDisliked"`
 }
+
+type CommentEntry struct {
+	Id           int    `json:"id"`
+	PostID       int    `json:"postid"`
+	Username     string `json:"username"`
+	Body         string `json:"body"`
+	CreationDate string `json:"creationDate"`
+	Likes        int    `json:"likes"`
+	Dislikes     int    `json:"dislikes"`
+	WhoLiked     string `json:"WwhoLiked"`
+	WhoDisliked  string `json:"whoDisliked"`
+}
