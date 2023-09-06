@@ -1,6 +1,8 @@
 package db
 
-import "log"
+import (
+	"realtimeForum/utils"
+)
 
 // adds a post to the database
 func AddPostToDatabase(username string, img string, body string, categories string) error {
@@ -10,7 +12,7 @@ func AddPostToDatabase(username string, img string, body string, categories stri
 	var whoDisliked = ""
 	_, err := Database.Exec("INSERT INTO POSTS (Username, Img, Body, Categories, Likes, Dislikes, WhoLiked, WhoDisliked) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", username, img, body, categories, likes, dislikes, whoLiked, whoDisliked)
 	if err != nil {
-		log.Println("Error adding post to database in addPostToDatabase:", err)
+		utils.HandleError("Error adding post to database in addPostToDatabase:", err)
 	}
 	return err
 }
@@ -19,7 +21,7 @@ func AddPostToDatabase(username string, img string, body string, categories stri
 func GetPostFromDatabase() ([]PostEntry, error) {
 	rows, err := Database.Query("SELECT Id, Username, Img, Body, Categories, CreationDate, Likes, Dislikes, WhoLiked, WhoDisliked FROM Posts ORDER BY Id ASC")
 	if err != nil {
-		log.Println("Error querying posts from database:", err)
+		utils.HandleError("Error querying posts from database:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -29,7 +31,7 @@ func GetPostFromDatabase() ([]PostEntry, error) {
 		var post PostEntry
 		err := rows.Scan(&post.Id, &post.Username, &post.Img, &post.Body, &post.Categories, &post.CreationDate, &post.Likes, &post.Dislikes, &post.WhoLiked, &post.WhoDisliked)
 		if err != nil {
-			log.Println("Error scanning row from database:", err)
+			utils.HandleError("Error scanning row from database:", err)
 			return nil, err
 		}
 		posts = append(posts, post)

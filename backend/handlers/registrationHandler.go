@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"realtimeForum/db"
+	"realtimeForum/utils"
 )
 
 // The AddRegistrationHandler function handles POST and GET requests for adding and retrieving
@@ -23,6 +24,7 @@ func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		utils.WriteMessageToLogFile("Received registration: " + registration.Username)
 		log.Println("Received registration:", registration.Username, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
 
 		err = db.AddRegistrationToDatabase(registration.Username, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)

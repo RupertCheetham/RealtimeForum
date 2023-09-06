@@ -25,10 +25,9 @@ func InitDatabase() {
 	// Apply "up" migrations from SQL files
 	err = RunMigrations(Database, "./db/migrations", "up")
 	if err != nil {
-		// log.Fatalf("Error applying 'up' migrations: %v", err)
+
 		utils.HandleError("Error applying 'up' migrations: ", err)
 	}
-	// schema := string(schemaAsBytes)
 
 	fmt.Println("Migrations applied successfully")
 	AddExampleEntries()
@@ -61,14 +60,11 @@ func RunMigrations(Database *sql.DB, migrationDir, direction string) error {
 			return fmt.Errorf("error reading migration file %s: %v", migrationPath, err)
 		}
 
-		// fmt.Println(string(sqlBytes))
-
 		_, err = Database.Exec(string(sqlBytes))
 		if err != nil {
 			return fmt.Errorf("error executing migration %s: %v", migrationPath, err)
 		}
 
-		// fmt.Printf("Applied migration: %s\n", migrationPath)
 	}
 
 	return nil
