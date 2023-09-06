@@ -3,8 +3,8 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
+	"realtimeForum/utils"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -17,15 +17,16 @@ func InitDatabase() {
 
 	Database, err = sql.Open("sqlite3", "./db/realtimeDatabase.db")
 	if err != nil {
-		log.Fatal(err)
+		utils.HandleError("Unable to open database", err)
 	}
 
-	fmt.Println("Connected to SQLite database")
+	utils.WriteMessageToLogFile("Connected to SQLite database")
 
 	// Apply "up" migrations from SQL files
 	err = RunMigrations(Database, "./db/migrations", "up")
 	if err != nil {
-		log.Fatalf("Error applying 'up' migrations: %v", err)
+		// log.Fatalf("Error applying 'up' migrations: %v", err)
+		utils.HandleError("Error applying 'up' migrations: ", err)
 	}
 	// schema := string(schemaAsBytes)
 
