@@ -1,7 +1,7 @@
 package db
 
 type RegistrationEntry struct {
-	ID        int    `json:"id"`
+	Id        int    `json:"id"`
 	Username  string `json:"username"`
 	Age       int    `json:"age"`
 	Gender    string `json:"gender"`

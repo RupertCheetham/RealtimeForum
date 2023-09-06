@@ -6,14 +6,15 @@ registrationForm.addEventListener("submit", function (event) {
 	console.log("are we getting to here?")
 
 	const userName = document.getElementById("username").value
-	const userAge = parseInt(age, 10)
+	const userAge = parseInt(document.getElementById("age").value, 10)
 	const userGender = document.getElementById("gender").value
 	const firstName = document.getElementById("first_name").value
 	const lastName = document.getElementById("last_name").value
 	const email = document.getElementById("email").value
 	const password = document.getElementById("password").value
 
-	console.log(userName, userAge)
+	console.log("userName:", userName)
+	console.log("userAge:", userAge)
 
 	fetch("http://localhost:8080/registrations", {
 		method: "POST",
@@ -33,5 +34,4 @@ registrationForm.addEventListener("submit", function (event) {
 	}).catch((error) => {
 		console.log(error)
 	})
-	console.log("bottom of page")
 })

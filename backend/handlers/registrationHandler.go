@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
 	"realtimeForum/db"
 )
@@ -18,13 +18,13 @@ func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 		var registration db.RegistrationEntry
 		err := json.NewDecoder(r.Body).Decode(&registration)
 
+		fmt.Println("registration:", registration)
+
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-
-		log.Println("Received registration:", registration.Username, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
-
+		// log.Println("Received registration:", registration.Username, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
 		err = db.AddRegistrationToDatabase(registration.Username, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

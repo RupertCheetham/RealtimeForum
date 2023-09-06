@@ -11,7 +11,7 @@ func AddRegistrationToDatabase(username string, age int, gender string, firstNam
 }
 
 func GetRegistrationFromDatabase() ([]RegistrationEntry, error) {
-	rows, err := Database.Query("SELECT Username, Age, Gender, First_name, Last_name, Email, Password FROM Registration ORDER BY Id ASC")
+	rows, err := Database.Query("SELECT Username, Age, Gender, First_name, Last_name, Email, Password FROM REGISTRATION ORDER BY Id ASC")
 	if err != nil {
 		log.Println("Error querying registrations from database:", err)
 		return nil, err
