@@ -97,6 +97,96 @@
         </div>
   </form>
 
+  <form id="post-form">
+    <div>
+        <h1>Register</h1>
+    <p>Kindly fill in this form to register.</p>
+     <!-- label and input for Username -->
+     <label for="username"><b>Username</b></label> 
+     <input
+       type="text"
+       placeholder="Enter post"
+       name="username"
+       id="username"
+       required
+     /><br>
+       <!-- label and input for Age -->
+       <label for="age"><b>Age</b></label> 
+       <input
+         type="text"
+         placeholder="Enter Age"
+         name="age"
+         id="age"
+         required
+       /><br>
+         <!-- label and input for gender -->
+     <label for="gender"><b>Gender</b></label> 
+     <input
+       type="text"
+       placeholder="Enter Gender"
+       name="gender"
+       id="gender"
+       required
+     /><br>
+      <!-- label and input for first name -->
+    <label for="first_name"><b>First Name</b></label>
+    <input
+      type="text"
+      placeholder="Enter First Name"
+      name="first_name"
+      id="first_name"
+      required
+    /><br>
+     <!-- label and input for last name -->
+     <label for="last_name"><b>Last Name</b></label>
+     <input
+       type="text"
+       placeholder="Enter Last Name"
+       name="last_name"
+       id="last_name"
+       required
+     /><br>
+      <!-- label and input for email -->
+      <label for="email"><b>Email</b></label>
+      <input
+        type="text"
+        placeholder="Enter Email"
+        name="email"
+        id="email"
+        required
+      /><br>
+        <!-- label and input for password -->
+        <label for="password"><b>Password</b></label>
+        <input
+          type="text"
+          placeholder="Enter Password"
+          name="password"
+          id="password"
+          required
+        /><br>
+        <!-- label and input for repeat password -->
+        <label for="password-repeat"><b>Repeat Password</b></label>
+        <input
+          type="password"
+          placeholder="Repeat Password"
+          name="password-repeat"
+          id="password-repeat"
+          required
+        /><br>
+
+
+         <!-- submit button -->
+         
+    <button type="submit" id="submit">Register</button>
+    </div>
+     <!-- wrapping the text inside the p tag with a tag for routing to the login page URL-->
+  <!-- the # must ideally be replaced by the login page URL -->
+  <div>
+    <div>
+        <p>Already have an account? <a href="#">Log in</a>.</p>
+    </div>
+</form>
+
   <script src="../static/js/postToAPI.js"></script>
 </body>
 </html>
