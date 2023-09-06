@@ -15,138 +15,67 @@ var Database *sql.DB
 func InitDatabase() {
 	var err error
 
-	wipeDatabaseOnCommand()
-
-	Database, err = sql.Open("sqlite3", "../db/realtimeDatabase.db")
+	Database, err = sql.Open("sqlite3", "./db/realtimeDatabase.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Create the post table if it doesn't exist
-	_, err = Database.Exec(`
-		CREATE TABLE IF NOT EXISTS posts (
-			Id INTEGER PRIMARY KEY AUTOINCREMENT,
-			Nickname TEXT,
-			Img TEXT,
-			Body TEXT,
-			Categories Text,
-			CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP,
-			Likes INTEGER,
-			Dislikes INTEGER,
-			WhoLiked TEXT,
-			WhoDisliked TEXT
-		);
-	`)
+	fmt.Println("Connected to SQLite database")
+
+	// Apply "up" migrations from SQL files
+	err = RunMigrations(Database, "./db/migrations", "up")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error applying 'up' migrations: %v", err)
 	}
 
-	// Create the registration table if it doesn't exist
-	_, err = Database.Exec(`
-	CREATE TABLE IF NOT EXISTS registration (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		nickname TEXT,
-		age INTEGER,
-		gender TEXT,
-		first_name Text,
-		last_name TEXT,
-		email TEXT,
-		password TEXT
-	);
-	`)
-	if err != nil {
-		log.Fatal(err)
-	}
-	addExampleEntries()
+	fmt.Println("Migrations applied successfully")
+	AddExampleEntries()
+	WipeDatabaseOnCommand()
 }
 
-// deletes database if first arg is 'new'
-func wipeDatabaseOnCommand() {
-	if len(os.Args) > 1 {
-		if os.Args[1] == "new" {
-			os.Remove("../db/realtimeDatabase.db")
-			fmt.Println("Deleted realtimeDatabase.db")
+func RunMigrations(Database *sql.DB, migrationDir, direction string) error {
+	files, err := os.ReadDir(migrationDir)
+	if err != nil {
+		return err
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			continue
 		}
-	}
-}
 
-// adds example posts if first arg is 'new'
-func addExampleEntries() {
-	if len(os.Args) > 1 {
-		if os.Args[1] == "new" {
-			AddRegistrationToDatabase("Ardek", int(35), "male", "Rupert", "Cheetham", "cheethamthing@gmail.com", "password12345")
-			AddRegistrationToDatabase("john_doe", 30, "Male", "John", "Doe", "john.doe@example.com", "password123")
-
-			AddPostToDatabase("Ardek", "no-image", "This is the message body", "various, categories")
-			AddPostToDatabase("Nikoi", "no-image", "This is the another message body", "various, categories")
-			AddPostToDatabase("Martin", "no-image", "This is the third body", "category")
-			AddPostToDatabase("Mike", "no-image", "giggle, giggle, giggle", "various, categories")
+		fileName := file.Name()
+		if direction == "up" && !isUpMigration(fileName) {
+			continue
 		}
-	}
-}
+		if direction == "down" && !isDownMigration(fileName) {
+			continue
+		}
 
-func AddRegistrationToDatabase(nickname string, age int, gender string, firstName string, lastName string, email string, password string) error {
-	_, err := Database.Exec("INSERT INTO registration (nickname, age, gender, first_name, last_name, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)", nickname, age, gender, firstName, lastName, email, password)
-	if err != nil {
-		log.Println("Error adding registration to database:", err)
-	}
-	return err
-}
-
-func GetRegistrationFromDatabase() ([]RegistrationEntry, error) {
-	rows, err := Database.Query("SELECT nickname, age, gender, first_name, last_name, email, password FROM registration ORDER BY id ASC")
-	if err != nil {
-		log.Println("Error querying registrations from database:", err)
-		return nil, err
-	}
-	defer rows.Close()
-
-	var registrations []RegistrationEntry
-	for rows.Next() {
-		var entry RegistrationEntry
-		err := rows.Scan(&entry.Nickname, &entry.Age, &entry.Gender, &entry.FirstName, &entry.LastName, &entry.Email, &entry.Password)
+		migrationPath := migrationDir + "/" + fileName
+		fmt.Println("migrationPath:", migrationPath)
+		sqlBytes, err := os.ReadFile(migrationPath)
 		if err != nil {
-			log.Println("Error scanning row from database:", err)
-			return nil, err
+			return fmt.Errorf("error reading migration file %s: %v", migrationPath, err)
 		}
-		registrations = append(registrations, entry)
-	}
 
-	return registrations, nil
-}
+		// fmt.Println(string(sqlBytes))
 
-// adds a post to the database
-func AddPostToDatabase(nickname string, img string, body string, categories string) error {
-	var likes = 0
-	var dislikes = 0
-	var whoLiked = ""
-	var whoDisliked = ""
-	_, err := Database.Exec("INSERT INTO posts (Nickname, Img, Body, Categories, Likes, Dislikes, WhoLiked, WhoDisliked) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", nickname, img, body, categories, likes, dislikes, whoLiked, whoDisliked)
-	if err != nil {
-		log.Println("Error adding post to database in addPostToDatabase:", err)
-	}
-	return err
-}
-
-// retrieves all posts from database and returns them
-func GetPostFromDatabase() ([]PostEntry, error) {
-	rows, err := Database.Query("SELECT Id, Nickname, Img, Body, Categories, CreationDate, Likes, Dislikes, WhoLiked, WhoDisliked FROM posts ORDER BY Id ASC")
-	if err != nil {
-		log.Println("Error querying posts from database:", err)
-		return nil, err
-	}
-	defer rows.Close()
-
-	var posts []PostEntry
-	for rows.Next() {
-		var post PostEntry
-		err := rows.Scan(&post.Id, &post.Nickname, &post.Img, &post.Body, &post.Categories, &post.CreationDate, &post.Likes, &post.Dislikes, &post.WhoLiked, &post.WhoDisliked)
+		_, err = Database.Exec(string(sqlBytes))
 		if err != nil {
-			log.Println("Error scanning row from database:", err)
-			return nil, err
+			return fmt.Errorf("error executing migration %s: %v", migrationPath, err)
 		}
-		posts = append(posts, post)
+
+		// fmt.Printf("Applied migration: %s\n", migrationPath)
 	}
 
-	return posts, nil
+	return nil
+}
+
+func isUpMigration(fileName string) bool {
+	return len(fileName) > 3 && fileName[len(fileName)-7:] == "_up.sql"
+}
+
+func isDownMigration(fileName string) bool {
+	return len(fileName) > 5 && fileName[len(fileName)-9:] == "_down.sql"
 }
