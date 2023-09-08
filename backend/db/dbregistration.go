@@ -2,7 +2,7 @@ package db
 
 import (
 	//"log"
-	"realtimeForum/utils"
+	"realtimeForum/backend/utils"
 )
 
 func AddRegistrationToDatabase(username string, age int, gender string, firstName string, lastName string, email string, password string) error {

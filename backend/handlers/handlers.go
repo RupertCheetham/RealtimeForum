@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"realtimeForum/db"
+	"realtimeForum/backend/db"
 )
 
 func SetupCORS(w *http.ResponseWriter, req *http.Request) {
@@ -54,6 +54,8 @@ func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+
 
 // Handler for posts page
 func AddPostHandler(w http.ResponseWriter, r *http.Request) {

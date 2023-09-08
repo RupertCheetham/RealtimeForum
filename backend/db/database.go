@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"realtimeForum/utils"
+	"realtimeForum/backend/utils"
 
 	_ "github.com/mattn/go-sqlite3"
 )

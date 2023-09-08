@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"realtimeForum/db"
-	"realtimeForum/handlers"
-	"realtimeForum/utils"
+	"realtimeForum/backend/db"
+	"realtimeForum/backend/handlers"
+	"realtimeForum/backend/utils"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -19,6 +19,7 @@ func main() {
 	http.HandleFunc("/", handlers.HomeHandler)
 	http.HandleFunc("/posts", handlers.AddPostHandler)
 	http.HandleFunc("/registrations", handlers.AddRegistrationHandler)
+	http.HandleFunc("/login", handlers.AddLoginHandler)
 
 	fmt.Printf("Starting server at port 8080\n")
 	log.Fatal(http.ListenAndServe(":8080", nil))
