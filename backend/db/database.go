@@ -15,7 +15,7 @@ var Database *sql.DB
 func InitDatabase() {
 	var err error
 
-	Database, err = sql.Open("sqlite3", "./db/realtimeDatabase.db")
+	Database, err = sql.Open("sqlite3", "./backend/db/realtimeDatabase.db")
 	if err != nil {
 		utils.HandleError("Unable to open database", err)
 	}
@@ -23,7 +23,7 @@ func InitDatabase() {
 	utils.WriteMessageToLogFile("Connected to SQLite database")
 
 	// Apply "up" migrations from SQL files
-	err = RunMigrations(Database, "./db/migrations", "up")
+	err = RunMigrations(Database, "./backend/db/migrations", "up")
 	if err != nil {
 		// log.Fatalf("Error applying 'up' migrations: %v", err)
 		utils.HandleError("Error applying 'up' migrations: ", err)

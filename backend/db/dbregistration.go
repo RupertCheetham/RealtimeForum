@@ -34,6 +34,5 @@ func GetRegistrationFromDatabase() ([]RegistrationEntry, error) {
 		}
 		registrations = append(registrations, entry)
 	}
-
 	return registrations, nil
 }

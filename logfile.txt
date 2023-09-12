@@ -1,0 +1,20 @@
+Tue Sep 12 12:52:55 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Tue Sep 12 12:52:55 BST 2023: ***** Error applying 'up' migrations: : open ./db/migrations: The system cannot find the path specified. on line 29 in realtimeForum/backend/db.InitDatabase at file database.go *****
+Tue Sep 12 12:52:55 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Tue Sep 12 13:11:06 BST 2023: ***** Error querying registrations from database: unable to open database file: The system cannot find the path specified. on line 21 in realtimeForum/backend/db.GetRegistrationFromDatabase at file dbregistration.go *****
+Tue Sep 12 13:12:44 BST 2023: ***** Error querying registrations from database: unable to open database file: The system cannot find the path specified. on line 21 in realtimeForum/backend/db.GetRegistrationFromDatabase at file dbregistration.go *****
+Tue Sep 12 13:14:23 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Tue Sep 12 13:14:23 BST 2023: ***** Error applying 'up' migrations: : open ./db/migrations: The system cannot find the path specified. on line 29 in realtimeForum/backend/db.InitDatabase at file database.go *****
+Tue Sep 12 13:14:23 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Tue Sep 12 13:14:50 BST 2023: ***** Error querying registrations from database: unable to open database file: The system cannot find the path specified. on line 21 in realtimeForum/backend/db.GetRegistrationFromDatabase at file dbregistration.go *****
+Tue Sep 12 13:16:54 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Tue Sep 12 13:16:54 BST 2023: ***** Error applying 'up' migrations: : open ./db/migrations: The system cannot find the path specified. on line 29 in realtimeForum/backend/db.InitDatabase at file database.go *****
+Tue Sep 12 13:16:54 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Tue Sep 12 13:17:20 BST 2023: ***** Error querying registrations from database: unable to open database file: The system cannot find the path specified. on line 21 in realtimeForum/backend/db.GetRegistrationFromDatabase at file dbregistration.go *****
+Tue Sep 12 13:34:51 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Tue Sep 12 13:34:51 BST 2023: ***** Error applying 'up' migrations: : open ./migrations: The system cannot find the file specified. on line 29 in realtimeForum/backend/db.InitDatabase at file database.go *****
+Tue Sep 12 13:34:51 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Tue Sep 12 13:35:40 BST 2023: ***** Error querying registrations from database: unable to open database file: The system cannot find the path specified. on line 21 in realtimeForum/backend/db.GetRegistrationFromDatabase at file dbregistration.go *****
+Tue Sep 12 13:46:47 BST 2023: ***** Error adding registration to database: unable to open database file: The system cannot find the path specified. on line 12 in realtimeForum/backend/db.AddRegistrationToDatabase at file dbregistration.go *****
+Tue Sep 12 13:52:40 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Tue Sep 12 13:52:40 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
