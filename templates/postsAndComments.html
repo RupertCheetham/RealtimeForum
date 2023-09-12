@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post A Message/Comment</title>
+</head>
+
+<body>
+  <form id="post-form">
+    <div>
+      <h1>Post</h1>
+      <p>Kindly fill in this form to post.</p>
+      <!-- label and input for postText -->
+      <label for="post"><b>Post</b></label>
+      <input type="text" placeholder="Enter Message" name="postText" id="postText" required /><br>
+      <!-- label and input for categories -->
+      <label for="categories"><b>Categories</b></label>
+      <input type="text" placeholder="Enter Categories" name="categories" id="categories" required /><br>
+      <!-- label and input for img -->
+      <label for="image"><b>Image</b></label>
+      <input type="text" placeholder="Enter Image String" name="image" id="image" required /><br>
+      <!-- submit button -->
+
+      <button type="submit" id="submit">Register</button>
+    </div>
+    <!-- wrapping the text inside the p tag with a tag for routing to the login page URL-->
+    <!-- the # must ideally be replaced by the login page URL -->
+    <div>
+      <div>
+        <p>Already have an account? <a href="#">Log in</a>.</p>
+      </div>
+  </form>
+<br>
+<hr>
+<br>
+<form id="comment-form">
+  <div>
+    <h1>Comment</h1>
+    <p>Kindly fill in this form to comment.</p>
+    <!-- label and input for commentText -->
+    <label for="username"><b>Username</b></label>
+    <input type="text" placeholder="Enter Username" name="commentText" id="commentText" required /><br>
+     <!-- label and input for commentText -->
+     <label for="parentPostID"><b>parentPostID</b></label>
+     <input type="text" placeholder="parentPostID" name="parentPostID" id="parentPostID" required /><br>
+
+    <!-- submit button -->
+    <button type="submit" id="submit">Register</button>
+  </div>
+  <!-- wrapping the text inside the p tag with a tag for routing to the login page URL-->
+  <!-- the # must ideally be replaced by the login page URL -->
+  <div>
+    <div>
+      <p>Already have an account? <a href="#">Log in</a>.</p>
+    </div>
+</form>
+
+  <script src="../static/js/postsToBackend.js"></script>
+  <script src="../static/js/commentsToBackend.js"></script>
+</body>
+
+</html>

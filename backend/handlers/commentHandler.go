@@ -13,17 +13,17 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	SetupCORS(&w, r)
 
 	if r.Method == "POST" {
-		var post db.PostEntry
-		err := json.NewDecoder(r.Body).Decode(&post)
+		var comment db.CommentEntry
+		err := json.NewDecoder(r.Body).Decode(&comment)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		log.Println("Received post:", post.Username, post.Img, post.Body, post.Categories)
+		log.Println("Received comment:", comment.Body)
 
-		err = db.AddPostToDatabase(post.Username, post.Img, post.Body, post.Categories)
+		err = db.AddCommentToDatabase(comment.Username, comment.Id, comment.Body)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -31,18 +31,18 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 	}
 
-	if r.Method == "GET" {
-		posts, err := db.GetPostFromDatabase()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	// if r.Method == "GET" {
+	// 	comments, err := db.GetCommentFromDatabase()
+	// 	if err != nil {
+	// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 		return
+	// 	}
 
-		if len(posts) > 0 {
-			json.NewEncoder(w).Encode(posts)
-		} else {
-			w.Write([]byte("No posts available"))
-		}
-	}
+	// 	if len(comments) > 0 {
+	// 		json.NewEncoder(w).Encode(comments)
+	// 	} else {
+	// 		w.Write([]byte("No posts available"))
+	// 	}
+	// }
 
 }
