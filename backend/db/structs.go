@@ -20,7 +20,7 @@ type PostEntry struct {
 	CreationDate string `json:"creationDate"`
 	Likes        int    `json:"likes"`
 	Dislikes     int    `json:"dislikes"`
-	WhoLiked     string `json:"WwhoLiked"`
+	WhoLiked     string `json:"whoLiked"`
 	WhoDisliked  string `json:"whoDisliked"`
 }
 
@@ -32,6 +32,6 @@ type CommentEntry struct {
 	CreationDate string `json:"creationDate"`
 	Likes        int    `json:"likes"`
 	Dislikes     int    `json:"dislikes"`
-	WhoLiked     string `json:"WwhoLiked"`
+	WhoLiked     string `json:"whoLiked"`
 	WhoDisliked  string `json:"whoDisliked"`
 }

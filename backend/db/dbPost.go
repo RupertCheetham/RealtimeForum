@@ -1,6 +1,9 @@
 package db
 
-import "log"
+import (
+	"encoding/json"
+	"log"
+)
 
 // adds a post to the database
 func AddPostToDatabase(username string, img string, body string, categories string) error {
@@ -17,7 +20,7 @@ func AddPostToDatabase(username string, img string, body string, categories stri
 
 // retrieves all posts from database and returns them
 func GetPostFromDatabase() ([]PostEntry, error) {
-	rows, err := Database.Query("SELECT Id, Username, Img, Body, Categories, CreationDate, Likes, Dislikes, WhoLiked, WhoDisliked FROM Posts ORDER BY Id ASC")
+	rows, err := Database.Query("SELECT Id, Username, Img, Body, Categories, CreationDate, Likes, Dislikes, WhoLiked, WhoDisliked FROM POSTS ORDER BY Id ASC")
 	if err != nil {
 		log.Println("Error querying posts from database:", err)
 		return nil, err
@@ -36,4 +39,15 @@ func GetPostFromDatabase() ([]PostEntry, error) {
 	}
 
 	return posts, nil
+}
+
+func ConvertPostsToJSON() ([]byte, error) {
+
+	posts, _ := GetPostFromDatabase()
+	// Marshal the array of PostEntry structs into JSON
+	jsonPosts, err := json.Marshal(posts)
+	if err != nil {
+		return nil, err
+	}
+	return jsonPosts, nil
 }

@@ -34,6 +34,7 @@ func AddExampleEntries() {
 			if err != nil {
 				log.Fatalf("Error adding entry to REGISTRATION table in AddExampleEntries: %v", err)
 			}
+
 			err = AddRegistrationToDatabase("john_doe", 30, "Male", "John", "Doe", "john.doe@example.com", "password123")
 			if err != nil {
 				log.Fatalf("Error adding entry to REGISTRATION table in AddExampleEntries: %v", err)
@@ -43,6 +44,7 @@ func AddExampleEntries() {
 			if err != nil {
 				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
 			}
+			_, _ = Database.Exec("UPDATE POSTS SET Likes = ?, Dislikes = ?, WhoLiked = ?, WhoDisliked = ? WHERE Id = ?", 1, 2, "hello, there, ghghg", "dgf, sdfgsdfg, ertret", 1)
 			AddPostToDatabase("Nikoi", "no-image", "This is the another message body", "various, categories")
 			if err != nil {
 				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)

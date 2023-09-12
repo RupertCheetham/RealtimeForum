@@ -20,7 +20,7 @@ func AddCommentToDatabase(username string, postID int, body string) error {
 // retrieves all posts from database and returns them
 func GetCommentsFromDatabase() ([]CommentEntry, error) {
 
-	rows, err := Database.Query("SELECT Id, Username, Img, Body, Categories, CreationDate, Likes, Dislikes, WhoLiked, WhoDisliked FROM Posts ORDER BY Id ASC")
+	rows, err := Database.Query("SELECT Id, Username, Img, Body, Categories, CreationDate, Likes, Dislikes, WhoLiked, WhoDisliked FROM POSTS ORDER BY Id ASC")
 	if err != nil {
 		log.Println("Error querying posts from database:", err)
 		return nil, err
