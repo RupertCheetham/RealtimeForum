@@ -7,7 +7,7 @@ import (
 	"realtimeForum/db"
 )
 
-// Handler for posts page
+// Handler for comments
 func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
