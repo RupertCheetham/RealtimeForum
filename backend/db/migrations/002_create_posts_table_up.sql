@@ -1,7 +1,7 @@
 -- 002_create_posts_table_up.sql
 CREATE TABLE IF NOT EXISTS POSTS (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    Username TEXT,
+    FOREIGN KEY (Username) REFERENCES USERS(Username),
     Img TEXT,
     Body TEXT,
     Categories Text,

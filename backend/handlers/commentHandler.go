@@ -15,15 +15,17 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		var comment db.CommentEntry
 		err := json.NewDecoder(r.Body).Decode(&comment)
-
+		log.Println(comment)
+		log.Println(comment.ParentPostID)
 		if err != nil {
+			log.Println("Error in AddCommentHandler")
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		log.Println("Received comment:", comment.Body)
 
-		err = db.AddCommentToDatabase(comment.Username, comment.Id, comment.Body)
+		err = db.AddCommentToDatabase(comment.Username, comment.ParentPostID, comment.Body)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

@@ -3,8 +3,8 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	"log"
+	"os"
 	"realtimeForum/utils"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -31,7 +31,6 @@ func InitDatabase() {
 		utils.HandleError("Error applying 'up' migrations: ", err)
 		log.Println("Error applying 'up' migrations: ", err)
 	}
-	// schema := string(schemaAsBytes)
 
 	fmt.Println("Migrations applied successfully")
 	AddExampleEntries()

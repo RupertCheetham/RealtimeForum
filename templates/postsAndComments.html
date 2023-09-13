@@ -24,14 +24,12 @@
       <input type="text" placeholder="Enter Image String" name="image" id="image" required /><br>
       <!-- submit button -->
 
-      <button type="submit" id="submit">Register</button>
+      <button type="submit" id="submit">Submit Post</button>
     </div>
     <!-- wrapping the text inside the p tag with a tag for routing to the login page URL-->
     <!-- the # must ideally be replaced by the login page URL -->
     <div>
-      <div>
-        <p>Already have an account? <a href="#">Log in</a>.</p>
-      </div>
+
   </form>
 <br>
 <hr>
@@ -42,20 +40,21 @@
     <p>Kindly fill in this form to comment.</p>
     <!-- label and input for commentText -->
     <label for="username"><b>Username</b></label>
-    <input type="text" placeholder="Enter Username" name="commentText" id="commentText" required /><br>
+    <input type="text" placeholder="Enter Username" name="commentUsername" id="commentUsername" required /><br>
      <!-- label and input for commentText -->
      <label for="parentPostID"><b>parentPostID</b></label>
-     <input type="text" placeholder="parentPostID" name="parentPostID" id="parentPostID" required /><br>
+     <input type="text" placeholder="Enter parentPostID" name="parentPostID" id="parentPostID" required /><br>
+      <!-- label and input for commentText -->
+      <label for="commentText"><b>Comment</b></label>
+      <input type="text" placeholder="Enter comment" name="commentText" id="commentText" required /><br>
+ 
 
     <!-- submit button -->
-    <button type="submit" id="submit">Register</button>
+    <button type="submit" id="submit">Submit Comment</button>
   </div>
   <!-- wrapping the text inside the p tag with a tag for routing to the login page URL-->
   <!-- the # must ideally be replaced by the login page URL -->
   <div>
-    <div>
-      <p>Already have an account? <a href="#">Log in</a>.</p>
-    </div>
 </form>
 
   <script src="../static/js/postsToBackend.js"></script>
