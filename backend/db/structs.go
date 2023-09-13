@@ -35,17 +35,3 @@ type CommentEntry struct {
 	WhoLiked     string `json:"whoLiked"`
 	WhoDisliked  string `json:"whoDisliked"`
 }
-
-type PostWithComments struct {
-	Id           int            `json:"id"`
-	Username     string         `json:"username"`
-	Img          string         `json:"img"`
-	Body         string         `json:"body"`
-	Categories   string         `json:"categories"`
-	CreationDate string         `json:"creationDate"`
-	Likes        int            `json:"likes"`
-	Dislikes     int            `json:"dislikes"`
-	WhoLiked     string         `json:"whoLiked"`
-	WhoDisliked  string         `json:"whoDisliked"`
-	Comments     []CommentEntry `json:"comments"`
-}

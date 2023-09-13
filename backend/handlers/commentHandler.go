@@ -12,6 +12,7 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
 
+	// This code block is handling the POST request for adding a comment.
 	if r.Method == "POST" {
 		var comment db.CommentEntry
 		err := json.NewDecoder(r.Body).Decode(&comment)
@@ -33,18 +34,19 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 	}
 
-	// if r.Method == "GET" {
-	// 	comments, err := db.GetCommentFromDatabase()
-	// 	if err != nil {
-	// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 		return
-	// 	}
+	// This code block is handling the GET request for retrieving comments from the database.
+	if r.Method == "GET" {
+		comments, err := db.GetCommentsFromDatabase()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	// 	if len(comments) > 0 {
-	// 		json.NewEncoder(w).Encode(comments)
-	// 	} else {
-	// 		w.Write([]byte("No posts available"))
-	// 	}
-	// }
+		if len(comments) > 0 {
+			json.NewEncoder(w).Encode(comments)
+		} else {
+			w.Write([]byte("No posts available"))
+		}
+	}
 
 }

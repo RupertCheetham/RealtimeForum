@@ -9,12 +9,16 @@ import (
 	"time"
 )
 
+// The function "PrintErrOnCommandLine" prints an error message to the command line if an error is not
+// nil.
 func PrintErrOnCommandLine(err error) {
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
 }
 
+// The function `WriteMessageToLogFile` writes a formatted message with timestamp, file name, line
+// number, and function name to a log file.
 func WriteMessageToLogFile(message interface{}) {
 	now := time.Now()
 	formatTime := now.Format(time.UnixDate)
@@ -25,6 +29,8 @@ func WriteMessageToLogFile(message interface{}) {
 	WriteToLogFile(MessageWithFormatTime)
 }
 
+// The function "HandleError" logs an error message along with the current time, file name, line
+// number, and function name if an error occurs.
 func HandleError(message string, err error) {
 	if err != nil {
 		now := time.Now()
@@ -37,6 +43,8 @@ func HandleError(message string, err error) {
 	}
 }
 
+// The function `WriteToLogFile` appends a given message to a log file, creating the file if it doesn't
+// exist.
 func WriteToLogFile(message string) {
 	_, err := os.Stat("./logfile.txt")
 	if err != nil {
@@ -54,6 +62,7 @@ func WriteToLogFile(message string) {
 
 }
 
+// The trace function returns the file name, line number, and function name of the caller.
 func trace() (string, int, string) {
 	pc, file, line, ok := runtime.Caller(2)
 	if !ok {
@@ -68,6 +77,8 @@ func trace() (string, int, string) {
 	return file, line, fn.Name()
 }
 
+// The AssertString function takes an interface{} value and asserts that it is a string, returning the
+// string value.
 func AssertString(val interface{}) string {
 	v := val.(string)
 	return v

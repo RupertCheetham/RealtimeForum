@@ -1,3 +1,5 @@
+/* The code is adding an event listener to the registration form. When the form is submitted, the
+function will be executed. */
 const registrationForm = document.getElementById("registration-form")
 
 registrationForm.addEventListener("submit", function (event) {

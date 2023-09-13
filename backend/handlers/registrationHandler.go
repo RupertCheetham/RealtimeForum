@@ -14,6 +14,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
 
+	// The code block is handling the POST request for adding a user entry to the database.
 	if r.Method == "POST" {
 		var user db.UserEntry
 		err := json.NewDecoder(r.Body).Decode(&user)
@@ -33,6 +34,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 	}
 
+	// The code block is handling the GET request for retrieving user entries from the database.
 	if r.Method == "GET" {
 		users, err := db.GetUsersFromDatabase()
 		if err != nil {
