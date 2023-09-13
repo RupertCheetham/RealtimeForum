@@ -17,7 +17,7 @@ func main() {
 
 	http.HandleFunc("/", handlers.HomeHandler)
 	http.HandleFunc("/registrations", handlers.AddRegistrationHandler)
-	http.HandleFunc("/posts", handlers.AddPostHandler)
+	http.HandleFunc("/postupload", handlers.AddPostHandler)
 	http.HandleFunc("/comments", handlers.AddCommentHandler)
 
 	fmt.Printf("Starting server at port 8080\n")

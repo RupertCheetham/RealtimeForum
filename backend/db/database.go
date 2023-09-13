@@ -30,7 +30,7 @@ func InitDatabase() {
 	}
 
 	fmt.Println("Migrations applied successfully")
-	AddExampleEntries()
+	// AddExampleEntries()
 	WipeDatabaseOnCommand()
 }
 

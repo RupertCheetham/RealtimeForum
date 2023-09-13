@@ -3,8 +3,6 @@ const registrationForm = document.getElementById("registration-form")
 registrationForm.addEventListener("submit", function (event) {
 	event.preventDefault()
 
-	console.log("are we getting to here?")
-
 	const userName = document.getElementById("username").value
 	const userAge = parseInt(document.getElementById("age").value, 10)
 	const userGender = document.getElementById("gender").value
