@@ -1,6 +1,7 @@
--- 005_create_cookies_table_up.sql
+-- 002_create_cookies_table_up.sql
 CREATE TABLE IF NOT EXISTS COOKIES (
     SessionID TEXT NULL,
     UserID TEXT NOT NULL,
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP
+    FOREIGN KEY (UserID) REFERENCES USERS(Id)
 );

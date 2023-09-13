@@ -1,8 +1,11 @@
 -- 001_create_users_table_up.sql
 CREATE TABLE IF NOT EXISTS USERS (
-    UserID INTEGER PRIMARY KEY,
-    Username TEXT NOT NULL,
-    Email TEXT,
-    Password TEXT,
-    RegistrationDate DATETIME DEFAULT CURRENT_TIMESTAMP
+	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	Username TEXT,
+	Age INTEGER,
+	Gender TEXT,
+	First_name Text,
+	Last_name TEXT,
+	Email TEXT,
+	Password TEXT
 );

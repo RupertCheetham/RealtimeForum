@@ -30,14 +30,14 @@ func WipeDatabaseOnCommand() {
 func AddExampleEntries() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "test" {
-			err := AddRegistrationToDatabase("Ardek", int(35), "male", "Rupert", "Cheetham", "cheethamthing@gmail.com", "password12345")
+			err := AddUserToDatabase("Ardek", int(35), "male", "Rupert", "Cheetham", "cheethamthing@gmail.com", "password12345")
 			if err != nil {
-				log.Fatalf("Error adding entry to REGISTRATION table in AddExampleEntries: %v", err)
+				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
 			}
 
-			err = AddRegistrationToDatabase("john_doe", 30, "Male", "John", "Doe", "john.doe@example.com", "password123")
+			err = AddUserToDatabase("john_doe", 30, "Male", "John", "Doe", "john.doe@example.com", "password123")
 			if err != nil {
-				log.Fatalf("Error adding entry to REGISTRATION table in AddExampleEntries: %v", err)
+				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
 			}
 
 			AddPostToDatabase("Ardek", "no-image", "This is the message body", "various, categories")

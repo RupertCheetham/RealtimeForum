@@ -7,25 +7,25 @@ import (
 	"realtimeForum/db"
 )
 
-// The AddRegistrationHandler function handles POST and GET requests for adding and retrieving
-// registration entries respectively, including decoding the request body, logging the received
-// registration, and interacting with the database.
-func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
+// The AddUserHandler function handles POST and GET requests for adding and retrieving
+// user entries respectively, including decoding the request body, logging the received
+// user, and interacting with the database.
+func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
 
 	if r.Method == "POST" {
-		var registration db.RegistrationEntry
-		err := json.NewDecoder(r.Body).Decode(&registration)
+		var user db.UserEntry
+		err := json.NewDecoder(r.Body).Decode(&user)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		log.Println("Received registration:", registration.Username, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
+		log.Println("Received user:", user.Username, user.Age, user.Gender, user.FirstName, user.LastName, user.Email, user.Password)
 
-		err = db.AddRegistrationToDatabase(registration.Username, registration.Age, registration.Gender, registration.FirstName, registration.LastName, registration.Email, registration.Password)
+		err = db.AddUserToDatabase(user.Username, user.Age, user.Gender, user.FirstName, user.LastName, user.Email, user.Password)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -34,16 +34,16 @@ func AddRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		registrations, err := db.GetRegistrationFromDatabase()
+		users, err := db.GetUsersFromDatabase()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		if len(registrations) > 0 {
-			json.NewEncoder(w).Encode(registrations)
+		if len(users) > 0 {
+			json.NewEncoder(w).Encode(users)
 		} else {
-			w.Write([]byte("No registrations available"))
+			w.Write([]byte("No users available"))
 		}
 	}
 
