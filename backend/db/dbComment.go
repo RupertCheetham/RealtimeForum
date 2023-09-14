@@ -5,9 +5,8 @@ import (
 )
 
 // adds a post to the database
-func AddCommentToDatabase(userID int, parentPostID int, body string) error {
-	var reaction = 0
-	_, err := Database.Exec("INSERT INTO COMMENTS (PostID, UserId, Body, Reaction) VALUES (?, ?, ?, ?)", parentPostID, userID, body, reaction)
+func AddCommentToDatabase(parentPostID int, userID int, body string) error {
+	_, err := Database.Exec("INSERT INTO COMMENTS (PostID, UserID, Body) VALUES (?, ?, ?)", parentPostID, userID, body)
 	if err != nil {
 		log.Println("Error adding comment to database in AddCommentToDatabase:", err)
 	}
@@ -28,7 +27,7 @@ func GetCommentsFromDatabase() ([]CommentEntry, error) {
 	for rows.Next() {
 
 		var comment CommentEntry
-		err := rows.Scan(&comment.Id, &comment.ParentPostID, &comment.UserId, &comment.Body, &comment.CreationDate, &comment.Reaction)
+		err := rows.Scan(&comment.Id, &comment.ParentPostID, &comment.UserId, &comment.Body, &comment.CreationDate, &comment.ReactionID)
 		if err != nil {
 			log.Println("Error scanning row from database:", err)
 			return nil, err

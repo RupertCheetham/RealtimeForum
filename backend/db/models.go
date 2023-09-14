@@ -18,7 +18,7 @@ type PostEntry struct {
 	Body         string `json:"body"`
 	Categories   string `json:"categories"`
 	CreationDate string `json:"creationDate"`
-	Reaction     int    `json:"reaction"`
+	ReactionID   int    `json:"reactionID"`
 }
 
 type CommentEntry struct {
@@ -27,7 +27,7 @@ type CommentEntry struct {
 	UserId       int    `json:"username"`
 	Body         string `json:"body"`
 	CreationDate string `json:"creationDate"`
-	Reaction     int    `json:"reaction"`
+	ReactionID   int    `json:"reactionID"`
 }
 
 type Reaction struct {

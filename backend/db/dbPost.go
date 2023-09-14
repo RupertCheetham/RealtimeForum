@@ -8,7 +8,7 @@ import (
 // adds a post to the database
 func AddPostToDatabase(userID int, img string, body string, categories string) error {
 	var reaction = 1
-	_, err := Database.Exec("INSERT INTO POSTS (UserId, Img, Body, Categories, Reaction) VALUES (?, ?, ?, ?, ?)", userID, img, body, categories, reaction)
+	_, err := Database.Exec("INSERT INTO POSTS (UserId, Img, Body, Categories, ReactionID) VALUES (?, ?, ?, ?, ?)", userID, img, body, categories, reaction)
 	if err != nil {
 		log.Println("Error adding post to database in addPostToDatabase:", err)
 	}
@@ -27,7 +27,7 @@ func GetPostFromDatabase() ([]PostEntry, error) {
 	var posts []PostEntry
 	for rows.Next() {
 		var post PostEntry
-		err := rows.Scan(&post.Id, &post.UserId, &post.Img, &post.Body, &post.Categories, &post.CreationDate, &post.Reaction)
+		err := rows.Scan(&post.Id, &post.UserId, &post.Img, &post.Body, &post.Categories, &post.CreationDate, &post.ReactionID)
 		if err != nil {
 			log.Println("Error scanning row from database:", err)
 			return nil, err
