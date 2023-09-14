@@ -1,18 +1,12 @@
 -- 003_create_posts_table_up.sql
 CREATE TABLE IF NOT EXISTS POSTS (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    Username TEXT,
+    UserID INTEGER,
     Img TEXT,
     Body TEXT,
     Categories Text,
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP,
-    Likes INTEGER,
-    Dislikes INTEGER,
-    WhoLiked TEXT,
-    WhoDisliked TEXT,
-    FOREIGN KEY (Username) REFERENCES USERS(Username),
-    FOREIGN KEY (Likes) REFERENCES POSTLIKES(Likes),
-    FOREIGN KEY (Dislikes) REFERENCES POSTLIKES(Dislikes),
-    FOREIGN KEY (WhoLiked) REFERENCES POSTLIKES(WhoLiked),
-    FOREIGN KEY (WhoDisliked) REFERENCES POSTLIKES(WhoDisliked)
+    Reaction INTEGER,
+    FOREIGN KEY (UserID) REFERENCES USERS(Id) ON DELETE SET NULL,
+    FOREIGN KEY (Reaction) REFERENCES POSTREACTIONS(Id) ON DELETE SET NULL,
 );
