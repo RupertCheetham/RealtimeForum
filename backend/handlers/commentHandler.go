@@ -26,7 +26,7 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 
 		log.Println("Received comment:", comment.Body)
 
-		err = db.AddCommentToDatabase(comment.Username, comment.ParentPostID, comment.Body)
+		err = db.AddCommentToDatabase(comment.Id, comment.ParentPostID, comment.Body)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

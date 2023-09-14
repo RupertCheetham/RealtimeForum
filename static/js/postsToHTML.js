@@ -17,10 +17,7 @@ async function postsToHTML() {
       Img: ${post.img},
       Body: ${post.body},
       Categories: ${post.categories},
-      Likes: ${post.likes},
-      Dislikes: ${post.dislikes},
-      WhoLiked: ${post.whoLiked},
-      WhoDisliked: ${post.whoDisliked},
+      Reaction: ${post.reaction},
     `;
 
     if (comments.length > 0) {

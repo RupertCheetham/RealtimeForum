@@ -2,7 +2,7 @@ package db
 
 type UserEntry struct {
 	ID        int    `json:"id"`
-	Username  string `json:"username"`
+	Username  string `json:"userID"`
 	Age       int    `json:"age"`
 	Gender    string `json:"gender"`
 	FirstName string `json:"first_name"`
@@ -13,25 +13,27 @@ type UserEntry struct {
 
 type PostEntry struct {
 	Id           int    `json:"id"`
-	Username     string `json:"username"`
+	UserId       int    `json:"userID"`
 	Img          string `json:"img"`
 	Body         string `json:"body"`
 	Categories   string `json:"categories"`
 	CreationDate string `json:"creationDate"`
-	Likes        int    `json:"likes"`
-	Dislikes     int    `json:"dislikes"`
-	WhoLiked     string `json:"whoLiked"`
-	WhoDisliked  string `json:"whoDisliked"`
+	Reaction     int    `json:"reaction"`
 }
 
 type CommentEntry struct {
 	Id           int    `json:"id"`
 	ParentPostID int    `json:"parentPostId"`
-	Username     string `json:"username"`
+	UserId       int    `json:"username"`
 	Body         string `json:"body"`
 	CreationDate string `json:"creationDate"`
-	Likes        int    `json:"likes"`
-	Dislikes     int    `json:"dislikes"`
-	WhoLiked     string `json:"whoLiked"`
-	WhoDisliked  string `json:"whoDisliked"`
+	Reaction     int    `json:"reaction"`
+}
+
+type Reaction struct {
+	Id          int    `json:"id"`
+	Likes       int    `json:"likes"`
+	Dislikes    int    `json:"dislikes"`
+	WhoLiked    string `json:"wholiked"`
+	WhoDisliked string `json:"whodisliked"`
 }

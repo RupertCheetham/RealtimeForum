@@ -42,49 +42,40 @@ func AddExampleEntries() {
 			}
 
 			// Adds example posts to POSTS
-			AddPostToDatabase("Ardek", "no-image", "This is the message body", "various, categories")
+			AddPostToDatabase(1, "no-image", "This is the message body", "various, categories")
 			if err != nil {
 				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
 			}
-			_, _ = Database.Exec("UPDATE POSTS SET Likes = ?, Dislikes = ?, WhoLiked = ?, WhoDisliked = ? WHERE Id = ?", 1, 2, "hello, there, ghghg", "dgf, sdfgsdfg, ertret", 1)
-			AddPostToDatabase("Nikoi", "no-image", "This is the another message body", "various, categories")
+			AddPostToDatabase(2, "no-image", "This is the another message body", "various, categories")
 			if err != nil {
 				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
 			}
-			_, _ = Database.Exec("UPDATE POSTS SET Likes = ?, Dislikes = ?, WhoLiked = ?, WhoDisliked = ? WHERE Id = ?", 13, 23, "hello, there, ghghg", "dgf, sdfgsdfg, ertret", 2)
-			AddPostToDatabase("Martin", "no-image", "This is the third body", "category")
+			AddPostToDatabase(3, "no-image", "This is the third body", "category")
 			if err != nil {
 				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
 			}
-			_, _ = Database.Exec("UPDATE POSTS SET Likes = ?, Dislikes = ?, WhoLiked = ?, WhoDisliked = ? WHERE Id = ?", 1111, 22222, "hello, there, ghghg", "dgf, sdfgsdfg, dfdf", 3)
-			AddPostToDatabase("Mike", "no-image", "giggle, giggle, giggle", "various, categories")
+			AddPostToDatabase(4, "no-image", "giggle, giggle, giggle", "various, categories")
 			if err != nil {
 				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
 			}
-			_, _ = Database.Exec("UPDATE POSTS SET Likes = ?, Dislikes = ?, WhoLiked = ?, WhoDisliked = ? WHERE Id = ?", 1, 2, "whoLiked", "whoDisliked", 4)
 
 			// Adds example Comments to COMMENTS
-			AddCommentToDatabase("Ardek", 1, "This is an example comment")
+			AddCommentToDatabase(1, 1, "This is an example comment")
 			if err != nil {
 				log.Fatalf("Error adding entry to COMMENT table in AddExampleEntries: %v", err)
 			}
-			_, _ = Database.Exec("UPDATE COMMENTS SET Likes = ?, Dislikes = ?, WhoLiked = ?, WhoDisliked = ? WHERE Id = ?", 1, 2, "hello, there, ghghg", "dgf, sdfgsdfg, ertret", 1)
-			AddCommentToDatabase("Nikoi", 3, "This is another example comment")
+			AddCommentToDatabase(2, 3, "This is another example comment")
 			if err != nil {
 				log.Fatalf("Error adding entry to COMMENT table in AddExampleEntries: %v", err)
 			}
-			_, _ = Database.Exec("UPDATE COMMENTS SET Likes = ?, Dislikes = ?, WhoLiked = ?, WhoDisliked = ? WHERE Id = ?", 13, 23, "hello, there, ghghg", "dgf, sdfgsdfg, ertret", 2)
-			AddCommentToDatabase("Martin", 4, "This is the third comment")
+			AddCommentToDatabase(3, 4, "This is the third comment")
 			if err != nil {
 				log.Fatalf("Error adding entry to COMMENT table in AddExampleEntries: %v", err)
 			}
-			_, _ = Database.Exec("UPDATE COMMENTS SET Likes = ?, Dislikes = ?, WhoLiked = ?, WhoDisliked = ? WHERE Id = ?", 1111, 22222, "hello, there, ghghg", "dgf, sdfgsdfg, dfdf", 3)
-			AddCommentToDatabase("Mike", 1, "chuckle, chuckle, chuckle, chuckle")
+			AddCommentToDatabase(4, 1, "chuckle, chuckle, chuckle, chuckle")
 			if err != nil {
 				log.Fatalf("Error adding entry to COMMENT table in AddExampleEntries: %v", err)
 			}
-			_, _ = Database.Exec("UPDATE COMMENTS SET Likes = ?, Dislikes = ?, WhoLiked = ?, WhoDisliked = ? WHERE Id = ?", 1, 2, "whoLiked", "whoDisliked", 4)
-
 		}
 		log.Println("Example Database entries added successfully")
 	}

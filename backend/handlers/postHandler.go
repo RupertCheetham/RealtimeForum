@@ -22,9 +22,9 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("Received post:", post.Username, post.Img, post.Body, post.Categories)
+		log.Println("Received post:", post.UserId, post.Img, post.Body, post.Categories)
 
-		err = db.AddPostToDatabase(post.Username, post.Img, post.Body, post.Categories)
+		err = db.AddPostToDatabase(post.UserId, post.Img, post.Body, post.Categories)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
