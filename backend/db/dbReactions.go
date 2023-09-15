@@ -101,24 +101,3 @@ func ReactionAdjuster(userID int, value1 int, value2 int, who1 string, who2 stri
 	return value1, value2, who1, who2
 
 }
-
-// // Check if the record exists in the database
-// var exists bool
-// err := Database.QueryRow("SELECT EXISTS(SELECT 1 FROM YourTable WHERE Identifier = ?)", identifier).Scan(&exists)
-// if err != nil {
-//     return err
-// }
-
-// if exists {
-//     // Perform an UPDATE
-//     _, err = Database.Exec("UPDATE YourTable SET Data = ? WHERE Identifier = ?", data, identifier)
-//     if err != nil {
-//         return err
-//     }
-// } else {
-//     // Perform an INSERT
-//     _, err = Database.Exec("INSERT INTO YourTable (Identifier, Data) VALUES (?, ?)", identifier, data)
-//     if err != nil {
-//         return err
-//     }
-// }
