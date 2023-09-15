@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"realtimeForum/db"
+	"realtimeForum/utils"
 )
 
 // Handler for comments
@@ -20,6 +21,7 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(comment.ParentPostID)
 		if err != nil {
 			log.Println("Error in AddCommentHandler")
+			utils.HandleError("Error in AddCommentHandler", err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -28,6 +30,7 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 
 		err = db.AddCommentToDatabase(comment.Id, comment.ParentPostID, comment.Body)
 		if err != nil {
+			utils.HandleError("Problem adding comment to db in AddCommentHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -38,6 +41,7 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		comments, err := db.GetCommentsFromDatabase()
 		if err != nil {
+			utils.HandleError("Problem getting comment from db in AddCommentHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

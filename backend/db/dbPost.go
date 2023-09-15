@@ -3,6 +3,7 @@ package db
 import (
 	"encoding/json"
 	"log"
+	"realtimeForum/utils"
 )
 
 // adds a post to the database
@@ -10,6 +11,7 @@ func AddPostToDatabase(userID int, img string, body string, categories string) e
 	var reaction = 1
 	_, err := Database.Exec("INSERT INTO POSTS (UserId, Img, Body, Categories, ReactionID) VALUES (?, ?, ?, ?, ?)", userID, img, body, categories, reaction)
 	if err != nil {
+		utils.HandleError("Error adding post to database in addPostToDatabase:", err)
 		log.Println("Error adding post to database in addPostToDatabase:", err)
 	}
 	return err
@@ -19,7 +21,8 @@ func AddPostToDatabase(userID int, img string, body string, categories string) e
 func GetPostFromDatabase() ([]PostEntry, error) {
 	rows, err := Database.Query("SELECT * FROM POSTS ORDER BY Id ASC")
 	if err != nil {
-		log.Println("Error querying posts from database:", err)
+		utils.HandleError("Error querying POSTS from database:", err)
+		log.Println("Error querying POSTS from database:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -29,6 +32,7 @@ func GetPostFromDatabase() ([]PostEntry, error) {
 		var post PostEntry
 		err := rows.Scan(&post.Id, &post.UserId, &post.Img, &post.Body, &post.Categories, &post.CreationDate, &post.ReactionID)
 		if err != nil {
+			utils.HandleError("Error scanning row from database:", err)
 			log.Println("Error scanning row from database:", err)
 			return nil, err
 		}

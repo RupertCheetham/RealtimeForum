@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"realtimeForum/db"
+	"realtimeForum/utils"
 )
 
 // The AddUserHandler function handles POST and GET requests for adding and retrieving
@@ -20,6 +21,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 		err := json.NewDecoder(r.Body).Decode(&user)
 
 		if err != nil {
+			utils.HandleError("Problem decoding JSON in AddUserHandler", err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -28,6 +30,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 
 		err = db.AddUserToDatabase(user.Username, user.Age, user.Gender, user.FirstName, user.LastName, user.Email, user.Password)
 		if err != nil {
+			utils.HandleError("Problem adding to USERS in AddUserHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -38,6 +41,7 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		users, err := db.GetUsersFromDatabase()
 		if err != nil {
+			utils.HandleError("Problem getting USERS from db in AddUserHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

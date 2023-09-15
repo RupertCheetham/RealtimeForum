@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"log"
+	"realtimeForum/utils"
 	"strconv"
 	"strings"
 )
@@ -29,6 +30,7 @@ func AddReactionToDatabase(tableName string, userID int, reaction string) {
 
 	_, err := Database.Exec(query, likes, dislikes, whoLiked, whoDisliked)
 	if err != nil {
+		utils.HandleError("Error adding comment to database in AddReactionToDatabase:", err)
 		log.Println("Error adding comment to database in AddReactionToDatabase:", err)
 	}
 }
@@ -45,7 +47,8 @@ func UpdateReactionInDatabase(tableName string, rowID int, userID int, reaction 
 
 	err := Database.QueryRow(selectQuery, rowID).Scan(&likes, &dislikes, &whoLiked, &whoDisliked)
 	if err != nil {
-		log.Println("Error retrieving values from the database:", err)
+		utils.HandleError("Error retrieving values from REACTIONS in UpdateReactionInDatabase:", err)
+		log.Println("Error retrieving values from REACTIONS in UpdateReactionInDatabase:", err)
 		return
 	}
 
@@ -62,7 +65,8 @@ func UpdateReactionInDatabase(tableName string, rowID int, userID int, reaction 
 
 	_, err = Database.Exec(updateQuery, likes, dislikes, whoLiked, whoDisliked, rowID)
 	if err != nil {
-		log.Println("Error updating values in the database:", err)
+		utils.HandleError("Error updating values in REACTIONS in UpdateReactionInDatabase:", err)
+		log.Println("Error updating values in REACTIONS in UpdateReactionInDatabase:", err)
 		return
 	}
 }

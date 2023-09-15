@@ -58,19 +58,17 @@ func RunMigrations(Database *sql.DB, migrationDir, direction string) error {
 
 		migrationPath := migrationDir + "/" + fileName
 		fmt.Println("migrationPath:", migrationPath)
+
 		sqlBytes, err := os.ReadFile(migrationPath)
 		if err != nil {
 			return fmt.Errorf("error reading migration file %s: %v", migrationPath, err)
 		}
-
-		// fmt.Println(string(sqlBytes))
 
 		_, err = Database.Exec(string(sqlBytes))
 		if err != nil {
 			return fmt.Errorf("error executing migration %s: %v", migrationPath, err)
 		}
 
-		// fmt.Printf("Applied migration: %s\n", migrationPath)
 	}
 
 	return nil

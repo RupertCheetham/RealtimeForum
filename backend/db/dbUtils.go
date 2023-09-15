@@ -85,5 +85,6 @@ func AddExampleEntries() {
 			// UpdateReactionInDatabase("POSTREACTIONS", 7, 1, "dislike")
 		}
 		log.Println("Example Database entries added successfully")
+
 	}
 }

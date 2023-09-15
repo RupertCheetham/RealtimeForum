@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"realtimeForum/db"
+	"realtimeForum/utils"
 )
 
 // Handler for posts page
@@ -18,6 +19,7 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 		err := json.NewDecoder(r.Body).Decode(&post)
 
 		if err != nil {
+			utils.HandleError("Problem decoding JSON in AddPostHandler", err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -26,6 +28,7 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 
 		err = db.AddPostToDatabase(post.UserId, post.Img, post.Body, post.Categories)
 		if err != nil {
+			utils.HandleError("Problem adding to POSTS in AddPostHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -37,6 +40,7 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		posts, err := db.GetPostFromDatabase()
 		if err != nil {
+			utils.HandleError("Problem getting posts from db in AddPostHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
