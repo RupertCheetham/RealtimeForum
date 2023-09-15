@@ -2,7 +2,7 @@ package db
 
 type UserEntry struct {
 	ID        int    `json:"id"`
-	Username  string `json:"userID"`
+	Username  string `json:"username"`
 	Age       int    `json:"age"`
 	Gender    string `json:"gender"`
 	FirstName string `json:"first_name"`

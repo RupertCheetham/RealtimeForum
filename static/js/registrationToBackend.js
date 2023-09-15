@@ -8,7 +8,7 @@ registrationForm.addEventListener("submit", function (event) {
 	console.log("are we getting to here?")
 
 	const userName = document.getElementById("username").value
-	const userAge = parseInt(age, 10)
+	const userAge = parseInt(document.getElementById("age").value)
 	const userGender = document.getElementById("gender").value
 	const firstName = document.getElementById("first_name").value
 	const lastName = document.getElementById("last_name").value
