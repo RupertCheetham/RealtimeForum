@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+</head>
+<body>
+    <form id="log-in-form">
+        <div>
+            <h1>Log In</h1>
+        <p>Kindly fill in this form to log in.</p>
+         <!-- label and input for Username -->
+         <label for="usernameOrEmail"><b>Username or Email</b></label> 
+         <input
+           type="text"
+           placeholder="Enter Username or Email"
+           name="usernameOrEmail"
+           id="usernameOrEmail"
+           required
+         /><br>
+           <!-- label and input for password -->
+           <label for="password"><b>Password</b></label>
+           <input
+             type="text"
+             placeholder="Enter Password"
+             name="password"
+             id="password"
+             required
+           /><br>
+           <button type="submit" id="loginButton">Log In</button>
+        </div>
+        <div id="output"></div>
+
+        </form>
+        <script src="../static/js/login.js"></script>
+</body>
+</html>

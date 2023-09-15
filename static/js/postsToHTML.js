@@ -20,6 +20,7 @@ async function postsToHTML() {
       Reaction: ${post.reaction},
     `;
 
+  
     if (comments.length > 0) {
       const commentsContainer = document.createElement('div');
       commentsContainer.id = 'commentContainer';
@@ -38,6 +39,7 @@ async function postsToHTML() {
   }
 }
 
+  // Comments need to be reworked, currently very inefficient.  Probably foreign keys will be involved
 async function fetchComments(parentPostID) {
   const response = await fetch('http://localhost:8080/comments');
   const comments = await response.json();

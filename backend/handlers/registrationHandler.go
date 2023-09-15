@@ -2,10 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"realtimeForum/db"
 	"realtimeForum/utils"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // The AddUserHandler function handles POST and GET requests for adding and retrieving
@@ -26,9 +29,14 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("Received user:", user.Username, user.Age, user.Gender, user.FirstName, user.LastName, user.Email, user.Password)
+		hashPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+		if err != nil {
+			fmt.Println("error in encryption", err)
+		}
 
-		err = db.AddUserToDatabase(user.Username, user.Age, user.Gender, user.FirstName, user.LastName, user.Email, user.Password)
+		log.Println("Received user:", user.Username, user.Age, user.Gender, user.FirstName, user.LastName, user.Email, string(hashPassword))
+
+		err = db.AddUserToDatabase(user.Username, user.Age, user.Gender, user.FirstName, user.LastName, user.Email, string(hashPassword))
 		if err != nil {
 			utils.HandleError("Problem adding to USERS in AddUserHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)

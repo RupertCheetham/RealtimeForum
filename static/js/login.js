@@ -1,44 +1,44 @@
-// Get references to HTML elements
-const usernameOrEmailInput = document.getElementById('usernameOrEmail');
-const passwordInput = document.getElementById('password');
-const outputElement = document.getElementById('output');
+const loginForm = document.getElementById("login-form")
 
-  document.getElementById('log-in-form').addEventListener('submit', (e) => {
-    e.preventDefault();
+loginForm.addEventListener("submit", function (event) {
+    event.preventDefault()
 
-  const usernameOrEmail = usernameOrEmailInput.value;
-  const password = passwordInput.value;
+    const userName = document.getElementById("username").value
+    const password = document.getElementById("password").value
 
-  // Make an HTTP GET request to your database API
-  fetch(`http://localhost:8080/registrations?search=${usernameOrEmail}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
+    console.log(userName, password)
+
+    fetch("http://localhost:8080/login", {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            username: userName,
+            password: password,
+        }),
     })
-    .then((users) => {
-      const user = users.find((user) => {
-        return user.username === usernameOrEmail || user.email === usernameOrEmail;
-      });
-
-      if (user) {
-        // User found, check if the provided password matches
-        if (user.password === password) {
-          outputElement.textContent = `Login successful. Welcome, ${user.username}`;
-          console.log("Login successful. Welcome.")
-        } else {
-          outputElement.textContent = 'Incorrect password. Login failed.';
-          console.log("Incorrect password. Login failed.")
-        }
-      } else {
-        outputElement.textContent = 'User not found. Please check your credentials.';
-        console.log("User not found. Please check your credentials.")
-      }
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      outputElement.textContent = 'An error occurred while fetching user data.';
-      console.log("An error occurred while fetching user data.")
-    });
-});
+        .then((response) => {
+            if (response.status === 200 || response.status === 201) {
+                return response.json(); // Only parse JSON if the status code is 200 or 201
+            } else {
+                throw new Error("HTTP status code: " + response.status);
+            }
+        })
+        .then((data) => {
+            console.log(data);
+            if (data.success) {
+                // Authentication successful, set session cookie and redirect
+                // setSessionCookie();
+                console.log("success");
+            } else {
+                // Authentication failed, display an error message
+                alert("Authentication failed. Please check your username and password.");
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+            // Handle other types of responses or errors here
+        });
+})
