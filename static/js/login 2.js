@@ -1,5 +1,3 @@
-import { hash } from 'bcrypt';
-
 // Get references to HTML elements
 const usernameOrEmailInput = document.getElementById('usernameOrEmail');
 const passwordInput = document.getElementById('password');
@@ -21,15 +19,13 @@ const outputElement = document.getElementById('output');
     })
     .then((users) => {
       const user = users.find((user) => {
-        return user.username === usernameOrEmail || user.email === usernameOrEmail;
+        return user.nickname === usernameOrEmail || user.email === usernameOrEmail;
       });
 
       if (user) {
-        let encryptedPassword = encryptPassword(password)
-        // ENCRYPT PASSWORD HERE
         // User found, check if the provided password matches
-        if (user.password === encryptedPassword) {
-          outputElement.textContent = `Login successful. Welcome, ${user.username}`;
+        if (user.password === password) {
+          outputElement.textContent = `Login successful. Welcome, ${user.nickname}`;
           console.log("Login successful. Welcome.")
         } else {
           outputElement.textContent = 'Incorrect password. Login failed.';
@@ -48,15 +44,4 @@ const outputElement = document.getElementById('output');
 });
 
 
-function encryptPassword(plainPassword) {
-  const saltRounds = 10;
-  hash(plainPassword, saltRounds, function (err, hashedPassword) {
-    if (err) {
-        console.error(err);
-    } else {
-        console.log('Hashed password:', hashedPassword);
-        return hashedPassword
-    }
-});
-
-}
+    
