@@ -60,3 +60,23 @@ Mon Sep 18 13:12:05 BST 2023: Connected to SQLite database on line 23 in realtim
 Mon Sep 18 13:12:05 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
 Mon Sep 18 13:12:54 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
 Mon Sep 18 13:12:54 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Mon Sep 18 13:25:42 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Mon Sep 18 13:25:42 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Mon Sep 18 13:27:27 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Mon Sep 18 13:27:27 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Mon Sep 18 13:28:52 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Mon Sep 18 13:28:52 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Mon Sep 18 13:29:37 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Mon Sep 18 13:29:37 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Mon Sep 18 13:30:38 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Mon Sep 18 13:30:38 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Mon Sep 18 13:37:16 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Mon Sep 18 13:37:16 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Mon Sep 18 13:39:10 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Mon Sep 18 13:39:10 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Mon Sep 18 13:41:38 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Mon Sep 18 13:41:38 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Mon Sep 18 13:42:09 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Mon Sep 18 13:42:09 BST 2023: Database initialized successfully on line 17 in main.main at file main.go
+Mon Sep 18 13:45:50 BST 2023: Connected to SQLite database on line 23 in realtimeForum/backend/db.InitDatabase at file database.go
+Mon Sep 18 13:45:50 BST 2023: Database initialized successfully on line 17 in main.main at file main.go

@@ -23,25 +23,18 @@ loginForm.addEventListener("submit", function (event) {
 			password: password,
 		})
 	})
-		.then((response) =>{
-			if (response === 201 || response === 200){
-				//setSessionCookie()
+		.then(response => {
+			if (response.ok) {
 				return response.json()
-			}	
+			} else {
+				throw new Error("POST request failed!")
+			}
 		})
-		.then((data) => {
-
-			console.log(data)
-
-		// 	// if (data.success) {
-		// 		// Authentication successful, set session cookie and redirect
-	 		setSessionCookie();
-		// 	// } else {
-		// 		// Authentication failed, display an error message
-		// 		// alert("Authentication failed. Please check your username and password.");
-		// 	// }
+		.then(data => {
+			console.log("data:", data)
+			setSessionCookie();
 		})
-		// .catch((error) => {
-		// 	console.log(error)
-		// })
+		.catch(error => {
+			console.log(error)
+		})
 })
