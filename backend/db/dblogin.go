@@ -1,7 +1,7 @@
 package db
 
 import (
-	"fmt"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func GetLoginEntry(loginCheck UserEntry) map[string]string {
@@ -12,13 +12,15 @@ func GetLoginEntry(loginCheck UserEntry) map[string]string {
 	}
 
 	for i := 0; i < len(dbLoginCheck); i++ {
-		if dbLoginCheck[i].Username == loginCheck.Username && dbLoginCheck[i].Password == loginCheck.Password {
-			fmt.Println("Login successful")
+		if dbLoginCheck[i].Username == loginCheck.Username {
+			err := bcrypt.CompareHashAndPassword([]byte(dbLoginCheck[i].Password), []byte(loginCheck.Password))
+			if err != nil {
+				panic(err)
+			}
 			message["message"] = "Login successful"
 			return message
 		}
 	}
-	fmt.Println("Incorrect login details")
 	message["message"] = "Incorrect login details"
 	return message
 }

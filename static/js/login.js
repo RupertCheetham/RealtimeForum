@@ -5,8 +5,6 @@ const loginForm = document.getElementById("login-form")
 loginForm.addEventListener("submit", function (event) {
 	event.preventDefault()
 
-	//console.log("you are logged in?")
-
 	const userName = document.getElementById("username").value
 	const password = document.getElementById("password").value
 

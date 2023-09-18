@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"realtimeForum/db"
 )
@@ -20,8 +19,6 @@ func AddLoginHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
-
-		log.Println("Recieved login entry:", login.Username, login.Password)
 
 		msg := db.GetLoginEntry(login)
 		jsonResponse, err := json.Marshal(msg)
