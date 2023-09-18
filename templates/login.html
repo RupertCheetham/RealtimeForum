@@ -1,40 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Login</title>
+	</head>
+	<body>
+		<form id="login-form">
+			<div>
+				<h1>Login to Forum</h1>
+			</div>
+			<div class="container">
+				<label for="username"><b>Username</b></label>
+				<input
+					type="text"
+					placeholder="Enter Username"
+					name="username"
+					required
+					id="username"
+				/>
+				<br />
+				<p>
+					<!-- label and input for password-->
+					<label for="password"><b>Password</b></label>
+					<input
+						type="password"
+						placeholder="Enter Password"
+						name="psw"
+						required
+						id="password"
+					/>
+					<br />
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
+					<!-- submit button -->
+					<button type="submit">Login</button>
+					<label>
+						<input type="checkbox" checked="checked" name="remember" />
+						Remember me
+					</label>
+				</p>
+			</div>
 
-<body>
-    <form id="login-form">
-        <div>
-            <h1>Login to Forum</h1>
-        </div>
-        <div class="container">
-            <label for="username"><b>Username</b></label>
-            <input type="text" placeholder="Enter Username" name="username" required id="username">
-            <br>
-            <p>
-                <!-- label and input for password-->
-                <label for="password"><b>Password</b></label>
-                <input type="password" placeholder="Enter Password" name="password" required id="password">
-                <br>
+			<div class="container" style="background-color: #f1f1f1">
+				<button type="button" class="cancelbtn">Cancel</button>
+				<span class="psw">
+					Forgot
+					<a href="#">password?</a>
+				</span>
+			</div>
+		</form>
 
-                <!-- submit button -->
-                <button type="submit">Login</button>
-        </div>
-
-        <div class="container" style="background-color:#f1f1f1">
-        </div>
-    </form>
-
-    <script src="../static/js/login.js"></script>
-    <!-- <script src="../cookie.js"></script> -->
-
-
-</body>
-
+		<script type="module" src="../static/js/login.js"></script>
+		<script type="module" src="../static/js/cookie.js"></script>
+		<!--<script>setSessionCookie();</script>; -->
+	</body>
 </html>
