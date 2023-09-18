@@ -25,19 +25,7 @@ func AddLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		// isLoginSuccessful(login)
 		db.GetLoginEntry(login)
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusOK)
 	}
+
 }
-
-// func isLoginSuccessful(loginAttempt db.RegistrationEntry) bool {
-// 	registeredUsers, _ := db.GetRegistrationFromDatabase()
-
-// 	for i := 0; i < len(registeredUsers); i++ {
-// 		if registeredUsers[i].Username == loginAttempt.Username {
-// 			fmt.Println("blimey!")
-// 			return true
-// 		}
-// 	}
-// 	fmt.Println("damn!")
-// 	return false
-// }
