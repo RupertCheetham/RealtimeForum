@@ -1,7 +1,51 @@
 import { setSessionCookie } from "./cookie.js"
 
-const loginForm = document.getElementById("login-form")
+const container = document.getElementById("container")
+let html = `
+		<form id="login-form">
+			<div>
+				<h1>Login to Forum</h1>
+			</div>
+			<div class="container">
+				<label for="username"><b>Username</b></label>
+				<input
+					type="text"
+					placeholder="Enter Username"
+					name="username"
+					required
+					id="username"
+				/>
+				<br />
+				<p>
+					<label for="password"><b>Password</b></label>
+					<input
+						type="password"
+						placeholder="Enter Password"
+						name="psw"
+						required
+						id="password"
+					/>
+					<br />
+					<button type="submit">Login</button>
+					<label>
+						<input type="checkbox" checked="checked" name="remember" />
+						Remember me
+					</label>
+				</p>
+			</div>
 
+			<div class="container" style="background-color: #f1f1f1">
+				<button type="button" class="cancelbtn">Cancel</button>
+				<span class="psw">
+					Forgot
+					<a href="#">password?</a>
+				</span>
+			</div>
+		</form>
+ `
+container.innerHTML = html
+
+const loginForm = document.getElementById("login-form")
 loginForm.addEventListener("submit", function (event) {
 	event.preventDefault()
 
@@ -29,7 +73,7 @@ loginForm.addEventListener("submit", function (event) {
 			}
 		})
 		.then((data) => {
-			console.log("data:", data)
+			console.log(data)
 			setSessionCookie()
 		})
 		.catch((error) => {
