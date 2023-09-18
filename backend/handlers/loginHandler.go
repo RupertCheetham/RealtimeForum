@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"realtimeForum/db"
 )
@@ -14,7 +13,6 @@ func AddLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var login db.UserEntry
 	if r.Method == "POST" {
-		fmt.Println("hello")
 		err := json.NewDecoder(r.Body).Decode(&login)
 
 		if err != nil {
