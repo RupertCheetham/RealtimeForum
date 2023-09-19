@@ -7,13 +7,13 @@ let html = `
 				<h1>Login to Forum</h1>
 			</div>
 			<div class="container">
-				<label for="username"><b>Username</b></label>
+				<label for="usernameOrEmail"><b>Username or Email</b></label>
 				<input
 					type="text"
-					placeholder="Enter Username"
+					placeholder="Enter Username or Email"
 					name="username"
 					required
-					id="username"
+					id="usernameOrEmail"
 				/>
 				<br />
 				<p>
@@ -49,10 +49,10 @@ const loginForm = document.getElementById("login-form")
 loginForm.addEventListener("submit", function (event) {
 	event.preventDefault()
 
-	const userName = document.getElementById("username").value
+	const userNameOrEmail = document.getElementById("usernameOrEmail").value
 	const password = document.getElementById("password").value
 
-	console.log(userName, password)
+	console.log(userNameOrEmail, password)
 
 	fetch("http://localhost:8080/login", {
 		method: "POST",
@@ -61,7 +61,7 @@ loginForm.addEventListener("submit", function (event) {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({
-			username: userName,
+			username: userNameOrEmail,
 			password: password,
 		}),
 	})
