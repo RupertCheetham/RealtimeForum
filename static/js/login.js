@@ -1,7 +1,10 @@
 import { setSessionCookie } from "./cookie.js"
+import { showRegistrationForm } from "./registration.js"
 
 const container = document.getElementById("container")
-let html = `
+
+export function showLoginForm() {
+	let html = `
 		<form id="login-form">
 			<div>
 				<h1>Login to Forum</h1>
@@ -27,25 +30,35 @@ let html = `
 					/>
 					<br />
 					<button type="submit">Login</button>
-					<label>
-						<input type="checkbox" checked="checked" name="remember" />
-						Remember me
-					</label>
 				</p>
 			</div>
-
-			<div class="container" style="background-color: #f1f1f1">
-				<button type="button" class="cancelbtn">Cancel</button>
-				<span class="psw">
-					Forgot
-					<a href="#">password?</a>
-				</span>
-			</div>
 		</form>
+		<span>
+			<a href="#" id="registration-form">Register Account</a>
+		</span>
+	</div>
  `
-container.innerHTML = html
+	container.innerHTML = html
+}
+
+// showLoginForm()
+
+// Add event listener to the "Register Account" link
+const registrationForm = document.getElementById("registration-form")
+registrationForm.addEventListener("click", function (event) {
+	event.preventDefault()
+	showRegistrationForm()
+})
 
 const loginForm = document.getElementById("login-form")
+
+// Event listener for switching to the login form
+loginForm.addEventListener("click", function (event) {
+	event.preventDefault()
+	showLoginForm()
+})
+
+// Event listener for submitting to login form
 loginForm.addEventListener("submit", function (event) {
 	event.preventDefault()
 
