@@ -1,4 +1,5 @@
 import { setSessionCookie } from "./cookie.js"
+// import { loadLoginScript } from "./registrationToBackend.js"
 
 const container = document.getElementById("container")
 let html = `
@@ -27,17 +28,14 @@ let html = `
 					/>
 					<br />
 					<button type="submit">Login</button>
-					<label>
-						<input type="checkbox" checked="checked" name="remember" />
-						Remember me
-					</label>
+					
 				</p>
 			</div>
 
 			<div class="container" style="background-color: #f1f1f1">
-				<button type="button" class="cancelbtn">Cancel</button>
+				<button type="button" class="signup" id="signup">Sign Up</button>
 				<span class="psw">
-					Forgot
+					Forgotten
 					<a href="#">password?</a>
 				</span>
 			</div>
@@ -73,10 +71,32 @@ loginForm.addEventListener("submit", function (event) {
 			}
 		})
 		.then((data) => {
-			console.log(data)
+			console.log(data.message)
+			if (data.message === 'Login successful') {
 			setSessionCookie()
+			}
 		})
 		.catch((error) => {
 			console.log(error)
 		})
 })
+
+const signupButton = document.getElementById("signup");
+
+signupButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    
+    // Load or serve your registrationToBackend.js script here
+    loadRegistrationToBackendScript();
+});
+
+function loadRegistrationToBackendScript() {
+    // Create a script element
+    const script = document.createElement("script");
+    
+    // Set the src attribute to your registrationToBackend.js file
+    script.src = "../static/js/registrationToBackend.js";
+    
+    // Append the script element to the document's head
+    document.head.appendChild(script);
+}

@@ -6,8 +6,6 @@ export function generateSessionId() {
 // Function to set a session cookie with an expiration time
 export function setSessionCookie() {
 
-    console.log("It's here")
-
     const sessionId = generateSessionId();
 
     const currentTime = new Date();
@@ -22,6 +20,7 @@ export function setSessionCookie() {
 
     // Set the cookie
     document.cookie = cookieString;
+    console.log("cookie set")
 }
 
 // Call the function to set the session cookie

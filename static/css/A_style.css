@@ -66,6 +66,12 @@ form.sign-in-form {
   margin-bottom: 10px;
 }
 
+.input-field-container {
+  max-height: 400px; /* Set a maximum height as needed */
+  height: 400px;
+  overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
+}
+
 .input-field {
   max-width: 380px;
   width: 100%;
