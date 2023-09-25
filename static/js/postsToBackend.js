@@ -1,11 +1,10 @@
 /* The code is adding an event listener to the form with the id "post-form". When the form is
 submitted, the event listener function is executed. */
 
-
 const container = document.getElementById("container")
 
+export function postsToBackend() {
 let html = `
-
 <form id="post-form">
     <div>
       <h1>Post</h1>
@@ -20,19 +19,13 @@ let html = `
       <label for="image"><b>Image</b></label>
       <input type="text" placeholder="Enter Image String" name="image" id="image" required /><br>
       <!-- submit button -->
-
       <button type="submit" id="submit">Submit Post</button>
     </div>
-    <!-- wrapping the text inside the p tag with a tag for routing to the login page URL-->
-    <!-- the # must ideally be replaced by the login page URL -->
-    <div>
-
   </form>
-
  `
 container.innerHTML = html
 
-function postsToBackend() {
+container.classList.remove("container")
 
 const postForm = document.getElementById("post-form")
 

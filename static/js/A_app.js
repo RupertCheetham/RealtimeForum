@@ -1,10 +1,10 @@
 import { setSessionCookie } from "./cookie.js"
+import { postsToBackend } from "./postsToBackend.js"
 
-const container = document.querySelector(".container");
+const container = document.getElementById("container");
 
+function showLoginForm() {
 let html = `
-
-
 <div class="forms-container">
 
   <div class="signin-signup">
@@ -178,7 +178,6 @@ container.innerHTML = html
 const sign_in_btn = document.querySelector("#sign-in-btn");
 const sign_up_btn = document.querySelector("#sign-up-btn");
 
-
 sign_up_btn.addEventListener("click", () => {
   container.classList.add("sign-up-mode");
 });
@@ -219,7 +218,7 @@ console.log(userNameOrEmail, password)
 			console.log("this is data", data)
       if (data.message === 'Login successful') {
 			setSessionCookie()
-      functionHere()
+      postsToBackend()
       }
 		})
 		.catch((error) => {
@@ -265,8 +264,9 @@ signupForm.addEventListener("submit", function (event) {
 	console.log("registration complete")
 })
 
+}
 
-
+showLoginForm()
 
 
 
