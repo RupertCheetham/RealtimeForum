@@ -1,5 +1,5 @@
 import { setSessionCookie } from "./cookie.js"
-import { showRegistrationForm } from "./registration.js"
+// import { loadLoginScript } from "./registrationToBackend.js"
 
 const container = document.getElementById("container")
 
@@ -10,13 +10,13 @@ export function showLoginForm() {
 				<h1>Login to Forum</h1>
 			</div>
 			<div class="container">
-				<label for="username"><b>Username</b></label>
+				<label for="usernameOrEmail"><b>Username or Email</b></label>
 				<input
 					type="text"
-					placeholder="Enter Username"
+					placeholder="Enter Username or Email"
 					name="username"
 					required
-					id="username"
+					id="usernameOrEmail"
 				/>
 				<br />
 				<p>
@@ -30,7 +30,16 @@ export function showLoginForm() {
 					/>
 					<br />
 					<button type="submit">Login</button>
+					
 				</p>
+			</div>
+
+			<div class="container" style="background-color: #f1f1f1">
+				<button type="button" class="signup" id="signup">Sign Up</button>
+				<span class="psw">
+					Forgotten
+					<a href="#">password?</a>
+				</span>
 			</div>
 		</form>
 		<span>
@@ -47,7 +56,6 @@ export function showLoginForm() {
 const registrationForm = document.getElementById("registration-form")
 registrationForm.addEventListener("click", function (event) {
 	event.preventDefault()
-	showRegistrationForm()
 })
 
 const loginForm = document.getElementById("login-form")
@@ -55,17 +63,16 @@ const loginForm = document.getElementById("login-form")
 // Event listener for switching to the login form
 loginForm.addEventListener("click", function (event) {
 	event.preventDefault()
-	showLoginForm()
 })
 
 // Event listener for submitting to login form
 loginForm.addEventListener("submit", function (event) {
 	event.preventDefault()
 
-	const userName = document.getElementById("username").value
+	const userNameOrEmail = document.getElementById("usernameOrEmail").value
 	const password = document.getElementById("password").value
 
-	console.log(userName, password)
+	console.log(userNameOrEmail, password)
 
 	fetch("http://localhost:8080/login", {
 		method: "POST",
@@ -74,7 +81,7 @@ loginForm.addEventListener("submit", function (event) {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({
-			username: userName,
+			username: userNameOrEmail,
 			password: password,
 		}),
 	})
@@ -86,10 +93,32 @@ loginForm.addEventListener("submit", function (event) {
 			}
 		})
 		.then((data) => {
-			console.log(data)
-			setSessionCookie()
+			console.log(data.message)
+			if (data.message === "Login successful") {
+				setSessionCookie()
+			}
 		})
 		.catch((error) => {
 			console.log(error)
 		})
 })
+
+const signupButton = document.getElementById("signup")
+
+signupButton.addEventListener("click", function (event) {
+	event.preventDefault()
+
+	// Load or serve your registrationToBackend.js script here
+	loadRegistrationToBackendScript()
+})
+
+function loadRegistrationToBackendScript() {
+	// Create a script element
+	const script = document.createElement("script")
+
+	// Set the src attribute to your registrationToBackend.js file
+	script.src = "../static/js/registrationToBackend.js"
+
+	// Append the script element to the document's head
+	document.head.appendChild(script)
+}
