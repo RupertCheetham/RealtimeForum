@@ -32,7 +32,21 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		msg := map[string]string{
+			"message": "post made successfully",
+		}
+
+		jsonResponse, err := json.Marshal(msg)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
+		w.Write(jsonResponse)
 	}
 
 	// This code block is handling the logic for retrieving posts from the database when the HTTP request

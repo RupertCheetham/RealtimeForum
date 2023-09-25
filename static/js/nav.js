@@ -1,9 +1,11 @@
+import { viewPosts } from "./posts.js"
+
 const navContainer = document.getElementById("nav")
 
 export function navbar() {
 	let html = `
   <div>Welcome to forum</div>
-  <form id="post-form">
+  <form id="post-form" method="POST">
   <div>
   <p>Kindly fill in this form to post.</p>
   <label for="post"><b>Post</b></label>
@@ -12,7 +14,7 @@ export function navbar() {
   <input type="text" placeholder="Enter Categories" name="categories" id="categories" required /><br>
   <label for="image"><b>Image</b></label>
   <input type="text" placeholder="Enter Image String" name="image" id="image" required /><br>
-  <button type="submit" id="submit">Submit Post</button>
+  <button type="button" id="submit">Submit Post</button>
   </div>
   </form>
   `
@@ -20,7 +22,7 @@ export function navbar() {
 
 	// make a post
 	const postForm = document.getElementById("post-form")
-	postForm.addEventListener("submit", function (event) {
+postForm.addEventListener("submit", function (event) {
 		event.preventDefault()
 
 		const postText = document.getElementById("postText").value
@@ -43,10 +45,11 @@ export function navbar() {
 		})
 			.then((response) => {
 				if (response.ok) {
+					viewPosts()	
 				}
 			})
 			.catch((error) => {
 				console.log(error)
 			})
 	})
-}
+ }
