@@ -1,50 +1,187 @@
+import { navbar } from "./nav.js"
 import { setSessionCookie } from "./cookie.js"
-// import { loadLoginScript } from "./registrationToBackend.js"
+import { viewPosts } from "./postsView.js"
 
-const container = document.getElementById("container")
+const container = document.getElementById("container");
+
+function showLoginForm() {
 let html = `
-		<form id="login-form">
-			<div>
-				<h1>Login to Forum</h1>
-			</div>
-			<div class="container">
-				<label for="usernameOrEmail"><b>Username or Email</b></label>
-				<input
-					type="text"
-					placeholder="Enter Username or Email"
-					name="username"
-					required
-					id="usernameOrEmail"
-				/>
-				<br />
-				<p>
-					<label for="password"><b>Password</b></label>
-					<input
-						type="password"
-						placeholder="Enter Password"
-						name="psw"
-						required
-						id="password"
-					/>
-					<br />
-					<button type="submit">Login</button>
-					
-				</p>
-			</div>
+<div class="forms-container">
+  <div class="signin-signup">
+  <div class="input-field-container">
+    <form id="sign-up-form" action="#" class="sign-in-form">
+      <h2 class="title">Sign in</h2>
+      <div class="input-field">
+        <i class="fas fa-user"></i>
+        <input 
+        type="text" 
+        placeholder="Username or Email" 
+        required
+        id="usernameOrEmail" />
+      </div>
+      <div class="input-field">
+        <i class="fas fa-lock"></i>
+        <input 
+        type="password" 
+        placeholder="Password" 
+        required
+        id="password" />
+      </div>
 
-			<div class="container" style="background-color: #f1f1f1">
-				<button type="button" class="signup" id="signup">Sign Up</button>
-				<span class="psw">
-					Forgotten
-					<a href="#">password?</a>
-				</span>
-			</div>
-		</form>
+      <input type="submit" value="Login" class="btn solid" />
+
+      <p class="social-text">Or Sign in with social platforms</p>
+      <div class="social-media">
+        <a href="#" class="social-icon">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#" class="social-icon">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="social-icon">
+          <i class="fab fa-google"></i>
+        </a>
+        <a href="#" class="social-icon">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </div>
+    </form>
+   
+    <form action="#" class="sign-up-form">
+      <h2 class="title">Sign up</h2>
+      <div class="input-field">
+        <i class="fas fa-user"></i>
+        <input 
+        type="text" 
+        placeholder="Username"
+        required
+        id="username" />
+      </div>
+      <div class="input-field">
+      <i class="fas fa-user"></i>
+      <input 
+      type="text" 
+      placeholder="User Age"
+      required
+      id="age" />
+    </div>
+    <div class="input-field">
+    <i class="fas fa-user"></i>
+    <input 
+    type="text" 
+    placeholder="Gender"
+    required
+    id="gender" />
+  </div>
+  <div class="input-field">
+  <i class="fas fa-user"></i>
+  <input 
+  type="text" 
+  placeholder="First Name"
+  required
+  id="first_name" />
+</div>
+<div class="input-field">
+<i class="fas fa-user"></i>
+<input 
+type="text" 
+placeholder="Last Name"
+required
+id="last_name" />
+</div>
+      <div class="input-field">
+        <i class="fas fa-envelope"></i>
+        <input 
+        type="email" 
+        placeholder="Email"
+        required
+        id="email" />
+      </div>
+      <div class="input-field">
+        <i class="fas fa-lock"></i>
+        <input 
+        type="password" 
+        placeholder="Password"
+        required
+        id="new_password" />
+      </div>
+      <div class="input-field">
+      <i class="fas fa-lock"></i>
+      <input 
+      type="password" 
+      placeholder="Repeat Password"
+      required
+      id="password-repeat" />
+    </div>
+
+      <input type="submit"  value="Sign up" class="btn"/>
+
+      <p class="social-text">Or Sign up with social platforms</p>
+      <div class="social-media">
+        <a href="#" class="social-icon">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#" class="social-icon">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="social-icon">
+          <i class="fab fa-google"></i>
+        </a>
+        <a href="#" class="social-icon">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </div>
+    </form>
+    
+  </div>
+</div>
+</div>
+
+<div class="panels-container">
+  <div class="panel left-panel">
+    <div class="content">
+      <h3>New here ?</h3>
+      <p>
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis,
+        ex ratione. Aliquid!
+      </p>
+      <button class="btn transparent" id="sign-up-btn">
+        Sign up
+      </button>
+    </div>
+    <img src="img/log.svg" class="image" alt="" />
+  </div>
+  <div class="panel right-panel">
+    <div class="content">
+      <h3>One of us ?</h3>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
+        laboriosam ad deleniti.
+      </p>
+      <button class="btn transparent" id="sign-in-btn">
+        Sign in
+      </button>
+    </div>
+    <img src="img/register.svg" class="image" alt="" />
+  </div>
+</div>
+</div>
  `
 container.innerHTML = html
 
-const loginForm = document.getElementById("login-form")
-loginForm.addEventListener("submit", function (event) {
+const sign_in_btn = document.querySelector("#sign-in-btn");
+const sign_up_btn = document.querySelector("#sign-up-btn");
+
+sign_up_btn.addEventListener("click", () => {
+	container.classList.add("sign-up-mode")
+})
+
+sign_in_btn.addEventListener("click", () => {
+	container.classList.remove("sign-up-mode")
+})
+
+const signinForm = document.querySelector(".sign-in-form")
+signinForm.addEventListener("submit", function (event) {
 	event.preventDefault()
 
 	const userNameOrEmail = document.getElementById("usernameOrEmail").value
@@ -71,32 +208,63 @@ loginForm.addEventListener("submit", function (event) {
 			}
 		})
 		.then((data) => {
-			console.log(data.message)
-			if (data.message === 'Login successful') {
+			console.log("this is data", data)
+      if (data.message === 'Login successful') {
 			setSessionCookie()
-			}
+      viewPosts()
+      }
 		})
 		.catch((error) => {
 			console.log(error)
 		})
 })
 
-const signupButton = document.getElementById("signup");
+const signupForm = document.querySelector(".sign-up-form")
 
-signupButton.addEventListener("click", function (event) {
-    event.preventDefault();
-    
-    // Load or serve your registrationToBackend.js script here
-    loadRegistrationToBackendScript();
-});
+signupForm.addEventListener("submit", function (event) {
+	event.preventDefault()
+  
+	const userName = document.getElementById("username").value
+	const userAge = parseInt(document.getElementById("age").value)
+	const userGender = document.getElementById("gender").value
+	const firstName = document.getElementById("first_name").value
+	const lastName = document.getElementById("last_name").value
+	const email = document.getElementById("email").value
+	const password = document.getElementById("new_password").value
 
-function loadRegistrationToBackendScript() {
-    // Create a script element
-    const script = document.createElement("script");
-    
-    // Set the src attribute to your registrationToBackend.js file
-    script.src = "../static/js/registrationToBackend.js";
-    
-    // Append the script element to the document's head
-    document.head.appendChild(script);
+	console.log(
+		userName,
+		userAge,
+		userGender,
+		firstName,
+		lastName,
+		email,
+		password
+	)
+
+	fetch("http://localhost:8080/registrations", {
+		method: "POST",
+		headers: {
+			Accept: "application/json",
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			username: userName,
+			age: userAge,
+			gender: userGender,
+			first_name: firstName,
+			last_name: lastName,
+			email: email,
+			password: password,
+		}),
+	}).catch((error) => {
+		console.log(error)
+	})
+	console.log("registration complete")
+})
 }
+
+showLoginForm()
+
+
+
