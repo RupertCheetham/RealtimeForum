@@ -1,10 +1,12 @@
+import { navbar } from "./nav.js"
 import { setSessionCookie } from "./cookie.js"
 import { showRegistrationForm } from "./registration.js"
-import { postsToHTML } from "./postsToHTML.js"
+import { viewPosts } from "./postsView.js"
 
 const container = document.getElementById("container")
 
 export function showLoginForm() {
+	navbar()
 	let html = `
 		<h1>Login to Forum</h1>
 		<form id="login-form">
@@ -75,7 +77,7 @@ export function showLoginForm() {
 				console.log(data.message)
 				if (data.message === "Login successful") {
 					setSessionCookie()
-					postsToHTML()
+					viewPosts()
 				}
 			})
 			.catch((error) => {

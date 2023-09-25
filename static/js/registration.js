@@ -119,4 +119,4 @@ export function showRegistrationForm() {
 	})
 }
 
-showRegistrationForm()
+// showRegistrationForm()
