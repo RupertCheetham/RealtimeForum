@@ -1,6 +1,6 @@
 import { navbar } from "./nav.js"
 import { setSessionCookie } from "./cookie.js"
-import { viewPosts } from "./postsView.js"
+import { viewPosts } from "./posts.js"
 
 const container = document.getElementById("container");
 
@@ -223,7 +223,7 @@ const signupForm = document.querySelector(".sign-up-form")
 
 signupForm.addEventListener("submit", function (event) {
 	event.preventDefault()
-  
+
 	const userName = document.getElementById("username").value
 	const userAge = parseInt(document.getElementById("age").value)
 	const userGender = document.getElementById("gender").value
