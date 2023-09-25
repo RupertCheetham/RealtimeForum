@@ -219,6 +219,7 @@ console.log(userNameOrEmail, password)
 			console.log("this is data", data)
       if (data.message === 'Login successful') {
 			setSessionCookie()
+      functionHere()
       }
 		})
 		.catch((error) => {

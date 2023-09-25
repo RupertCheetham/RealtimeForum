@@ -1,6 +1,9 @@
 /* The code is adding an event listener to the form with the id "post-form". When the form is
 submitted, the event listener function is executed. */
 
+
+const container = document.getElementById("container")
+
 let html = `
 
 <form id="post-form">
