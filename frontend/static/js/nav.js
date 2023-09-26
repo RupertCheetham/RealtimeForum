@@ -1,11 +1,12 @@
 import { viewPosts } from "./posts.js"
 
 const navContainer = document.getElementById("nav")
+const container = document.getElementById("container")
 
 export function navbar() {
 	let html = `
   <div>Welcome to forum</div>
-  <form id="post-form" method="POST">
+  <form id="post-form">
   <div>
   <p>Kindly fill in this form to post.</p>
   <label for="post"><b>Post</b></label>
@@ -14,7 +15,7 @@ export function navbar() {
   <input type="text" placeholder="Enter Categories" name="categories" id="categories" required /><br>
   <label for="image"><b>Image</b></label>
   <input type="text" placeholder="Enter Image String" name="image" id="image" required /><br>
-  <button type="button" id="submit">Submit Post</button>
+  <button id="submit">Submit Post</button>
   </div>
   </form>
   `
@@ -22,7 +23,7 @@ export function navbar() {
 
 	// make a post
 	const postForm = document.getElementById("post-form")
-postForm.addEventListener("submit", function (event) {
+	postForm.addEventListener("submit", function (event) {
 		event.preventDefault()
 
 		const postText = document.getElementById("postText").value
@@ -38,18 +39,18 @@ postForm.addEventListener("submit", function (event) {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				Body: postText,
-				Categories: categories,
-				Img: image,
+				body: postText,
+				categories: categories,
+				img: image,
 			}),
 		})
-			.then((response) => {
+			.then(async (response) => {
 				if (response.ok) {
-					viewPosts()	
+					// await viewPosts()
 				}
 			})
 			.catch((error) => {
 				console.log(error)
 			})
 	})
- }
+}

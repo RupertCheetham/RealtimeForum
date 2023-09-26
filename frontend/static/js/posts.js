@@ -11,9 +11,9 @@ export async function viewPosts() {
 		</div>
 	`
 
-container.innerHTML = html
+	container.innerHTML = html
 
-container.classList.remove("container")
+	container.classList.remove("container")
 
 	const response = await fetch("http://localhost:8080/posts")
 	const postContainer = document.getElementById("postContainer")
@@ -34,8 +34,8 @@ container.classList.remove("container")
       Categories: ${post.categories},
       Reaction: ${post.reaction},
     `
-		
-	let commentHTML = `
+
+		let commentHTML = `
 	<form id="comment-form">
 	<div>
 	<label for="commentText"><b>Comment</b></label>
@@ -44,21 +44,21 @@ container.classList.remove("container")
   	</div>
 	</form>
 	`
-	
-	if (comments.length > 0) {
-		const commentsContainer = document.createElement("div")
-		commentsContainer.id = "commentContainer"
-		let commentsNum = 1
-		comments.forEach((comment) => {
-			const commentElement = document.createElement("div")
-			commentElement.className = "comment" + commentsNum++
-			commentElement.textContent = `Comment: ${comment.body}`
-			commentsContainer.appendChild(commentElement)
-		})
-		
-		postElement.appendChild(commentsContainer)
-		console.log(postElement)
-	}
+
+		if (comments.length > 0) {
+			const commentsContainer = document.createElement("div")
+			commentsContainer.id = "commentContainer"
+			let commentsNum = 1
+			comments.forEach((comment) => {
+				const commentElement = document.createElement("div")
+				commentElement.className = "comment" + commentsNum++
+				commentElement.textContent = `Comment: ${comment.body}`
+				commentsContainer.appendChild(commentElement)
+			})
+
+			postElement.appendChild(commentsContainer)
+			console.log(postElement)
+		}
 		postElement.innerHTML += commentHTML
 		postContainer.appendChild(postElement)
 	}
