@@ -39,7 +39,7 @@ const handler = (req, res) => {
 				res.end(data)
 			}
 		})
-	} else if (urlReg.test(req.url)) {
+	} else if (urlReg.test(req.url) || req.url === "/") {
 		// Respond with "Hello, World!" for the root URL
 		fs.readFile(path.join(__dirname, "index.html"), "utf8", (err, data) => {
 			if (err) {
