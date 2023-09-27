@@ -51,19 +51,44 @@ input {
     justify-content: space-between;
 }
 
-.contentContainer-item {
-    flex: 0 0 calc(33.333%);
-	overflow: scroll;
+.contentContainer-left {
+	background-color: #e7eefb;
+	flex: 1;
+	max-width: 33.333%;
+	overflow: hidden;
     border: none;
     outline: none;
     color: #000000;
     text-transform: uppercase;
     font-weight: 600;
-    box-sizing: border-box; /* Include padding in the width calculation */
+}
+
+.contentContainer-post {
+	background-color: #d7e6ff;
+	flex: 1;
+	max-width: 33.333%;
+	overflow: hidden;
+    border: none;
+    outline: none;
+    color: #000000;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.contentContainer-right {
+	background-color: #bcd5ff;
+	flex: 1;
+	max-width: 33.333%;
+	overflow: hidden;
+    border: none;
+    outline: none;
+    color: #000000;
+    text-transform: uppercase;
+    font-weight: 600;
 }
 
 
-.contentContainer-left {
+/* .contentContainer-left {
 	background-color: #e7eefb;
 }
 
@@ -73,7 +98,7 @@ input {
 
 .contentContainer-right {
 	background-color: #bcd5ff;
-}
+} */
 
 .signin-signup {
 	position: absolute;
@@ -114,13 +139,13 @@ form.sign-in-form {
 	margin-bottom: 10px;
 }
 
-.input-field-container {
+.post-input-field-container {
 	max-height: 400px; /* Set a maximum height as needed */
 	height: 400px;
 	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
 }
 
-.input-row {
+.post-input-row {
     display: flex;
 	padding-bottom: 10px;
     justify-content: space-between; /* Adjust as needed */
@@ -128,14 +153,18 @@ form.sign-in-form {
     flex-wrap: wrap; /* Wrap items to the next row if needed */
 }
 
+.input-field-container {
+	max-height: 400px; /* Set a maximum height as needed */
+	height: 400px;
+	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
+}
+
 .input-field {
-	flex: 1; /* Allow each input field to grow and take up equal space */
-    margin-right: 10px; /* Adjust spacing between fields */
-	max-width: 30%;
-	width: 20%;
+	max-width: 380px;
+	width: 100%;
 	background-color: #f0f0f0;
-	/* margin: 10px 0; */
-	max-height: 25%;
+	margin: 10px 0;
+	height: 55px;
 	border-radius: 55px;
 	display: grid;
 	grid-template-columns: 15% 85%;
@@ -157,7 +186,7 @@ form.sign-in-form {
 	border: none;
 	line-height: 1;
 	font-weight: 600;
-	font-size: 1rem;
+	font-size: 1.1rem;
 	color: #333;
 }
 
@@ -201,13 +230,11 @@ form.sign-in-form {
 	background-color: #5995fd;
 	border: none;
 	outline: none;
-	max-height: 20%;
 	border-radius: 49px;
 	color: #fff;
 	text-transform: uppercase;
 	font-weight: 600;
 	margin: 10px 0;
-	cursor: pointer;
 	transition: 0.5s;
 }
 

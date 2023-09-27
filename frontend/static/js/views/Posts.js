@@ -13,52 +13,51 @@ export default class extends AbstractView {
 
 		return `
 		${navHTML}
-		<div class="post-form"> 
-			<form id="post-form" method="POST">
-				<p>Kindly fill in this form to post.</p>
-				<div class="input-row">
-					<div class="input-field">
-						<label for="post"><b>Post</b></label>
-						<input
-							type="text"
-							placeholder="Enter Message"
-							name="postText"
-							id="postText"
-							required
-						/>
-					</div>
-					<div class="input-field">
-						<label for="categories"><b>Categories</b></label>
-						<input
-							type="text"
-							placeholder="Enter Categories"
-							name="categories"
-							id="categories"
-							required
-						/>
-					</div>
-					<div class="input-field">
-						<label for="image"><b>Image</b></label>
-						<input
-							type="text"
-							placeholder="Enter Image String"
-							name="image"
-							id="image"
-							required
-						/>
-					</div>
-				</div>
-				<br />
-				</div>
-				<button class="btn" id="submit">Submit Post</button>
-			</div>
-		</form>
-		
-		<div class="contentContainer">
-		<div id="leftContainer" class="contentContainer-left">left container REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE</div>
-		<div id="postContainer" class="contentContainer-post"></div>	
-		<div id="rightContainer" class="contentContainer-right">right container, probably chat</div>	
-		</div>
+		<div class="post-form">
+    <form id="post-form" method="POST">
+        <p>Kindly fill in this form to post.</p>
+        <div class="input-row">
+            <div class="input-field">
+                <label for="post"><b>Post</b></label>
+                <input
+                    type="text"
+                    placeholder="Enter Message"
+                    name="postText"
+                    id="postText"
+                    required
+                />
+            </div>
+            <div class="input-field">
+                <label for="categories"><b>Categories</b></label>
+                <input
+                    type="text"
+                    placeholder="Enter Categories"
+                    name="categories"
+                    id="categories"
+                    required
+                />
+            </div>
+            <div class="input-field">
+                <label for="image"><b>Image</b></label>
+                <input
+                    type="text"
+                    placeholder="Enter Image String"
+                    name="image"
+                    id="image"
+                    required
+                />
+            </div>
+        </div>
+        <button class="btn" id="submit">Submit Post</button>
+    </form>
+</div>
+
+<div class="contentContainer">
+    <div id="leftContainer" class="contentContainer-left">left container</div>
+    <div id="postContainer" class="contentContainer-post"></div>
+    <div id="rightContainer" class="contentContainer-right">right container, probably chat</div>
+</div>
+
     `
 	}
 
