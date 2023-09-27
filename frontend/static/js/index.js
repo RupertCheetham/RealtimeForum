@@ -1,4 +1,5 @@
 import Auth from "./views/Auth.js"
+import Comments from "./views/Comments.js"
 import Posts from "./views/Posts.js"
 
 const navigateTo = (url) => {
@@ -43,6 +44,13 @@ const router = async () => {
 		const postsView = new Posts()
 		postsView.getPosts()
 		postsView.submitForm()
+	}
+
+	// Call the submitForm method here
+	if (match.route.view === Comments) {
+		const postsView = new Posts()
+		postsView.getPosts()
+		postsView.submitCommentForm()
 	}
 
 	console.log("match:", view)

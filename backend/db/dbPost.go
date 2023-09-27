@@ -19,7 +19,7 @@ func AddPostToDatabase(userID int, img string, body string, categories string) e
 
 // retrieves all posts from database and returns them
 func GetPostFromDatabase() ([]PostEntry, error) {
-	rows, err := Database.Query("SELECT * FROM POSTS ORDER BY Id ASC")
+	rows, err := Database.Query("SELECT * FROM POSTS ORDER BY Id DESC")
 	if err != nil {
 		utils.HandleError("Error querying POSTS from database:", err)
 		log.Println("Error querying POSTS from database:", err)

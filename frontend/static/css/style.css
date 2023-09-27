@@ -35,6 +35,46 @@ input {
 	left: 0;
 }
 
+.nav{
+	width: 100%;
+	background-color: #5995fd;
+	border: none;
+	outline: none;
+	max-height: 20%;
+	color: #fff;
+	text-transform: uppercase;
+	font-weight: 600;
+}
+
+.contentContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.contentContainer-item {
+    flex: 0 0 calc(33.333%);
+	overflow: scroll;
+    border: none;
+    outline: none;
+    color: #000000;
+    text-transform: uppercase;
+    font-weight: 600;
+    box-sizing: border-box; /* Include padding in the width calculation */
+}
+
+
+.contentContainer-left {
+	background-color: #e7eefb;
+}
+
+.contentContainer-post {
+	background-color: #d7e6ff;
+}
+
+.contentContainer-right {
+	background-color: #bcd5ff;
+}
+
 .signin-signup {
 	position: absolute;
 	top: 50%;
@@ -80,12 +120,22 @@ form.sign-in-form {
 	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
 }
 
+.input-row {
+    display: flex;
+	padding-bottom: 10px;
+    justify-content: space-between; /* Adjust as needed */
+    align-items: center; /* Center vertically */
+    flex-wrap: wrap; /* Wrap items to the next row if needed */
+}
+
 .input-field {
-	max-width: 380px;
-	width: 100%;
+	flex: 1; /* Allow each input field to grow and take up equal space */
+    margin-right: 10px; /* Adjust spacing between fields */
+	max-width: 30%;
+	width: 20%;
 	background-color: #f0f0f0;
-	margin: 10px 0;
-	height: 55px;
+	/* margin: 10px 0; */
+	max-height: 25%;
 	border-radius: 55px;
 	display: grid;
 	grid-template-columns: 15% 85%;
@@ -107,7 +157,7 @@ form.sign-in-form {
 	border: none;
 	line-height: 1;
 	font-weight: 600;
-	font-size: 1.1rem;
+	font-size: 1rem;
 	color: #333;
 }
 
@@ -144,6 +194,21 @@ form.sign-in-form {
 .social-icon:hover {
 	color: #4481eb;
 	border-color: #4481eb;
+}
+
+.post-form {
+	width: 100%;
+	background-color: #5995fd;
+	border: none;
+	outline: none;
+	max-height: 20%;
+	border-radius: 49px;
+	color: #fff;
+	text-transform: uppercase;
+	font-weight: 600;
+	margin: 10px 0;
+	cursor: pointer;
+	transition: 0.5s;
 }
 
 .btn {

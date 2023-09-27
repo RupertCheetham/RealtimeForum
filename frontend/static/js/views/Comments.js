@@ -2,9 +2,10 @@ import AbstractView from "./AbstractView.js"
 import Nav from "./Nav.js"
 
 export default class extends AbstractView {
+    
 	constructor() {
 		super()
-		this.setTitle("Posts")
+		this.setTitle("Comments")
 	}
 
 	async getHTML() {
@@ -13,95 +14,84 @@ export default class extends AbstractView {
 
 		return `
 		${navHTML}
-		<div class="post-form"> 
-			<form id="post-form" method="POST">
+    <h1>Posts</h1>
+		<form id="post-form" method="POST">
+			<div>
 				<p>Kindly fill in this form to post.</p>
-				<div class="input-row">
-					<div class="input-field">
-						<label for="post"><b>Post</b></label>
-						<input
-							type="text"
-							placeholder="Enter Message"
-							name="postText"
-							id="postText"
-							required
-						/>
-					</div>
-					<div class="input-field">
-						<label for="categories"><b>Categories</b></label>
-						<input
-							type="text"
-							placeholder="Enter Categories"
-							name="categories"
-							id="categories"
-							required
-						/>
-					</div>
-					<div class="input-field">
-						<label for="image"><b>Image</b></label>
-						<input
-							type="text"
-							placeholder="Enter Image String"
-							name="image"
-							id="image"
-							required
-						/>
-					</div>
-				</div>
+				<label for="post"><b>Post</b></label>
+				<input
+					type="text"
+					placeholder="Enter Message"
+					name="postText"
+					id="postText"
+					required
+				/>
 				<br />
-				</div>
-				<button class="btn" id="submit">Submit Post</button>
+				<label for="categories"><b>Categories</b></label>
+				<input
+					type="text"
+					placeholder="Enter Categories"
+					name="categories"
+					id="categories"
+					required
+				/>
+				<br />
+				<label for="image"><b>Image</b></label>
+				<input
+					type="text"
+					placeholder="Enter Image String"
+					name="image"
+					id="image"
+					required
+				/>
+				<br />
+				<button id="submit">Submit Post</button>
 			</div>
 		</form>
-		
-		<div class="contentContainer">
-		<div id="leftContainer" class="contentContainer-left">left container REEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE</div>
-		<div id="postContainer" class="contentContainer-post"></div>	
-		<div id="rightContainer" class="contentContainer-right">right container, probably chat</div>	
-		</div>
+		<div id="postContainer"></div>
     `
 	}
 
-	async submitForm() {
-		const postForm = document.getElementById("post-form")
-		console.log("postform is:", postForm)
+	// async submitForm() {
+	// 	const postForm = document.getElementById("post-form")
+	// 	console.log("postform is:", postForm)
 
-		postForm.addEventListener(
-			"submit",
-			function (event) {
-				event.preventDefault()
-				const postText = document.getElementById("postText").value
-				const categories = document.getElementById("categories").value
-				const image = document.getElementById("image").value
-				console.log("submitted post:", postText, categories, image)
+	// 	postForm.addEventListener(
+	// 		"submit",
+	// 		function (event) {
+	// 			event.preventDefault()
+	// 			const postText = document.getElementById("postText").value
+	// 			const categories = document.getElementById("categories").value
+	// 			const image = document.getElementById("image").value
+	// 			console.log("submitted post:", postText, categories, image)
 
-				fetch("http://localhost:8080/posts", {
-					method: "POST",
-					headers: {
-						Accept: "application/json",
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						body: postText,
-						categories: categories,
-						img: image,
-					}),
-				})
-					.then(async (response) => {
-						if (response.ok) {
-							document.getElementById("postText").value = ""
-							document.getElementById("categories").value = ""
-							document.getElementById("image").value = ""
+	// 			fetch("http://localhost:8080/posts", {
+	// 				method: "POST",
+	// 				headers: {
+	// 					Accept: "application/json",
+	// 					"Content-Type": "application/json",
+	// 				},
+	// 				body: JSON.stringify({
+	// 					body: postText,
+	// 					categories: categories,
+	// 					img: image,
+	// 				}),
+	// 			})
+	// 				.then(async (response) => {
+	// 					if (response.ok) {
+	// 						document.getElementById("postText").value = ""
+	// 						document.getElementById("categories").value = ""
+	// 						document.getElementById("image").value = ""
 
-							await this.getPosts()
-						}
-					})
-					.catch((error) => {
-						console.log(error)
-					})
-			}.bind(this)
-		)
-	}
+	// 						await this.getPosts()
+	// 					}
+	// 				})
+	// 				.catch((error) => {
+	// 					console.log(error)
+	// 				})
+	// 		}.bind(this)
+	// 	)
+	// }
 
 	async getPosts() {
 		let html = `
@@ -139,7 +129,7 @@ export default class extends AbstractView {
 	<div>
 	<label for="commentText"><b>Comment</b></label>
 	<input type="text" placeholder="Enter comment" name="commentText" id="commentText" required /><br>
-	<button type="submit" id="submit" class = "btn">Submit Comment</button>
+	<button type="submit" id="submit">Submit Comment</button>
   	</div>
 	</form>
 	`
@@ -173,6 +163,7 @@ export default class extends AbstractView {
     form. It listens for the "submit" event on the comment form, prevents the default form submission
     behavior, and retrieves the comment text from the input field. */
     async submitCommentForm() {
+        
         console.log("I'm comment form man; look at me go!")
         const commentForm = document.getElementById("comment-form")
         //console.log(commentForm)
