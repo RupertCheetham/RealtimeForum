@@ -1,4 +1,14 @@
 import AbstractView from "./AbstractView.js"
+import Posts from "./Posts.js"
+import { setSessionCookie } from "./cookie.js"
+
+async function switchToPostsView() {
+	const container = document.getElementById("container")
+
+	// Create an instance of the Posts view and render it
+	const postsView = new Posts()
+	container.innerHTML = await postsView.getHTML()
+}
 
 export default class extends AbstractView {
 	constructor() {
@@ -8,6 +18,7 @@ export default class extends AbstractView {
 
 	async getHTML() {
 		return `
+		<div id="auth-container" class="auth-container">
 		<div class="forms-container">
 			<div class="signin-signup">
 				<div class="input-field-container">
@@ -51,7 +62,7 @@ export default class extends AbstractView {
 						</div>
 					</form>
 
-					<form action="#" class="sign-up-form">
+					<form class="sign-up-form">
 						<h2 class="title">Sign up</h2>
 						<div class="input-field">
 							<i class="fas fa-user"></i>
@@ -157,6 +168,105 @@ export default class extends AbstractView {
 				<img src="img/register.svg" class="image" alt="" />
 			</div>
 		</div>
+		</div>
  `
+	}
+
+	async submitForm() {
+		const authcontainer = document.getElementById("auth-container")
+		const sign_in_btn = document.querySelector("#sign-in-btn")
+		const sign_up_btn = document.querySelector("#sign-up-btn")
+
+		sign_up_btn.addEventListener("click", () => {
+			authcontainer.classList.add("sign-up-mode")
+		})
+
+		sign_in_btn.addEventListener("click", () => {
+			authcontainer.classList.remove("sign-up-mode")
+		})
+
+		const signinForm = document.querySelector(".sign-in-form")
+		signinForm.addEventListener("submit", function (event) {
+			event.preventDefault()
+
+			const userNameOrEmail = document.getElementById("usernameOrEmail").value
+			const password = document.getElementById("password").value
+
+			console.log(userNameOrEmail, password)
+
+			fetch("http://localhost:8080/login", {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					username: userNameOrEmail,
+					password: password,
+				}),
+			})
+				.then((response) => {
+					if (response.ok) {
+						return response.json()
+					} else {
+						throw new Error("POST request failed!")
+					}
+				})
+				.then(async (data) => {
+					console.log("this is data", data)
+					if (data.message === "Login successful") {
+						setSessionCookie()
+						switchToPostsView()
+						window.location.pathname = "/posts"
+					}
+				})
+				.catch((error) => {
+					console.log(error)
+				})
+		})
+
+		const signupForm = document.querySelector(".sign-up-form")
+
+		signupForm.addEventListener("submit", function (event) {
+			event.preventDefault()
+
+			const userName = document.getElementById("username").value
+			const userAge = parseInt(document.getElementById("age").value)
+			const userGender = document.getElementById("gender").value
+			const firstName = document.getElementById("first_name").value
+			const lastName = document.getElementById("last_name").value
+			const email = document.getElementById("email").value
+			const password = document.getElementById("new_password").value
+
+			console.log(
+				userName,
+				userAge,
+				userGender,
+				firstName,
+				lastName,
+				email,
+				password
+			)
+
+			fetch("http://localhost:8080/registrations", {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					username: userName,
+					age: userAge,
+					gender: userGender,
+					first_name: firstName,
+					last_name: lastName,
+					email: email,
+					password: password,
+				}),
+			}).catch((error) => {
+				console.log(error)
+			})
+			console.log("registration complete")
+		})
 	}
 }

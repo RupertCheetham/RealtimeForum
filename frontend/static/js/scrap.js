@@ -2,16 +2,26 @@ import Posts from "./views/Posts.js"
 
 import { setSessionCookie } from "./views/cookie.js"
 
+async function switchToPostsView() {
+	// Remove the current view content from the DOM
+	const container = document.getElementById("container")
+
+	// Create an instance of the Posts view and render it
+	const postsView = new Posts()
+	container.innerHTML = await postsView.getHTML()
+}
+
 function authenticate() {
+	const authcontainer = document.getElementById("auth-container")
 	const sign_in_btn = document.querySelector("#sign-in-btn")
 	const sign_up_btn = document.querySelector("#sign-up-btn")
 
 	sign_up_btn.addEventListener("click", () => {
-		container.classList.add("sign-up-mode")
+		authcontainer.classList.add("sign-up-mode")
 	})
 
 	sign_in_btn.addEventListener("click", () => {
-		container.classList.remove("sign-up-mode")
+		authcontainer.classList.remove("sign-up-mode")
 	})
 
 	const signinForm = document.querySelector(".sign-in-form")
@@ -45,8 +55,7 @@ function authenticate() {
 				console.log("this is data", data)
 				if (data.message === "Login successful") {
 					setSessionCookie()
-					const postview = new Posts()
-					await postview.getHTML()
+					switchToPostsView()
 				}
 			})
 			.catch((error) => {
@@ -100,6 +109,8 @@ function authenticate() {
 }
 
 function makePost() {
+	switchToPostsView()
+
 	const postForm = document.getElementById("post-form")
 	console.log("postForm:", postForm)
 	postForm.addEventListener("submit", function (event) {
@@ -123,6 +134,7 @@ function makePost() {
 			.then(async (response) => {
 				if (response.ok) {
 					// await viewPosts()
+					switchToPostsView()
 				}
 			})
 			.catch((error) => {
@@ -189,9 +201,9 @@ async function getPosts() {
 	}
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 	// Your code here
 	authenticate()
 	makePost()
-	getPosts()
+	await getPosts()
 })

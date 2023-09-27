@@ -33,6 +33,18 @@ const router = async () => {
 
 	document.querySelector("#container").innerHTML = await view.getHTML()
 
+	if (match.route.view === Auth) {
+		const authView = new Auth()
+		authView.submitForm()
+	}
+
+	// Call the submitForm method here
+	if (match.route.view === Posts) {
+		const postsView = new Posts()
+		postsView.getPosts()
+		postsView.submitForm()
+	}
+
 	console.log("match:", view)
 }
 
