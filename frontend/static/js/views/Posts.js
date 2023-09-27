@@ -53,7 +53,7 @@ export default class extends AbstractView {
 
 	async submitForm() {
 		const postForm = document.getElementById("post-form")
-		console.log(postForm)
+		console.log("postform is:", postForm)
 
 		postForm.addEventListener(
 			"submit",
@@ -62,7 +62,7 @@ export default class extends AbstractView {
 				const postText = document.getElementById("postText").value
 				const categories = document.getElementById("categories").value
 				const image = document.getElementById("image").value
-				console.log(postText, categories, image)
+				console.log("submitted post:", postText, categories, image)
 
 				fetch("http://localhost:8080/posts", {
 					method: "POST",
@@ -145,7 +145,7 @@ export default class extends AbstractView {
 				})
 
 				postElement.appendChild(commentsContainer)
-				console.log(postElement)
+
 			}
 			postElement.innerHTML += commentHTML
 			postContainer.appendChild(postElement)
