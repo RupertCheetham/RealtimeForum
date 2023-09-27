@@ -1,6 +1,6 @@
 import AbstractView from "./AbstractView.js"
 import Posts from "./Posts.js"
-import { setSessionCookie } from "./cookie.js"
+import { setSessionCookie } from "../utils/cookie.js"
 
 async function switchToPostsView() {
 	const container = document.getElementById("container")
