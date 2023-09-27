@@ -4,7 +4,10 @@ commentForm.addEventListener("submit", function (event) {
 	event.preventDefault()
 
 	const username = document.getElementById("commentUsername").value
-	const parentPostID = parseInt(document.getElementById("parentPostID").value, 10)
+	const parentPostID = parseInt(
+		document.getElementById("parentPostID").value,
+		10
+	)
 	const comment = document.getElementById("commentText").value
 	console.log(username)
 	console.log(parentPostID)

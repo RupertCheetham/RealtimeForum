@@ -1,11 +1,13 @@
-import { navbar } from "./nav.js"
-import { setSessionCookie } from "./cookie.js"
-import { viewPosts } from "./posts.js"
+import AbstractView from "./AbstractView.js"
 
-const container = document.getElementById("container")
+export default class extends AbstractView {
+	constructor() {
+		super()
+		this.setTitle("Sign in  or sign up")
+	}
 
-function showLoginForm() {
-	let html = `
+	async getHTML() {
+		return `
 		<div class="forms-container">
 			<div class="signin-signup">
 				<div class="input-field-container">
@@ -156,101 +158,5 @@ function showLoginForm() {
 			</div>
 		</div>
  `
-	container.innerHTML = html
-
-	const sign_in_btn = document.querySelector("#sign-in-btn")
-	const sign_up_btn = document.querySelector("#sign-up-btn")
-
-	sign_up_btn.addEventListener("click", () => {
-		container.classList.add("sign-up-mode")
-	})
-
-	sign_in_btn.addEventListener("click", () => {
-		container.classList.remove("sign-up-mode")
-	})
-
-	const signinForm = document.querySelector(".sign-in-form")
-	signinForm.addEventListener("submit", function (event) {
-		event.preventDefault()
-
-		const userNameOrEmail = document.getElementById("usernameOrEmail").value
-		const password = document.getElementById("password").value
-
-		console.log(userNameOrEmail, password)
-
-		fetch("http://localhost:8080/login", {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				username: userNameOrEmail,
-				password: password,
-			}),
-		})
-			.then((response) => {
-				if (response.ok) {
-					return response.json()
-				} else {
-					throw new Error("POST request failed!")
-				}
-			})
-			.then((data) => {
-				console.log("this is data", data)
-				if (data.message === "Login successful") {
-					setSessionCookie()
-					viewPosts()
-				}
-			})
-			.catch((error) => {
-				console.log(error)
-			})
-	})
-
-	const signupForm = document.querySelector(".sign-up-form")
-
-	signupForm.addEventListener("submit", function (event) {
-		event.preventDefault()
-
-		const userName = document.getElementById("username").value
-		const userAge = parseInt(document.getElementById("age").value)
-		const userGender = document.getElementById("gender").value
-		const firstName = document.getElementById("first_name").value
-		const lastName = document.getElementById("last_name").value
-		const email = document.getElementById("email").value
-		const password = document.getElementById("new_password").value
-
-		console.log(
-			userName,
-			userAge,
-			userGender,
-			firstName,
-			lastName,
-			email,
-			password
-		)
-
-		fetch("http://localhost:8080/registrations", {
-			method: "POST",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				username: userName,
-				age: userAge,
-				gender: userGender,
-				first_name: firstName,
-				last_name: lastName,
-				email: email,
-				password: password,
-			}),
-		}).catch((error) => {
-			console.log(error)
-		})
-		console.log("registration complete")
-	})
+	}
 }
-
-showLoginForm()
