@@ -46,40 +46,4 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	})
 	router()
-
-	const postForm = document.getElementById("post-form")
-	console.log("postForm:", postForm)
 })
-
-// const postForm = document.getElementById("post-form")
-// console.log("postForm:", postForm)
-// postForm.addEventListener("submit", function (event) {
-// 	event.preventDefault()
-
-// 	const postText = document.getElementById("postText").value
-// 	const categories = document.getElementById("categories").value
-// 	const image = document.getElementById("image").value
-
-// 	console.log(postText, categories, image)
-
-// 	fetch("http://localhost:8080/posts", {
-// 		method: "POST",
-// 		headers: {
-// 			Accept: "application/json",
-// 			"Content-Type": "application/json",
-// 		},
-// 		body: JSON.stringify({
-// 			body: postText,
-// 			categories: categories,
-// 			img: image,
-// 		}),
-// 	})
-// 		.then(async (response) => {
-// 			if (response.ok) {
-// 				// await viewPosts()
-// 			}
-// 		})
-// 		.catch((error) => {
-// 			console.log(error)
-// 		})
-// })
