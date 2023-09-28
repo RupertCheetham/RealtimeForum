@@ -10,7 +10,7 @@ async function switchToPostsView() {
 	container.innerHTML = await postsView.getHTML()
 }
 
-export default class extends AbstractView {
+export default class Auth extends AbstractView {
 	constructor() {
 		super()
 		this.setTitle("Sign in  or sign up")

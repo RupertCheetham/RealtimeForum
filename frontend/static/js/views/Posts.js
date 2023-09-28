@@ -1,7 +1,7 @@
 import AbstractView from "./AbstractView.js"
 import Nav from "./Nav.js"
 
-export default class extends AbstractView {
+export default class Posts extends AbstractView {
 	constructor() {
 		super()
 		this.setTitle("Posts")
@@ -155,7 +155,6 @@ export default class extends AbstractView {
 				})
 
 				postElement.appendChild(commentsContainer)
-
 			}
 			postElement.innerHTML += commentHTML
 			postContainer.appendChild(postElement)
@@ -171,41 +170,39 @@ export default class extends AbstractView {
 	/* The `async submitCommentForm()` function is responsible for handling the submission of the comment
     form. It listens for the "submit" event on the comment form, prevents the default form submission
     behavior, and retrieves the comment text from the input field. */
-    async submitCommentForm() {
-        console.log("I'm comment form man; look at me go!")
-        const commentForm = document.getElementById("comment-form")
-        //console.log(commentForm)
-    
-        commentForm.addEventListener(
-             "submit",
-            function (event) {
-                event.preventDefault()
-                const commentText = document.getElementById("commentText").value
-                
-                console.log("this is comment text", commentText)
-    
-                fetch("http://localhost:8080/comments", {
-                    method: "POST",
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        body: commentText,
-                    }),
-                })
-                    .then(async (response) => {
-                        if (response.ok) {
-                            document.getElementById("commentText").value = ""
-                            await this.getPosts()
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                    })
-            }.bind(this)
-        )
+	async submitCommentForm() {
+		console.log("I'm comment form man; look at me go!")
+		const commentForm = document.getElementById("comment-form")
+		//console.log(commentForm)
 
-        }
+		commentForm.addEventListener(
+			"submit",
+			function (event) {
+				event.preventDefault()
+				const commentText = document.getElementById("commentText").value
+
+				console.log("this is comment text", commentText)
+
+				fetch("http://localhost:8080/comments", {
+					method: "POST",
+					headers: {
+						Accept: "application/json",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						body: commentText,
+					}),
+				})
+					.then(async (response) => {
+						if (response.ok) {
+							document.getElementById("commentText").value = ""
+							await this.getPosts()
+						}
+					})
+					.catch((error) => {
+						console.log(error)
+					})
+			}.bind(this)
+		)
+	}
 }
-
