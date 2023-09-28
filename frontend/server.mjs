@@ -5,7 +5,7 @@ import path from "path"
 const hostname = "localhost"
 const port = 3000
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
-let urlReg = new RegExp(`\/.`)
+let urlReg = new RegExp(`\/.+`)
 
 const handler = (req, res) => {
 	// Set the response header
@@ -42,6 +42,7 @@ const handler = (req, res) => {
 	} else if (urlReg.test(req.url) || req.url === "/") {
 		// Respond with "Hello, World!" for the root URL
 		fs.readFile(path.join(__dirname, "index.html"), "utf8", (err, data) => {
+			console.log ("This is path", __dirname)			
 			if (err) {
 				res.statusCode = 500
 				res.end("Internal Server Error\n")
