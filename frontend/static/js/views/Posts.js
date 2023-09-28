@@ -1,7 +1,7 @@
 import AbstractView from "./AbstractView.js"
 import Nav from "./Nav.js"
 
-export default class extends AbstractView {
+export default class Posts extends AbstractView {
 	constructor() {
 		super()
 		this.setTitle("Posts")
