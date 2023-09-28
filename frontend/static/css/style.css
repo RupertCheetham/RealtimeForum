@@ -14,7 +14,7 @@ input {
 .container {
 	position: relative;
 	width: 100%;
-	background-color: #fff;
+	background-color: #000000;
 	min-height: 100vh;
 	overflow: hidden;
 }
@@ -52,37 +52,37 @@ input {
 }
 
 .contentContainer-left {
-	background-color: #e7eefb;
+	background-color: #282930;
 	flex: 1;
 	max-width: 33.333%;
 	overflow: hidden;
     border: none;
     outline: none;
-    color: #000000;
+    color: #ffffff;
     text-transform: uppercase;
     font-weight: 600;
 }
 
 .contentContainer-post {
-	background-color: #d7e6ff;
+	background-color: #263045;
 	flex: 1;
 	max-width: 33.333%;
 	overflow: hidden;
     border: none;
     outline: none;
-    color: #000000;
+    color: #ffffff;
     text-transform: uppercase;
     font-weight: 600;
 }
 
 .contentContainer-right {
-	background-color: #bcd5ff;
+	background-color: #1b2e4e;
 	flex: 1;
 	max-width: 33.333%;
 	overflow: hidden;
     border: none;
     outline: none;
-    color: #000000;
+    color: #ffffff;
     text-transform: uppercase;
     font-weight: 600;
 }

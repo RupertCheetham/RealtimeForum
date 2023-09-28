@@ -134,13 +134,12 @@ export default class extends AbstractView {
     `
 
 			let commentHTML = `
-	<form id="comment-form">
-	<div>
-	<label for="commentText"><b>Comment</b></label>
-	<input type="text" placeholder="Enter comment" name="commentText" id="commentText" required /><br>
-	<button type="submit" id="submit" class = "btn">Submit Comment</button>
-  	</div>
-	</form>
+		<form id="comment-form" class="comment-form">
+			<label for="commentText"><b>Comment</b></label>
+			<input type="text" placeholder="Enter comment" name="commentText" id="commentText" required /><br>
+			<button type="submit" id="commentSubmit" class="btn">Submit Comment</button>
+		</form>
+		
 	`
 
 			if (comments.length > 0) {
@@ -169,43 +168,48 @@ export default class extends AbstractView {
 		}
 	}
 	/* The `async submitCommentForm()` function is responsible for handling the submission of the comment
-    form. It listens for the "submit" event on the comment form, prevents the default form submission
-    behavior, and retrieves the comment text from the input field. */
-    async submitCommentForm() {
-        console.log("I'm comment form man; look at me go!")
-        const commentForm = document.getElementById("comment-form")
-        //console.log(commentForm)
-    
-        commentForm.addEventListener(
-             "submit",
-            function (event) {
-                event.preventDefault()
-                const commentText = document.getElementById("commentText").value
-                
-                console.log("this is comment text", commentText)
-    
-                fetch("http://localhost:8080/comments", {
-                    method: "POST",
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        body: commentText,
-                    }),
-                })
-                    .then(async (response) => {
-                        if (response.ok) {
-                            document.getElementById("commentText").value = ""
-                            await this.getPosts()
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                    })
-            }.bind(this)
-        )
+	form. It listens for the "submit" event on the comment form, prevents the default form submission
+	behavior, and retrieves the comment text from the input field. */
+	async submitCommentForm() {
+		console.log("I'm comment form man; look at me go!")
+		// document.addEventListener("DOMContentLoaded", function () {
 
-        }
+			// This is where the problems begin; only the second line of code, so it could be worse...
+			// Upon reflection it *is* the first line of code
+			const commentForm = document.getElementById("comment-form")
+			//console.log(commentForm)
+			console.log("I here now?")
+			commentForm.addEventListener(
+				"submit",
+				function (event) {
+					event.preventDefault()
+					const commentText = document.getElementById("commentText").value
+
+					console.log("this is comment text", commentText)
+
+					fetch("http://localhost:8080/comments", {
+						method: "POST",
+						headers: {
+							Accept: "application/json",
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							body: commentText,
+						}),
+					})
+						.then(async (response) => {
+							if (response.ok) {
+								document.getElementById("commentText").value = ""
+								await this.getPosts()
+							}
+						})
+						.catch((error) => {
+							console.log(error)
+						})
+				}.bind(this)
+			)
+		// });
+	}
+
 }
 
