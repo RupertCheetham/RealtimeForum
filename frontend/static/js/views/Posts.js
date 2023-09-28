@@ -178,7 +178,7 @@ export default class extends AbstractView {
 			// Upon reflection it *is* the first line of code
 			const commentForm = document.getElementById("comment-form")
 			//console.log(commentForm)
-			console.log("I here now?")
+			console.log("commentForm is:", commentForm)
 			commentForm.addEventListener(
 				"submit",
 				function (event) {
@@ -197,12 +197,12 @@ export default class extends AbstractView {
 							body: commentText,
 						}),
 					})
-						.then(async (response) => {
-							if (response.ok) {
-								document.getElementById("commentText").value = ""
-								await this.getPosts()
-							}
-						})
+						// .then(async (response) => {
+						// 	if (response.ok) {
+						// 		document.getElementById("commentText").value = ""
+						// 		await this.getPosts()
+						// 	}
+						// })
 						.catch((error) => {
 							console.log(error)
 						})

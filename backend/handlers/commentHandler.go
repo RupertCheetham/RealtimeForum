@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"realtimeForum/db"
@@ -15,6 +16,7 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	// This code block is handling the POST request for adding a comment.
 	if r.Method == "POST" {
+		fmt.Println("Oh boy, here I am in AddCommentHandler")
 		var comment db.CommentEntry
 		err := json.NewDecoder(r.Body).Decode(&comment)
 		log.Println(comment)
