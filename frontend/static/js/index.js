@@ -43,7 +43,10 @@ const router = async () => {
 		const postsView = new Posts()
 		postsView.getPosts()
 		postsView.submitForm()
-		postsView.submitCommentForm()
+		setTimeout(() => {
+			postsView.submitCommentForm()
+		},1000)
+
 	}
 
 	console.log("match:", view)

@@ -1,7 +1,7 @@
 package db
 
 type UserEntry struct {
-	ID        int    `json:"id"`
+	Id        int    `json:"id"`
 	Username  string `json:"username"`
 	Age       int    `json:"age"`
 	Gender    string `json:"gender"`
@@ -24,7 +24,7 @@ type PostEntry struct {
 type CommentEntry struct {
 	Id           int    `json:"id"`
 	ParentPostID int    `json:"parentPostId"`
-	UserId       int    `json:"username"`
+	UserId       int    `json:"userID"`
 	Body         string `json:"body"`
 	CreationDate string `json:"creationDate"`
 	ReactionID   int    `json:"reactionID"`

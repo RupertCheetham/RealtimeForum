@@ -134,7 +134,7 @@ export default class Posts extends AbstractView {
     `
 
 			let commentHTML = `
-		<form id="comment-form" class="comment-form">
+		<form id="comment-form" class="comment-form" method="POST">
 			<label for="commentText"><b>Comment</b></label>
 			<input type="text" placeholder="Enter comment" name="commentText" id="commentText" required /><br>
 			<button type="submit" id="commentSubmit" class="btn">Submit Comment</button>
@@ -174,16 +174,18 @@ export default class Posts extends AbstractView {
 		console.log("I'm comment form man; look at me go!")
 		// document.addEventListener("DOMContentLoaded", function () {
 
-			// This is where the problems begin; only the second line of code, so it could be worse...
-			// Upon reflection it *is* the first line of code
+		// This is where the problems begin; only the second line of code, so it could be worse...
+		// Upon reflection it *is* the first line of codet
 			const commentForm = document.getElementById("comment-form")
-			//console.log(commentForm)
+
 			console.log("commentForm is:", commentForm)
+
 			commentForm.addEventListener(
 				"submit",
 				function (event) {
 					event.preventDefault()
 					const commentText = document.getElementById("commentText").value
+					const parentPostId = document.getElementById("commentText").value
 
 					console.log("this is comment text", commentText)
 
@@ -195,20 +197,20 @@ export default class Posts extends AbstractView {
 						},
 						body: JSON.stringify({
 							body: commentText,
+							parentPostId: 44,
 						}),
 					})
-						// .then(async (response) => {
-						// 	if (response.ok) {
-						// 		document.getElementById("commentText").value = ""
-						// 		await this.getPosts()
-						// 	}
-						// })
+						.then(async (response) => {
+							if (response.ok) {
+								document.getElementById("commentText").value = ""
+								await this.getPosts()
+							}
+						})
 						.catch((error) => {
 							console.log(error)
 						})
 				}.bind(this)
 			)
-		// });
 	}
 
 }
