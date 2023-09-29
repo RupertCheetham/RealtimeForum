@@ -1,5 +1,6 @@
 import Auth from "./views/Auth.js"
 import Posts from "./views/Posts.js"
+import Chat from "./views/Chat.js"
 
 const navigateTo = (url) => {
 	history.pushState(null, null, url)
@@ -10,6 +11,7 @@ const router = async () => {
 	const routes = [
 		{ path: "/", view: Auth },
 		{ path: "/posts", view: Posts },
+		{ path: "/chat", view: Chat },
 	]
 
 	// test each route for potential match

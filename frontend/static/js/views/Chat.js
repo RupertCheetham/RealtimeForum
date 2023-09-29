@@ -14,7 +14,7 @@ export default class Chat extends AbstractView {
 
 		return `
 		${navHTML}
-        <h1 id="chat-font"> CHat is here</h1>
+        <h1 id="chat-font" class = "chat-font"> CHat is here</h1>
         `
 	}
 
