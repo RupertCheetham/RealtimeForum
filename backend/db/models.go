@@ -30,6 +30,14 @@ type CommentEntry struct {
 	ReactionID   int    `json:"reactionID"`
 }
 
+type ReactionEntry struct {
+	UserID     int    `json:"userID"`
+	Type       string `json:"type"`
+	ParentID   int    `json:"parentID"`
+	Action     string `json:"action"`
+	ReactionID int    `json:"reactionID"`
+}
+
 type Reaction struct {
 	Id          int    `json:"id"`
 	Likes       int    `json:"likes"`

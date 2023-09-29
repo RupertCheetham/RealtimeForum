@@ -76,10 +76,10 @@ func AddExampleEntries() {
 			if err != nil {
 				log.Fatalf("Error adding entry to COMMENT table in AddExampleEntries: %v", err)
 			}
-			AddReactionToDatabase("POSTREACTIONS", 1, "dislike")
-			AddReactionToDatabase("POSTREACTIONS", 3, "like")
-			AddReactionToDatabase("COMMENTREACTIONS", 1, "dislike")
-			AddReactionToDatabase("COMMENTREACTIONS", 2, "like")
+			AddReactionToDatabase("POSTREACTIONS", 1, 1, "dislike")
+			AddReactionToDatabase("POSTREACTIONS", 2, 3, "like")
+			AddReactionToDatabase("COMMENTREACTIONS", 1, 1, "dislike")
+			AddReactionToDatabase("COMMENTREACTIONS", 2, 2, "like")
 		}
 		log.Println("Example Database entries added successfully")
 

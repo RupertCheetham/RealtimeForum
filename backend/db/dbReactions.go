@@ -8,33 +8,53 @@ import (
 	"strings"
 )
 
-// if Reaction > 0 {UPDATE} else {INSERT}
-
-func AddReactionToDatabase(tableName string, userID int, reaction string) {
+// Adds a reaction to the database, if post/comment doesn't have any.
+// Updates the parent post/comment's ReactionID to relevant reactiontable's ID
+func AddReactionToDatabase(tableName string, parentID int, userID int, reaction string) {
 
 	likes := 0
 	dislikes := 0
 	whoLiked := ""
 	whoDisliked := ""
-	query := ""
 
+	// if the reaction was "like" then adds a like
 	if reaction == "like" {
 		likes = 1
 		whoLiked = whoLiked + strconv.Itoa(userID)
-		query = fmt.Sprintf("INSERT INTO %s (Likes, Dislikes, WhoLiked, WhoDisliked) VALUES (?, ?, ?, ?)", tableName)
-	} else {
+		// if the reaction was "dislike" then adds a dislike instead
+	} else if reaction == "dislike" {
 		dislikes = 1
 		whoDisliked = whoDisliked + strconv.Itoa(userID)
-		query = fmt.Sprintf("INSERT INTO %s (Likes, Dislikes, WhoLiked, WhoDisliked) VALUES (?, ?, ?, ?)", tableName)
+	} else {
+		// Just in case I make a type in the HTML
+		log.Println("Invalid reaction in AddReactionToDatabase:", reaction)
 	}
 
+	// Insert the reaction into the tableName table
+	query := fmt.Sprintf("INSERT INTO %s (Likes, Dislikes, WhoLiked, WhoDisliked) VALUES (?, ?, ?, ?)", tableName)
 	_, err := Database.Exec(query, likes, dislikes, whoLiked, whoDisliked)
 	if err != nil {
-		utils.HandleError("Error adding comment to database in AddReactionToDatabase:", err)
-		log.Println("Error adding comment to database in AddReactionToDatabase:", err)
+		utils.HandleError("Error adding reaction to database in AddReactionToDatabase:", err)
+		log.Println("Error adding reaction to database in AddReactionToDatabase:", err)
+	}
+
+	// Update the ReactionID of the specified post/comment (e.g. post 5),
+	// but first needs to decide whether to update posts or comments
+	postOrCommentTable := ""
+	if tableName == "POSTREACTIONS" {
+		postOrCommentTable = "POSTS"
+	} else {
+		postOrCommentTable = "COMMENTS"
+	}
+	updateQuery := fmt.Sprintf("UPDATE %s SET ReactionID = (SELECT Id FROM %s ORDER BY Id DESC LIMIT 1) WHERE Id = ?", postOrCommentTable, tableName)
+	_, err = Database.Exec(updateQuery, parentID)
+	if err != nil {
+		utils.HandleError("Error updating ReactionID in database in AddReactionToDatabase:", err)
+		log.Println("Error updating ReactionID in AddReactionToDatabase:", err)
 	}
 }
 
+// Updates values already in the reaction table
 func UpdateReactionInDatabase(tableName string, rowID int, userID int, reaction string) {
 
 	var likes int

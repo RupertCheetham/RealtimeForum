@@ -21,6 +21,7 @@ func main() {
 	http.HandleFunc("/comments", handlers.AddCommentHandler)
 	http.HandleFunc("/registrations", handlers.AddUserHandler)
 	http.HandleFunc("/login", handlers.AddLoginHandler)
+	http.HandleFunc("/reaction", handlers.ReactionHandler)
 
 	fmt.Printf("Starting server at port 8080\n")
 	log.Fatal(http.ListenAndServe(":8080", nil))
