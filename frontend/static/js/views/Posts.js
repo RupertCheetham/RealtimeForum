@@ -18,7 +18,7 @@ export default class Posts extends AbstractView {
           <p>Kindly fill in this form to post.</p>
           <div class="input-row">
             <div class="input-field">
-              <label for="post"><b>Post</b></label>
+              <label for="postText"><b>Post</b></label>
               <input
                 type="text"
                 placeholder="Enter Message"
@@ -123,17 +123,25 @@ export default class Posts extends AbstractView {
 
 			const comments = await fetchComments(post.id); // Wait for the comments to be fetched
 
-			postElement.textContent = `
-        Id: ${post.id},
-        Username: ${post.username},
-        Img: ${post.img},
-        Body: ${post.body},
-        Categories: ${post.categories},
-        Reaction: ${post.reaction},
-      `;
+			postElement.innerHTML = `
+			<ul>
+			  <li><b>Id:</b> ${post.id}</li>
+			  <li><b>Username:</b> ${post.username}</li>
+			  <li><b>Img:</b> ${post.img}</li>
+			  <li><b>Body:</b> ${post.body}</li>
+			  <li><b>Categories:</b> ${post.categories}</li>
+			  <li><b>Reaction:</b> ${post.reactionID}</li>
+			  <li>
+			  <button class="reaction-button" reaction-post-id="${post.id}" reaction-action="like" reaction-reaction = ${post.reactionID}">👍</button>
+			  <button class="reaction-button" reaction-post-id="${post.id}" reaction-action="dislike" reaction-reaction = ${post.reactionID}">👎</button>
+			  </li>
+			</ul>
+		  `;
+
+			console.log("post.id is", post.id)
 
 			let commentHTML = `
-        <form id="comment-form" class="comment-form" method="POST">
+        <form id="comment-form${post.id}" class="comment-form" method="POST">
           <label for="commentText"><b>Comment</b></label>
           <input type="text" placeholder="Enter comment" name="commentText" id="commentText" required /><br>
           <input type="hidden" name="postId" id="postId" value="${post.id}" />
@@ -170,41 +178,93 @@ export default class Posts extends AbstractView {
 	/* The `async submitCommentForm()` function is responsible for handling the submission of the comment
 	  form. It listens for the "submit" event on the comment form, prevents the default form submission
 	  behavior, and retrieves the comment text from the input field. */
-	  async submitCommentForm() {
+	async submitCommentForm() {
 		const commentForms = document.querySelectorAll(".comment-form");
-		
-		commentForms.forEach((commentForm) => {
-			var postId = Number(document.getElementById("postId").value)
-		  commentForm.addEventListener("submit", async function(event) {
-			event.preventDefault();
-	  
-			const commentText = document.getElementById("commentText").value;
-			;
-			try {
-			  const response = await fetch("http://localhost:8080/comments", {
-				method: "POST",
-				headers: {
-				  Accept: "application/json",
-				  "Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-				  body: commentText,
-				  parentPostId: Number(postId),
-				}),
-			  });
-			//   postId = postId-1
-			  console.log(postId, "is postId")
-			  if (response.ok) {
-				document.getElementById("commentText").value = "";
-				await this.getPosts();
-			  }
-			} catch (error) {
-			  console.log(error);
-			}
-		  }.bind(this));
-		});
-	  }
-	  
 
+		commentForms.forEach((commentForm) => {
+
+			commentForm.addEventListener("submit", async function (event) {
+				event.preventDefault();
+				var postId = Number(document.getElementById("postId").value)
+				const commentText = document.getElementById("commentText").value;
+				;
+				try {
+					const response = await fetch("http://localhost:8080/comments", {
+						method: "POST",
+						headers: {
+							Accept: "application/json",
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							body: commentText,
+							parentPostId: Number(postId),
+						}),
+					});
+					//   postId = postId-1
+					console.log(postId, "is postId")
+					if (response.ok) {
+						document.getElementById("commentText").value = "";
+						await this.getPosts();
+					}
+				} catch (error) {
+					console.log(error);
+				}
+			}.bind(this));
+		});
+	}
+	// 		const commentForm = document.getElementById("comment-form")
+
+	// 		commentForm.addEventListener("submit", function (event) {
+	// 			event.preventDefault()
+
+	// 			// const username = document.getElementById("commentUsername").value
+	// 			const parentPostID = parseInt(
+	// 				document.getElementById("postId").value,
+	// 				10
+	// 			)
+	// 			const comment = document.getElementById("commentText").value
+	// 			// console.log(username)
+	// 			console.log(parentPostID)
+	// 			console.log(comment)
+
+	// 			fetch("http://localhost:8080/comments", {
+	// 				method: "POST",
+	// 				headers: {
+	// 					Accept: "application/json",
+	// 					"Content-Type": "application/json",
+	// 				},
+	// 				body: JSON.stringify({
+	// 					// Username: username,
+	// 					ParentPostID: parentPostID,
+	// 					Body: comment,
+	// 				}),
+	// 			}).catch((error) => {
+	// 				console.log(error)
+	// 			})
+	// 		})
+
+	// 	}
+	async reactions() {
+		const reactionButtons = document.querySelectorAll('.reaction-button');
+		reactionButtons.forEach((reactButton) => {
+			reactButton.addEventListener('click', async (event) => {
+				event.preventDefault();
+				const action = reactButton.getAttribute('reaction-action');
+				const postId = reactButton.getAttribute('reaction-post-id');
+				const reactionID = reactButton.getAttribute('reaction-reaction');
+
+				console.log(`Reacted post ${postId} with action: ${action}, whilst reactionID is ${reactionID}`);
+
+				// Perform your fetch request here with the action and postId
+				// ...
+			});
+		});
+
+
+
+	}
 }
+
+
+
 

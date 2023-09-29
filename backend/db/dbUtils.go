@@ -80,9 +80,6 @@ func AddExampleEntries() {
 			AddReactionToDatabase("POSTREACTIONS", 3, "like")
 			AddReactionToDatabase("COMMENTREACTIONS", 1, "dislike")
 			AddReactionToDatabase("COMMENTREACTIONS", 2, "like")
-			// UpdateReactionInDatabase("POSTREACTIONS", 1, 3, "dislike")
-			// UpdateReactionInDatabase("POSTREACTIONS", 1, 3, "like")
-			// UpdateReactionInDatabase("POSTREACTIONS", 7, 1, "dislike")
 		}
 		log.Println("Example Database entries added successfully")
 
