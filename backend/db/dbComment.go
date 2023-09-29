@@ -8,7 +8,9 @@ import (
 
 // adds a post to the database
 func AddCommentToDatabase(parentPostID int, userID int, body string) error {
-	fmt.Println("I be in AddCommentToDatabase")
+	fmt.Println("parentPostID:", parentPostID)
+	fmt.Println("userID:", userID)
+	fmt.Println("body:", body)
 	_, err := Database.Exec("INSERT INTO COMMENTS (PostID, UserID, Body) VALUES (?, ?, ?)", parentPostID, userID, body)
 	if err != nil {
 		utils.HandleError("Error adding comment to database in AddCommentToDatabase:", err)
