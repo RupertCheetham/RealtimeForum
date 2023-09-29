@@ -1,6 +1,6 @@
 import Auth from "./views/Auth.js"
-import Comments from "./views/Comments.js"
 import Posts from "./views/Posts.js"
+import Chat from "./views/Chat.js"
 
 const navigateTo = (url) => {
 	history.pushState(null, null, url)
@@ -11,6 +11,7 @@ const router = async () => {
 	const routes = [
 		{ path: "/", view: Auth },
 		{ path: "/posts", view: Posts },
+		{ path: "/chat", view: Chat },
 	]
 
 	// test each route for potential match
@@ -44,13 +45,9 @@ const router = async () => {
 		const postsView = new Posts()
 		postsView.getPosts()
 		postsView.submitForm()
-	}
-
-	// Call the submitForm method here
-	if (match.route.view === Comments) {
-		const postsView = new Posts()
-		postsView.getPosts()
-		postsView.submitCommentForm()
+		setTimeout(() => {
+			postsView.submitCommentForm()
+		}, 1000)
 	}
 
 	console.log("match:", view)

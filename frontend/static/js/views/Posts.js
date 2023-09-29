@@ -134,13 +134,12 @@ export default class Posts extends AbstractView {
     `
 
 			let commentHTML = `
-	<form id="comment-form">
-	<div>
-	<label for="commentText"><b>Comment</b></label>
-	<input type="text" placeholder="Enter comment" name="commentText" id="commentText" required /><br>
-	<button type="submit" id="submit" class = "btn">Submit Comment</button>
-  	</div>
-	</form>
+		<form id="comment-form" class="comment-form" method="POST">
+			<label for="commentText"><b>Comment</b></label>
+			<input type="text" placeholder="Enter comment" name="commentText" id="commentText" required /><br>
+			<button type="submit" id="commentSubmit" class="btn">Submit Comment</button>
+		</form>
+		
 	`
 
 			if (comments.length > 0) {
@@ -168,18 +167,24 @@ export default class Posts extends AbstractView {
 		}
 	}
 	/* The `async submitCommentForm()` function is responsible for handling the submission of the comment
-    form. It listens for the "submit" event on the comment form, prevents the default form submission
-    behavior, and retrieves the comment text from the input field. */
+	form. It listens for the "submit" event on the comment form, prevents the default form submission
+	behavior, and retrieves the comment text from the input field. */
 	async submitCommentForm() {
 		console.log("I'm comment form man; look at me go!")
+		// document.addEventListener("DOMContentLoaded", function () {
+
+		// This is where the problems begin; only the second line of code, so it could be worse...
+		// Upon reflection it *is* the first line of codet
 		const commentForm = document.getElementById("comment-form")
-		//console.log(commentForm)
+
+		console.log("commentForm is:", commentForm)
 
 		commentForm.addEventListener(
 			"submit",
 			function (event) {
 				event.preventDefault()
 				const commentText = document.getElementById("commentText").value
+				const parentPostId = document.getElementById("commentText").value
 
 				console.log("this is comment text", commentText)
 
@@ -191,6 +196,7 @@ export default class Posts extends AbstractView {
 					},
 					body: JSON.stringify({
 						body: commentText,
+						parentPostId: 44,
 					}),
 				})
 					.then(async (response) => {

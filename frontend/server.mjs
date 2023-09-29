@@ -40,7 +40,7 @@ const handler = (req, res) => {
 			}
 		})
 	} else if (urlReg.test(req.url) || req.url === "/") {
-		// Respond with "Hello, World!" for the root URL
+		// Respond with index for the root URL
 		fs.readFile(path.join(__dirname, "index.html"), "utf8", (err, data) => {
 			if (err) {
 				res.statusCode = 500
