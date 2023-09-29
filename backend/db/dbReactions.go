@@ -21,11 +21,11 @@ func AddReactionToDatabase(tableName string, userID int, reaction string) {
 	if reaction == "like" {
 		likes = 1
 		whoLiked = whoLiked + strconv.Itoa(userID)
-		query = fmt.Sprintf("INSERT INTO %s (Likes, WhoLiked) VALUES (?, ?)", tableName)
+		query = fmt.Sprintf("INSERT INTO %s (Likes, Dislikes, WhoLiked, WhoDisliked) VALUES (?, ?, ?, ?)", tableName)
 	} else {
 		dislikes = 1
 		whoDisliked = whoDisliked + strconv.Itoa(userID)
-		query = fmt.Sprintf("INSERT INTO %s (Dislikes, WhoDisliked) VALUES (?, ?)", tableName)
+		query = fmt.Sprintf("INSERT INTO %s (Likes, Dislikes, WhoLiked, WhoDisliked) VALUES (?, ?, ?, ?)", tableName)
 	}
 
 	_, err := Database.Exec(query, likes, dislikes, whoLiked, whoDisliked)
