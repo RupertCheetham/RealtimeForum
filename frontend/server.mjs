@@ -1,10 +1,18 @@
 import * as fs from "fs"
-import http from "http"
-import path from "path"
+import path, { dirname } from "path"
+import https from "https"
 
 const hostname = "localhost"
-const port = 3000
+//const port = 3000
+const httpsPort = 3001 // Use a different port to HTTPS
+
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
+
+const options = {
+	key: fs.readFileSync(path.join(__dirname, "../backend", "server.key")),
+	cert: fs.readFileSync(path.join(__dirname, "../backend", "server.crt"))
+}
+
 let urlReg = new RegExp(`\/.`)
 
 const handler = (req, res) => {
@@ -57,10 +65,10 @@ const handler = (req, res) => {
 	}
 }
 
-// Create an HTTP server
-const server = http.createServer(handler)
+// Create an HTTPS server
+const server = https.createServer(options, handler)
 
 // Start the server
-server.listen(port, hostname, () => {
-	console.log(`Server is running on port:${port}`)
+server.listen(httpsPort, hostname, () => {
+	console.log(`HTTPS Server is running on port:${httpsPort}`)
 })

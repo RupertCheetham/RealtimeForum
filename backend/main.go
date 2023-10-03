@@ -22,6 +22,6 @@ func main() {
 	http.HandleFunc("/registrations", handlers.AddUserHandler)
 	http.HandleFunc("/login", handlers.AddLoginHandler)
 
-	fmt.Printf("Starting server at port 8080\n")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	fmt.Printf("Starting backend server at port 8080\n")
+	log.Fatal(http.ListenAndServeTLS(":8080", "server.crt", "server.key", nil))
 }
