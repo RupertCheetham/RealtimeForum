@@ -141,24 +141,42 @@ export default class Posts extends AbstractView {
 		  `;
 
 			console.log("post.id is", post.id)
-			const commentFormElement = document.createElement("div");
-			commentFormElement.id = "commentFormElement" + post.id;
+			const commentFormElement = document.createElement("form");
+			commentFormElement.id = "comment-form"
+			commentFormElement.className = "comment-form"
+			commentFormElement.method = "POST"
+			commentFormElement.setAttribute('parentPostID', post.id);
+			console.log(commentFormElement)
 			postElement.appendChild(commentFormElement);
 			// Adds a comment form to each post.  Laughs at you, scornfully, when you try and figure out why post.id is always the most recent post
+
+			// <form id="comment-form" class="comment-form" method="POST">
+			//  </form>
 			let commentFormHTML = `
-        <form id="comment-form" class="comment-form" method="POST">
           <label for="commentText"><b>Comment</b></label>
           <input type="text" placeholder="Enter comment" name="commentText" commentText="commentText" id="commentText" required commentParentID2="${post.id}"/><br>
           My value is ${post.id}
 		  <input type="hidden" name="commentText" commentParentID3="${post.id}" id="commentParentID" value="${post.id}"/><br>
-          <input type="submit" value="REPLY" class="btn">Submit Comment</button>
+          <input type="submit" value="REPLY" class="btn">
 		   <input type="hidden" id="postID" name="postID" value="${post.id}"></input>
 		   <input type="hidden" id="dfgdfgdf" name="dfgdfgdf" value="${post.id}">
 		   <testtestedytesttestteset="${post.id}">
 		   <input type="hidden" id="maybeThisWillWork" name="maybeThisWillWork" value="I don't know why this works">
-        </form>
       `;
-	  commentFormElement.innerHTML = commentFormHTML;
+			commentFormElement.innerHTML = commentFormHTML;
+			commentFormElement.addEventListener("submit", async function (event) {
+				event.preventDefault();
+		  
+				// Extract data from the submitted form
+				const form = event.target;
+				const commentText = form.querySelector("#commentText").value;
+				const postID = form.querySelector("#postID").value;
+		  
+				// Now, you can use commentText and postID to submit the comment for the correct post
+				// Fetch request here...
+				console.log(`Comment for post ID ${postID}: ${commentText}`);
+			  });
+		  
 			console.log("post.id is still", post.id)
 
 			// shows comments underneath post, if it has any to show
@@ -200,9 +218,12 @@ export default class Posts extends AbstractView {
 	  behavior, and retrieves the comment text from the input field. */
 	async submitCommentForm() {
 
+		console.log(" made it into this function")
+		const commentForm = document.querySelector('.comment-form');
 		// Attempt 5
-		const commentForms = document.querySelectorAll('.comment-form');
-		commentForms.forEach((commentForm) => {
+		// const commentForms = document.querySelectorAll('.comment-form');
+		// console.log("the length of commentForms is", commentForms.length)
+		// commentForms.forEach((commentForm) => {
 			commentForm.addEventListener('submit', async (event) => {
 				event.preventDefault();
 				const commentText = document.getElementById("commentText").value;
@@ -233,7 +254,7 @@ export default class Posts extends AbstractView {
 				// 	console.log(error)
 				// })
 			});
-		});
+		// });
 
 
 		// Attempt 4
