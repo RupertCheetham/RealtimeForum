@@ -60,6 +60,7 @@ export default class Posts extends AbstractView {
     `;
 	}
 
+	// The post form at the top of the main page
 	async submitForm() {
 		const postForm = document.getElementById("post-form");
 		console.log("postform is:", postForm);
@@ -101,6 +102,7 @@ export default class Posts extends AbstractView {
 		);
 	}
 
+	// Gets and displays posts; attaches a comments form to the bottom of each
 	async getPosts() {
 		let html = `
       <div>
@@ -117,11 +119,11 @@ export default class Posts extends AbstractView {
 		const posts = await response.json();
 
 		for (const post of posts) {
-			const postElement = document.createElement("div");
+			let postElement = document.createElement("div");
 			postElement.id = "Post" + post.id;
 			postElement.classList.add("post");
-
-			const comments = await fetchComments(post.id); // Wait for the comments to be fetched
+			console.log("in getPosts, post.id is", post.id)
+			let comments = await fetchComments(post.id); // Wait for the comments to be fetched
 
 			postElement.innerHTML = `
 			<ul>
@@ -139,20 +141,32 @@ export default class Posts extends AbstractView {
 		  `;
 
 			console.log("post.id is", post.id)
-
-			let commentHTML = `
-        <form id="comment-form${post.id}" class="comment-form" method="POST">
+			const commentFormElement = document.createElement("div");
+			commentFormElement.id = "commentFormElement" + post.id;
+			postElement.appendChild(commentFormElement);
+			// Adds a comment form to each post.  Laughs at you, scornfully, when you try and figure out why post.id is always the most recent post
+			let commentFormHTML = `
+        <form id="comment-form" class="comment-form" method="POST">
           <label for="commentText"><b>Comment</b></label>
-          <input type="text" placeholder="Enter comment" name="commentText" id="commentText" required /><br>
-          <input type="hidden" name="postId" id="postId" value="${post.id}" />
+          <input type="text" placeholder="Enter comment" name="commentText" commentText="commentText" id="commentText" required commentParentID2="${post.id}"/><br>
           My value is ${post.id}
-          <button type="submit" id="commentSubmit" class="btn">Submit Comment</button>
+		  <input type="hidden" name="commentText" commentParentID3="${post.id}" id="commentParentID" value="${post.id}"/><br>
+          <input type="submit" value="REPLY" class="btn">Submit Comment</button>
+		   <input type="hidden" id="postID" name="postID" value="${post.id}"></input>
+		   <input type="hidden" id="dfgdfgdf" name="dfgdfgdf" value="${post.id}">
+		   <testtestedytesttestteset="${post.id}">
+		   <input type="hidden" id="maybeThisWillWork" name="maybeThisWillWork" value="I don't know why this works">
         </form>
       `;
+	  commentFormElement.innerHTML = commentFormHTML;
+			console.log("post.id is still", post.id)
 
+			// shows comments underneath post, if it has any to show
+			// currently very inefficient, needs reworked
 			if (comments.length > 0) {
 				const commentsContainer = document.createElement("div");
 				commentsContainer.id = "commentContainer";
+				commentsContainer.className = "commentContainer";
 				let commentsNum = 1;
 				comments.forEach((comment) => {
 					const commentElement = document.createElement("div");
@@ -169,7 +183,7 @@ export default class Posts extends AbstractView {
 
 				postElement.appendChild(commentsContainer);
 			}
-			postElement.innerHTML += commentHTML;
+			// commentForm.setAttribute('parentPostID', post.id);
 			postContainer.appendChild(postElement);
 		}
 
@@ -185,71 +199,138 @@ export default class Posts extends AbstractView {
 	  form. It listens for the "submit" event on the comment form, prevents the default form submission
 	  behavior, and retrieves the comment text from the input field. */
 	async submitCommentForm() {
-		const commentForms = document.querySelectorAll(".comment-form");
 
+		// Attempt 5
+		const commentForms = document.querySelectorAll('.comment-form');
 		commentForms.forEach((commentForm) => {
-
-			commentForm.addEventListener("submit", async function (event) {
+			commentForm.addEventListener('submit', async (event) => {
 				event.preventDefault();
-				var postId = Number(document.getElementById("postId").value)
 				const commentText = document.getElementById("commentText").value;
-				;
-				try {
-					const response = await fetch("http://localhost:8080/comments", {
-						method: "POST",
-						headers: {
-							Accept: "application/json",
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify({
-							body: commentText,
-							parentPostId: Number(postId),
-						}),
-					});
-					//   postId = postId-1
-					console.log(postId, "is postId")
-					if (response.ok) {
-						document.getElementById("commentText").value = "";
-						await this.getPosts();
-					}
-				} catch (error) {
-					console.log(error);
-				}
-			}.bind(this));
+				const dfgdfgdf = document.getElementsByName("dfgdfgdf").value;
+				const CommentID = document.getElementById("commentParentID").value;
+				const CommentID2 = commentForm.getAttribute('commentParentID2');
+				const CommentID3 = commentForm.getAttribute('commentParentID3');
+				const maybeThisWillWork = commentForm.getAttribute('maybeThisWillWork');
+				const testtestedytesttestteset = commentForm.getAttribute('testtestedytesttestteset');
+
+				console.log("testtestedytesttestteset", testtestedytesttestteset, "maybeThisWillWork", maybeThisWillWork)
+				console.log(`commentText ${commentText}, dfgdfgdf ${dfgdfgdf}, CommentID ${CommentID}, commentID2: ${CommentID2}, CommentID3 ${CommentID3}`);
+
+				// fetch("http://localhost:8080/comments", {
+				// 	method: "POST",
+				// 	headers: {
+				// 		Accept: "application/json",
+				// 		"Content-Type": "application/json",
+				// 	},
+				// 	body: JSON.stringify({
+				// 		userID: UserID,
+				// 		type: Type,
+				// 		parentID: parseInt(ParentID),
+				// 		action: Action,
+				// 		reactionID: parseInt(ReactionID),
+				// 	}),
+				// }).catch((error) => {
+				// 	console.log(error)
+				// })
+			});
 		});
+
+
+		// Attempt 4
+		// commentForms.forEach((commentForm) => {
+		// 	commentForm.addEventListener('click', async (event) => {
+		// 		event.preventDefault();;
+		// 		const postText = document.getElementById("postText").value;
+		// 		const categories = document.getElementById("categories").value;
+		// 		const image = document.getElementById("image").value;
+		// 		console.log("submitted post:", postText, categories, image);
+
+		// 			const response = await fetch("http://localhost:8080/comments", {
+		// 				// 				method: "POST",
+		// 				// 				headers: {
+		// 				// 					Accept: "application/json",
+		// 				// 					"Content-Type": "application/json",
+		// 				// 				},
+		// 				// 				body: JSON.stringify({
+		// 				// 					body: commentText,
+		// 				// 					parentPostId: Number(commentParentID),
+		// 				// 				}),
+		// 				// 			}).catch((error) => {
+		// 				// 				console.log(error)
+		// 				// 			})
+		// 	}.bind(this));
+		// });
+
+
+		// Attempt 3
+		// 	const commentForms = document.querySelectorAll('.comment-form');
+		// 	commentForms.forEach((commentForm) => {
+		// 		commentForm.addEventListener('click', async (event) => {
+		// 			event.preventDefault();
+		// 			const commentText = document.getElementById("commentText").value;
+		// 			const commentParentID = commentForm.getAttribute('commentParentID');
+		// 			// Placeholder UserID
+		// 			// const UserID = 1;
+		// 			// Placeholder UserID
+
+		// 			console.log(`Received comment: ${commentText}, with parent ID ${commentParentID}`);
+
+		// 			const response = await fetch("http://localhost:8080/comments", {
+		// 				method: "POST",
+		// 				headers: {
+		// 					Accept: "application/json",
+		// 					"Content-Type": "application/json",
+		// 				},
+		// 				body: JSON.stringify({
+		// 					body: commentText,
+		// 					parentPostId: Number(commentParentID),
+		// 				}),
+		// 			}).catch((error) => {
+		// 				console.log(error)
+		// 			})
+		// 			if (response.ok) {
+		// 				document.getElementById("commentText").value = "";
+		// 				await this.getPosts();
+		// 			}
+		// 		});
+		// 	});
+		// }
+
+		// Attempt 2
+		// 	const commentForms = document.querySelectorAll(".comment-form");
+
+		// 	commentForms.forEach((commentForm) => {
+
+		// 		commentForm.addEventListener("submit", async function (event) {
+		// 			event.preventDefault();
+		// 			var postId = Number(commentForm.getAttribute('commentParentID'));
+		// 			console.log("comment parent post ID is:", postId)
+		// 			const commentText = commentForm.getElementById("commentText").value;
+		// 			;
+		// 			try {
+		// 				const response = await fetch("http://localhost:8080/comments", {
+		// 					method: "POST",
+		// 					headers: {
+		// 						Accept: "application/json",
+		// 						"Content-Type": "application/json",
+		// 					},
+		// 					body: JSON.stringify({
+		// 						body: commentText,
+		// 						parentPostId: Number(postId),
+		// 					}),
+		// 				});
+		// 				//   postId = postId-1
+		// 				console.log(postId, "is postId")
+		// 				if (response.ok) {
+		// 					document.getElementById("commentText").value = "";
+		// 					await this.getPosts();
+		// 				}
+		// 			} catch (error) {
+		// 				console.log(error);
+		// 			}
+		// 		}.bind(this));
+		// 	});
 	}
-	// 		const commentForm = document.getElementById("comment-form")
-
-	// 		commentForm.addEventListener("submit", function (event) {
-	// 			event.preventDefault()
-
-	// 			// const username = document.getElementById("commentUsername").value
-	// 			const parentPostID = parseInt(
-	// 				document.getElementById("postId").value,
-	// 				10
-	// 			)
-	// 			const comment = document.getElementById("commentText").value
-	// 			// console.log(username)
-	// 			console.log(parentPostID)
-	// 			console.log(comment)
-
-	// 			fetch("http://localhost:8080/comments", {
-	// 				method: "POST",
-	// 				headers: {
-	// 					Accept: "application/json",
-	// 					"Content-Type": "application/json",
-	// 				},
-	// 				body: JSON.stringify({
-	// 					// Username: username,
-	// 					ParentPostID: parentPostID,
-	// 					Body: comment,
-	// 				}),
-	// 			}).catch((error) => {
-	// 				console.log(error)
-	// 			})
-	// 		})
-
-	// 	}
 
 	// Adds reactions to db
 	async reactions() {
@@ -285,8 +366,6 @@ export default class Posts extends AbstractView {
 				})
 			});
 		});
-
-
 
 	}
 }
