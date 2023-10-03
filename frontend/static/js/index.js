@@ -45,8 +45,9 @@ const router = async () => {
 		const postsView = new Posts()
 		postsView.getPosts()
 		postsView.submitForm()
+
 		setTimeout(() => {
-			postsView.submitCommentForm()
+			// postsView.submitCommentForm()
 			postsView.reactions()
 		}, 1000)
 	}
