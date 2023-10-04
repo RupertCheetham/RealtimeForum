@@ -30,7 +30,7 @@ export function handleReactions() {
                 .then(async (response) => {
                     if (response.ok) {
                         // If the POST request was successful, make a GET request for reactionID
-                        const reactionData = await fetch(`http://localhost:8080/reaction?rowID=${parseInt(ReactionID)}&reactionTable=${Type}`);
+                        const reactionData = await fetch(`http://localhost:8080/reaction?parentID=${parseInt(ParentID)}&rowID=${parseInt(ReactionID)}&reactionTable=${Type}`);
 
                         if (reactionData.ok) {
                             const data = await reactionData.json();

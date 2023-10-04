@@ -43,6 +43,11 @@ func ReactionHandler(w http.ResponseWriter, r *http.Request) {
 	// method is GET.
 	if r.Method == "GET" {
 
+		parentID, err := strconv.Atoi(r.URL.Query().Get("parentID"))
+		if err != nil {
+			log.Println("There was an issue with parentID in ReactionHandler")
+			utils.HandleError("There was an isusue with parentID in ReactionHandler", err)
+		}
 		// Reads the rowID from the get request URL (http://localhost:8080/reaction?rowID=${parseInt(ReactionID)}&reactionTable=${Type})
 		rowID, err := strconv.Atoi(r.URL.Query().Get("rowID"))
 		if err != nil {
@@ -53,6 +58,32 @@ func ReactionHandler(w http.ResponseWriter, r *http.Request) {
 		// Reads the reactionTable from the request URL
 		reactionTable := r.URL.Query().Get("reactionTable")
 		log.Println("type is:", reactionTable)
+		if rowID == 0 {
+			postOrCommentTable := ""
+			if reactionTable == "POSTREACTIONS" {
+				postOrCommentTable = "POSTS"
+			} else {
+				postOrCommentTable = "COMMENTS"
+			}
+
+			updateQuery := fmt.Sprintf("UPDATE %s SET ReactionID = (SELECT Id FROM %s ORDER BY Id DESC LIMIT 1) WHERE Id = ?", postOrCommentTable, reactionTable)
+			_, err = db.Database.Exec(updateQuery, parentID)
+			if err != nil {
+				log.Println("There was a problem with updating a post/comments reactionID in ReactionHandler", err)
+				utils.HandleError("There was a problem with updating a post/comments reactionID in ReactionHandler", err)
+			}
+			// Query for the latest ReactionID after the update
+			var latestReactionID int
+			query := fmt.Sprintf("SELECT Id FROM %s ORDER BY Id DESC LIMIT 1", reactionTable)
+			err = db.Database.QueryRow(query).Scan(&latestReactionID)
+
+			if err != nil {
+				// Handle the error
+				log.Println("Error querying latest ReactionID:", err)
+				// You may return an error response or handle it as needed
+			}
+			rowID = latestReactionID
+		}
 
 		likes, dislikes, err := GetLikesAndDislikes(reactionTable, rowID)
 		log.Println("likes are", likes, "and dislikes are", dislikes)

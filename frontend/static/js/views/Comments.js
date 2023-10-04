@@ -67,8 +67,8 @@ export function attachCommentsToPost(comments) {
 		commentElement.innerHTML = `
 					Comment: ${comment.body}
 					<ul>
-					<button class="reaction-button" reaction-type="COMMENTREACTIONS" reaction-parent-id="${comment.id}" reaction-action="like" reaction-id = ${comment.reactionID}">👍 ${comment.commentLikes}</button>
-					<button class="reaction-button" reaction-type="COMMENTREACTIONS" reaction-parent-id="${comment.id}" reaction-action="dislike" reaction-id = ${comment.reactionID}">👎 ${comment.commentDislikes}</button>
+					<button class="reaction-button" reaction-type="COMMENTREACTIONS" reaction-parent-id="${comment.id}" reaction-action="like" reaction-id = "${comment.reactionID}">👍 ${comment.commentLikes}</button>
+					<button class="reaction-button" reaction-type="COMMENTREACTIONS" reaction-parent-id="${comment.id}" reaction-action="dislike" reaction-id = "${comment.reactionID}">👎 ${comment.commentDislikes}</button>
 					</ul>`
 		commentsContainer.appendChild(commentElement);
 	});
