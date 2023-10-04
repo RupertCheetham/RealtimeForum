@@ -3,15 +3,16 @@ import Nav from "./Nav.js";
 import { handleReactions } from "../utils/reactions.js";
 import { fetchComments, attachCommentForm, attachCommentsToPost } from "./Comments.js";
 
+// Contains what the Posts page can do, including rendering itself
 export default class Posts extends AbstractView {
 	constructor() {
 		super();
 		this.setTitle("Posts");
 	}
 
-	async getHTML() {
+	async renderHTML() {
 		const nav = new Nav(); // Create an instance of the Nav class
-		const navHTML = await nav.getHTML(); // Get the HTML content for the navigation
+		const navHTML = await nav.renderHTML(); // Get the HTML content for the navigation
 		const postForm = postFormHTML()
 		return `
       ${navHTML}
@@ -95,8 +96,8 @@ export default class Posts extends AbstractView {
 			  <li><b>Categories:</b> ${post.categories}</li>
 			  <li><b>Reaction:</b> ${post.reactionID}</li>
 			  <li>
-			  <button class="reaction-button" reaction-type="POSTREACTIONS" reaction-parent-id="${post.id}" reaction-action="like" reaction-id = ${post.reactionID}">👍</button>
-			  <button class="reaction-button" reaction-type="POSTREACTIONS" reaction-parent-id="${post.id}" reaction-action="dislike" reaction-id = ${post.reactionID}">👎</button>
+			  <button class="reaction-button" reaction-type="POSTREACTIONS" reaction-parent-id="${post.id}" reaction-action="like" reaction-id = ${post.reactionID}">👍 ${post.postLikes}</button>
+			  <button class="reaction-button" reaction-type="POSTREACTIONS" reaction-parent-id="${post.id}" reaction-action="dislike" reaction-id = ${post.reactionID}">👎 ${post.postDislikes}</button>
 			  </li>
 			</ul>
 		  `;
@@ -115,7 +116,6 @@ export default class Posts extends AbstractView {
 
 			postContainer.appendChild(postElement);
 		}
-
 
 	}
 

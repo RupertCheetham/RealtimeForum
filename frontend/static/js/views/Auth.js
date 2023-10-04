@@ -7,7 +7,7 @@ async function switchToPostsView() {
 
 	// Create an instance of the Posts view and render it
 	const postsView = new Posts()
-	container.innerHTML = await postsView.getHTML()
+	container.innerHTML = await postsView.renderHTML()
 }
 
 export default class Auth extends AbstractView {
@@ -16,7 +16,7 @@ export default class Auth extends AbstractView {
 		this.setTitle("Sign in  or sign up")
 	}
 
-	async getHTML() {
+	async renderHTML() {
 		return `
 		<div id="auth-container" class="auth-container">
 		<div class="forms-container">

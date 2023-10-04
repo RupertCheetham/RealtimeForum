@@ -18,10 +18,18 @@ func AddPostToDatabase(userID int, img string, body string, categories string) e
 
 // retrieves all posts from database and returns them
 func GetPostFromDatabase() ([]PostEntry, error) {
-	rows, err := Database.Query("SELECT * FROM POSTS ORDER BY Id DESC")
+	query := `
+	SELECT p.Id, p.UserId, p.Img, p.Body, p.Categories, p.CreationDate, p.ReactionID,
+		   COALESCE(pr.Likes, 0) AS Likes, COALESCE(pr.Dislikes, 0) AS Dislikes
+	FROM POSTS p
+	LEFT JOIN POSTREACTIONS pr ON p.ReactionID = pr.Id
+	ORDER BY p.Id DESC
+`
+
+	rows, err := Database.Query(query)
 	if err != nil {
-		utils.HandleError("Error querying POSTS from database:", err)
-		log.Println("Error querying POSTS from database:", err)
+		utils.HandleError("Error querying posts with likes and dislikes from database:", err)
+		log.Println("Error querying posts with likes and dislikes from database:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -29,7 +37,7 @@ func GetPostFromDatabase() ([]PostEntry, error) {
 	var posts []PostEntry
 	for rows.Next() {
 		var post PostEntry
-		err := rows.Scan(&post.Id, &post.UserId, &post.Img, &post.Body, &post.Categories, &post.CreationDate, &post.ReactionID)
+		err := rows.Scan(&post.Id, &post.UserId, &post.Img, &post.Body, &post.Categories, &post.CreationDate, &post.ReactionID, &post.Likes, &post.Dislikes)
 		if err != nil {
 			utils.HandleError("Error scanning row from database:", err)
 			log.Println("Error scanning row from database:", err)

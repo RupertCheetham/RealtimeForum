@@ -7,9 +7,9 @@ export default class Chat extends AbstractView {
 		this.setTitle("Chat")
 	}
 
-	async getHTML() {
+	async renderHTML() {
 		const nav = new Nav() // Create an instance of the Nav class
-		const navHTML = await nav.getHTML() // Get the HTML content for the navigation
+		const navHTML = await nav.renderHTML() // Get the HTML content for the navigation
 
 		return `
 		${navHTML}

@@ -19,6 +19,8 @@ type PostEntry struct {
 	Categories   string `json:"categories"`
 	CreationDate string `json:"creationDate"`
 	ReactionID   int    `json:"reactionID"`
+	Likes        int    `json:"postLikes"`
+	Dislikes     int    `json:"postDislikes"`
 }
 
 type CommentEntry struct {
@@ -28,6 +30,8 @@ type CommentEntry struct {
 	Body         string `json:"body"`
 	CreationDate string `json:"creationDate"`
 	ReactionID   int    `json:"reactionID"`
+	Likes        int    `json:"commentLikes"`
+	Dislikes     int    `json:"commentDislikes"`
 }
 
 type ReactionEntry struct {

@@ -33,7 +33,7 @@ const router = async () => {
 
 	const view = new match.route.view()
 
-	document.querySelector("#container").innerHTML = await view.getHTML()
+	document.querySelector("#container").innerHTML = await view.renderHTML()
 
 	if (match.route.view === Auth) {
 		const authView = new Auth()

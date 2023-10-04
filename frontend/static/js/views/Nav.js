@@ -6,7 +6,7 @@ export default class Nav extends AbstractView {
 		this.setTitle("Posts")
 	}
 
-	async getHTML() {
+	async renderHTML() {
 		return `
 		<nav id="nav" class="nav">
 			<a href="/" class="nav-link" data-link>Logout</a>

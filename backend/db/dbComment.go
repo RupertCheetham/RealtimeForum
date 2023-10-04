@@ -21,20 +21,26 @@ func AddCommentToDatabase(parentPostID int, userID int, body string) error {
 
 // retrieves all posts from database and returns them
 func GetCommentsFromDatabase() ([]CommentEntry, error) {
+	query := `
+        SELECT c.Id, c.PostID, c.UserId, c.Body, c.CreationDate, c.ReactionID,
+               COALESCE(cr.Likes, 0) AS Likes, COALESCE(cr.Dislikes, 0) AS Dislikes
+        FROM COMMENTS c
+        LEFT JOIN COMMENTREACTIONS cr ON c.ReactionID = cr.Id
+        ORDER BY c.Id ASC
+    `
 
-	rows, err := Database.Query("SELECT * FROM COMMENTS ORDER BY Id ASC")
+	rows, err := Database.Query(query)
 	if err != nil {
-		utils.HandleError("Error querying comments from database:", err)
-		log.Println("Error querying comments from database:", err)
+		utils.HandleError("Error querying comments with likes and dislikes from database:", err)
+		log.Println("Error querying comments with likes and dislikes from database:", err)
 		return nil, err
 	}
 	defer rows.Close()
 
 	var comments []CommentEntry
 	for rows.Next() {
-
 		var comment CommentEntry
-		err := rows.Scan(&comment.Id, &comment.ParentPostID, &comment.UserId, &comment.Body, &comment.CreationDate, &comment.ReactionID)
+		err := rows.Scan(&comment.Id, &comment.ParentPostID, &comment.UserId, &comment.Body, &comment.CreationDate, &comment.ReactionID, &comment.Likes, &comment.Dislikes)
 		if err != nil {
 			utils.HandleError("Error scanning row from database:", err)
 			log.Println("Error scanning row from database:", err)
