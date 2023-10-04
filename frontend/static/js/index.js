@@ -40,11 +40,11 @@ const router = async () => {
 		authView.submitForm()
 	}
 
-	// Call the submitForm method here
+	// Call the submitForm and displayPosts method here
 	if (match.route.view === Posts) {
 		const postsView = new Posts()
-		postsView.getPosts()
-		postsView.submitForm()
+		postsView.displayCompletePosts()
+		postsView.postSubmitForm()
 
 		setTimeout(() => {
 			// postsView.submitCommentForm()
