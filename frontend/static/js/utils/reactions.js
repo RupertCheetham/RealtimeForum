@@ -26,12 +26,35 @@ export function handleReactions() {
                     action: Action,
                     reactionID: parseInt(ReactionID),
                 }),
-            }).catch((error) => {
-                console.log(error)
-            });
-            
-        });
-        
-    });
+            })
+                .then(async (response) => {
+                    if (response.ok) {
+                        // If the POST request was successful, make a GET request for reactionID
+                        const reactionData = await fetch(`http://localhost:8080/reaction?rowID=${parseInt(ReactionID)}&reactionTable=${Type}`);
 
+                        if (reactionData.ok) {
+                            const data = await reactionData.json();
+                            console.log("Reaction data:", data);
+
+                            // Update the like and dislike buttons in the DOM
+                            const likeButton = document.querySelector(`.reaction-button[reaction-id="${ReactionID}"][reaction-action="like"]`);
+                            console.log("likeButton", likeButton)
+                            const dislikeButton = document.querySelector(`.reaction-button[reaction-id="${ReactionID}"][reaction-action="dislike"]`);
+                            if (likeButton && dislikeButton) {
+                                likeButton.innerText = `👍 ${data.Likes}`;
+                                dislikeButton.innerText = `👎 ${data.Dislikes}`;
+                                console.log("made it")
+                            }
+                        } else {
+                            console.log("Error fetching reaction data:", reactionData.statusText);
+                        }
+                    } else {
+                        console.log("Error with the POST request:", response.statusText);
+                    }
+                })
+                .catch((error) => {
+                    console.log("Error with the POST request:", error);
+                });
+        });
+    });
 }

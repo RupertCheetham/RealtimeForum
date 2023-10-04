@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"realtimeForum/db"
 	"realtimeForum/utils"
+	"strconv"
 )
 
 // Handler for posts page
@@ -39,19 +41,57 @@ func ReactionHandler(w http.ResponseWriter, r *http.Request) {
 
 	// This code block is handling the logic for retrieving posts from the database when the HTTP request
 	// method is GET.
-	// if r.Method == "GET" {
-	// 	posts, err := db.GetPostFromDatabase()
-	// 	if err != nil {
-	// 		utils.HandleError("Problem getting posts from db in AddPostHandler", err)
-	// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 		return
-	// 	}
+	if r.Method == "GET" {
 
-	// 	if len(posts) > 0 {
-	// 		json.NewEncoder(w).Encode(posts)
-	// 	} else {
-	// 		w.Write([]byte("No posts available"))
-	// 	}
-	// }
+		// Reads the rowID from the get request URL (http://localhost:8080/reaction?rowID=${parseInt(ReactionID)}&reactionTable=${Type})
+		rowID, err := strconv.Atoi(r.URL.Query().Get("rowID"))
+		if err != nil {
+			log.Println("There was an issue converting a string to an int in ReactionHandler")
+			utils.HandleError("There was an issue converting a string to an int in ReactionHandler", err)
+		}
+		log.Println("rowID is:", rowID)
+		// Reads the reactionTable from the request URL
+		reactionTable := r.URL.Query().Get("reactionTable")
+		log.Println("type is:", reactionTable)
 
+		likes, dislikes, err := GetLikesAndDislikes(reactionTable, rowID)
+		log.Println("likes are", likes, "and dislikes are", dislikes)
+		if err != nil {
+			log.Println("There was a problem with GetLikesAndDislikes in ReactionHandler")
+			utils.HandleError("There was a problem with GetLikesAndDislikes in ReactionHandler", err)
+		}
+
+		response := struct {
+			Likes    int
+			Dislikes int
+		}{
+			Likes:    likes,
+			Dislikes: dislikes,
+		}
+
+		jsonResponse, err := json.Marshal(response)
+		if err != nil {
+			log.Println("There was a problem marshalling in ReactionHandler.", err)
+			utils.HandleError("There was a problem marshalling in ReactionHandler.", err)
+
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		w.Write(jsonResponse)
+	}
+
+}
+
+// Returns the likes and dislikes for a given post/comment, from the relevant table
+func GetLikesAndDislikes(reactionTable string, rowID int) (int, int, error) {
+	query := fmt.Sprintf("SELECT Likes, Dislikes FROM %s WHERE Id = ?", reactionTable)
+
+	var likes, dislikes int
+	err := db.Database.QueryRow(query, rowID).Scan(&likes, &dislikes)
+	if err != nil {
+		utils.HandleError("there was a problem in GetLikesAndDislikes", err)
+		return 0, 0, err
+	}
+
+	return likes, dislikes, nil
 }

@@ -54,6 +54,11 @@ func AddReactionToDatabase(tableName string, parentID int, userID int, reaction 
 	}
 }
 
+func GetReactionData(reactionType string, reactionID int) (int, int, error) {
+
+	return 3, 0, nil
+}
+
 // Updates values already in the reaction table
 func UpdateReactionInDatabase(tableName string, rowID int, userID int, reaction string) {
 

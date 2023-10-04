@@ -96,8 +96,8 @@ export default class Posts extends AbstractView {
 			  <li><b>Categories:</b> ${post.categories}</li>
 			  <li><b>Reaction:</b> ${post.reactionID}</li>
 			  <li>
-			  <button class="reaction-button" reaction-type="POSTREACTIONS" reaction-parent-id="${post.id}" reaction-action="like" reaction-id = ${post.reactionID}">👍 ${post.postLikes}</button>
-			  <button class="reaction-button" reaction-type="POSTREACTIONS" reaction-parent-id="${post.id}" reaction-action="dislike" reaction-id = ${post.reactionID}">👎 ${post.postDislikes}</button>
+			  <button class="reaction-button" reaction-type="POSTREACTIONS" reaction-parent-id="${post.id}" reaction-action="like" reaction-id = "${post.reactionID}">👍 ${post.postLikes}</button>
+			  <button class="reaction-button" reaction-type="POSTREACTIONS" reaction-parent-id="${post.id}" reaction-action="dislike" reaction-id = "${post.reactionID}">👎 ${post.postDislikes}</button>
 			  </li>
 			</ul>
 		  `;
