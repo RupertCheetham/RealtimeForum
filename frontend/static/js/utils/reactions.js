@@ -43,7 +43,6 @@ export function handleReactions() {
                             if (likeButton && dislikeButton) {
                                 likeButton.innerText = `👍 ${data.Likes}`;
                                 dislikeButton.innerText = `👎 ${data.Dislikes}`;
-                                console.log("made it")
                             }
                         } else {
                             console.log("Error fetching reaction data:", reactionData.statusText);

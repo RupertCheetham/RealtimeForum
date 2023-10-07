@@ -1,8 +1,9 @@
 // Comments need to be reworked, currently very inefficient.  Probably foreign keys will be involved
 export async function fetchComments(parentPostID) {
-	const response = await fetch("http://localhost:8080/comments");
+	const response = await fetch(`http://localhost:8080/comments?postID=${parentPostID}`);
+	console.log("in comments.js, parentPostID is", parentPostID)
 	const comments = await response.json();
-	return comments.filter((comment) => comment.parentPostId == parentPostID);
+	return comments
 }
 
 // attaches the comment form to the bottom of each post, if you've placed it in the right place
@@ -17,13 +18,7 @@ export function attachCommentForm(post, postElement) {
 
 	// <form id="comment-form" class="comment-form" method="POST">
 	//  </form>
-	let commentFormHTML = `
-	<label for="commentText"><b>Comment</b></label>
-	<input type="text" placeholder="Enter comment" name="commentText" commentText="commentText" id="commentText" required"/><br>
-	<input type="submit" value="REPLY" class="btn">
-	<input type="hidden" id="postID" name="postID" value="${post.id}"></input>
-	`;
-	commentFormElement.innerHTML = commentFormHTML;
+	commentFormElement.innerHTML = getCommentFormHTML(post.id);
 	commentFormElement.addEventListener("submit", async function (event) {
 		event.preventDefault();
 
@@ -74,4 +69,14 @@ export function attachCommentsToPost(comments) {
 	});
 
 	return commentsContainer;
+}
+
+// The comment submission form
+function getCommentFormHTML(postID){
+	return `
+	<label for="commentText"><b>Comment</b></label>
+	<input type="text" placeholder="Enter comment" name="commentText" commentText="commentText" id="commentText" required"/><br>
+	<input type="submit" value="REPLY" class="btn">
+	<input type="hidden" id="postID" name="postID" value="${postID}"></input>
+	` 
 }

@@ -13,7 +13,7 @@ export default class Posts extends AbstractView {
 	async renderHTML() {
 		const nav = new Nav(); // Create an instance of the Nav class
 		const navHTML = await nav.renderHTML(); // Get the HTML content for the navigation
-		const postForm = postFormHTML()
+		const postForm = getPostFormHTML()
 		return `
       ${navHTML}
 	  ${postForm}
@@ -107,16 +107,12 @@ export default class Posts extends AbstractView {
 
 			// fetch comments, if any, for this post
 			let comments = await fetchComments(post.id); // Wait for the comments to be fetched
-			// shows comments underneath post, if it has any to show
-			// currently very inefficient, needs reworked
-			if (comments.length > 0) {
+			if (comments !== null) {
 				let postComments = attachCommentsToPost(comments)
 				postElement.appendChild(postComments);
 			}
-
 			postContainer.appendChild(postElement);
 		}
-
 	}
 
 	// Adds reactions to db
@@ -125,13 +121,13 @@ export default class Posts extends AbstractView {
 	}
 }
 
-function postFormHTML() {
+function getPostFormHTML() {
 
 	return `<div class="post-form">
         <form id="post-form" method="POST">
           <p>Kindly fill in this form to post.</p>
-          <div class="input-row">
-            <div class="input-field">
+         
+            <div class="post-form-input-field">
               <label for="postText"><b>Post</b></label>
               <input
                 type="text"
@@ -141,7 +137,7 @@ function postFormHTML() {
                 required
               />
             </div>
-            <div class="input-field">
+            <div class="post-form-input-field">
               <label for="categories"><b>Categories</b></label>
               <input
                 type="text"
@@ -151,7 +147,7 @@ function postFormHTML() {
                 required
               />
             </div>
-            <div class="input-field">
+            <div class="post-form-input-field">
               <label for="image"><b>Image</b></label>
               <input
                 type="text"
@@ -161,8 +157,8 @@ function postFormHTML() {
                 required
               />
             </div>
-          </div>
-          <button class="btn" id="submit">Submit Post</button>
+          
+          <button class="postSubmitButton" id="submit">Submit Post</button>
         </form>
       </div>`
 }

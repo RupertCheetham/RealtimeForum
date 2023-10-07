@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"realtimeForum/utils"
+	"strconv"
 )
 
 // adds a post to the database
@@ -20,16 +21,18 @@ func AddCommentToDatabase(parentPostID int, userID int, body string) error {
 }
 
 // retrieves all posts from database and returns them
-func GetCommentsFromDatabase() ([]CommentEntry, error) {
+func GetCommentsFromDatabase(parentPostID int) ([]CommentEntry, error) {
 	query := `
         SELECT c.Id, c.PostID, c.UserId, c.Body, c.CreationDate, c.ReactionID,
                COALESCE(cr.Likes, 0) AS Likes, COALESCE(cr.Dislikes, 0) AS Dislikes
         FROM COMMENTS c
         LEFT JOIN COMMENTREACTIONS cr ON c.ReactionID = cr.Id
+		Where c.PostID = ?
         ORDER BY c.Id ASC
     `
 
-	rows, err := Database.Query(query)
+	postID := strconv.Itoa(parentPostID)
+	rows, err := Database.Query(query, postID)
 	if err != nil {
 		utils.HandleError("Error querying comments with likes and dislikes from database:", err)
 		log.Println("Error querying comments with likes and dislikes from database:", err)
@@ -48,6 +51,5 @@ func GetCommentsFromDatabase() ([]CommentEntry, error) {
 		}
 		comments = append(comments, comment)
 	}
-
 	return comments, nil
 }

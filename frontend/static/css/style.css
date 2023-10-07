@@ -35,17 +35,6 @@ input {
 	left: 0;
 }
 
-.nav{
-	width: 100%;
-	background-color: #5995fd;
-	border: none;
-	outline: none;
-	max-height: 20%;
-	color: #fff;
-	text-transform: uppercase;
-	font-weight: 600;
-}
-
 .contentContainer {
     display: flex;
     justify-content: space-between;
@@ -126,20 +115,6 @@ form.sign-in-form {
 	margin-bottom: 10px;
 }
 
-.post-input-field-container {
-	max-height: 400px; /* Set a maximum height as needed */
-	height: 400px;
-	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
-}
-
-.post-input-row {
-    display: flex;
-	padding-bottom: 10px;
-    justify-content: space-between; /* Adjust as needed */
-    align-items: center; /* Center vertically */
-    flex-wrap: wrap; /* Wrap items to the next row if needed */
-}
-
 .input-field-container {
 	max-height: 400px; /* Set a maximum height as needed */
 	height: 400px;
@@ -210,19 +185,6 @@ form.sign-in-form {
 .social-icon:hover {
 	color: #4481eb;
 	border-color: #4481eb;
-}
-
-.post-form {
-	width: 100%;
-	background-color: #5995fd;
-	border: none;
-	outline: none;
-	border-radius: 49px;
-	color: #fff;
-	text-transform: uppercase;
-	font-weight: 600;
-	margin: 10px 0;
-	transition: 0.5s;
 }
 
 .btn {
@@ -322,15 +284,7 @@ form.sign-in-form {
 	padding: 0.7rem 0;
 }
 
-.btn.transparent {
-	margin: 0;
-	background: none;
-	border: 2px solid #fff;
-	width: 130px;
-	height: 41px;
-	font-weight: 600;
-	font-size: 0.8rem;
-}
+
 
 .right-panel .image,
 .right-panel .content {
@@ -439,6 +393,16 @@ form.sign-in-form {
 		width: 110px;
 		height: 35px;
 		font-size: 0.7rem;
+	}
+
+	.btn.transparent {
+		margin: 0;
+		background: none;
+		border: 2px solid #fff;
+		width: 130px;
+		height: 41px;
+		font-weight: 600;
+		font-size: 0.8rem;
 	}
 
 	.container:before {

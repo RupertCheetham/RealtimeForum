@@ -42,13 +42,6 @@ func ReactionHandler(w http.ResponseWriter, r *http.Request) {
 	// This code block is handling the logic for retrieving posts from the database when the HTTP request
 	// method is GET.
 	if r.Method == "GET" {
-
-		// parentID, err := strconv.Atoi(r.URL.Query().Get("parentID"))
-		// if err != nil {
-		// 	log.Println("There was an issue with parentID in ReactionHandler")
-		// 	utils.HandleError("There was an isusue with parentID in ReactionHandler", err)
-		// }
-		// Reads the rowID from the get request URL (http://localhost:8080/reaction?rowID=${parseInt(ReactionID)}&reactionTable=${Type})
 		rowID, err := strconv.Atoi(r.URL.Query().Get("rowID"))
 		if err != nil {
 			log.Println("There was an issue converting a string to an int in ReactionHandler")
