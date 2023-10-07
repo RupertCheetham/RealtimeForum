@@ -1,7 +1,6 @@
 // Comments need to be reworked, currently very inefficient.  Probably foreign keys will be involved
 export async function fetchComments(parentPostID) {
 	const response = await fetch(`http://localhost:8080/comments?postID=${parentPostID}`);
-	console.log("in comments.js, parentPostID is", parentPostID)
 	const comments = await response.json();
 	return comments
 }
@@ -57,13 +56,14 @@ export function attachCommentsToPost(comments) {
 	let commentsNum = 1;
 	comments.forEach((comment) => {
 		const commentElement = document.createElement("div");
-		commentElement.className = "comment" + commentsNum++;
-		// commentElement.textContent = `Comment: ${comment.body}`;
+		commentElement.id = "comment" + commentsNum++
+		commentElement.className = "comment";
+		commentElement.setAttribute('reactionID', comment.reactionID);
 		commentElement.innerHTML = `
 					Comment: ${comment.body}
 					<ul>
-					<button class="reaction-button" reaction-type="COMMENTREACTIONS" reaction-parent-id="${comment.id}" reaction-action="like" reaction-id = "${comment.reactionID}">👍 ${comment.commentLikes}</button>
-					<button class="reaction-button" reaction-type="COMMENTREACTIONS" reaction-parent-id="${comment.id}" reaction-action="dislike" reaction-id = "${comment.reactionID}">👎 ${comment.commentDislikes}</button>
+					<button class="reaction-button" reaction-action="like" reaction-parent-class="comment" reaction-parent-id="${comment.id}"  reaction-id = "${commentElement.getAttribute('reactionID')}">👍 ${comment.commentLikes}</button>
+					<button class="reaction-button" reaction-action="dislike" reaction-parent-class="comment" reaction-parent-id="${comment.id}"  reaction-id = "${commentElement.getAttribute('reactionID')}">👎 ${comment.commentDislikes}</button>
 					</ul>`
 		commentsContainer.appendChild(commentElement);
 	});

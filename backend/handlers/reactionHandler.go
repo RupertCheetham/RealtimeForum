@@ -10,109 +10,126 @@ import (
 	"strconv"
 )
 
-// Handler for posts page
+// Handler for reactions (likes/dislikes)
 func ReactionHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
 
-	// This code block is handling the logic for adding a new post to the database.
 	if r.Method == "POST" {
-		var reactionEntry db.ReactionEntry
-		err := json.NewDecoder(r.Body).Decode(&reactionEntry)
-
-		if err != nil {
-			log.Println("Problem decoding JSON in ReactionHandler", err)
-			utils.HandleError("Problem decoding JSON in ReactionHandler", err)
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		log.Println("Received", reactionEntry.Action, "for", reactionEntry.Type, reactionEntry.ParentID, "from UserID:", reactionEntry.UserID, ", reactionID:", reactionEntry.ReactionID)
-
-		if reactionEntry.ReactionID == 0 {
-			db.AddReactionToDatabase(reactionEntry.Type, reactionEntry.ParentID, reactionEntry.UserID, reactionEntry.Action)
-		} else {
-			db.UpdateReactionInDatabase(reactionEntry.Type, reactionEntry.ReactionID, reactionEntry.UserID, reactionEntry.Action)
-		}
-
-		w.WriteHeader(http.StatusCreated)
-
+		ReactionHandlerPostMethod(w, r)
 	}
 
-	// This code block is handling the logic for retrieving posts from the database when the HTTP request
-	// method is GET.
 	if r.Method == "GET" {
-		rowID, err := strconv.Atoi(r.URL.Query().Get("rowID"))
-		if err != nil {
-			log.Println("There was an issue converting a string to an int in ReactionHandler")
-			utils.HandleError("There was an issue converting a string to an int in ReactionHandler", err)
-		}
-		log.Println("rowID is:", rowID)
-		// Reads the reactionTable from the request URL
-		reactionTable := r.URL.Query().Get("reactionTable")
-		log.Println("type is:", reactionTable)
-		if rowID == 0 {
-			// postOrCommentTable := ""
-			// if reactionTable == "POSTREACTIONS" {
-			// 	postOrCommentTable = "POSTS"
-			// } else {
-			// 	postOrCommentTable = "COMMENTS"
-			// }
-
-			// updateQuery := fmt.Sprintf("UPDATE %s SET ReactionID = (SELECT Id FROM %s ORDER BY Id DESC LIMIT 1) WHERE Id = ?", postOrCommentTable, reactionTable)
-			// _, err = db.Database.Exec(updateQuery, parentID)
-			// if err != nil {
-			// 	log.Println("There was a problem with updating a post/comments reactionID in ReactionHandler", err)
-			// 	utils.HandleError("There was a problem with updating a post/comments reactionID in ReactionHandler", err)
-			// }
-			// Query for the latest ReactionID after the update
-			var latestReactionID int
-			query := fmt.Sprintf("SELECT Id FROM %s ORDER BY Id DESC LIMIT 1", reactionTable)
-			err = db.Database.QueryRow(query).Scan(&latestReactionID)
-
-			if err != nil {
-				// Handle the error
-				log.Println("Error querying latest ReactionID:", err)
-				// You may return an error response or handle it as needed
-			}
-			rowID = latestReactionID
-		}
-
-		likes, dislikes, err := GetLikesAndDislikes(reactionTable, rowID)
-		log.Println("likes are", likes, "and dislikes are", dislikes)
-		if err != nil {
-			log.Println("There was a problem with GetLikesAndDislikes in ReactionHandler")
-			utils.HandleError("There was a problem with GetLikesAndDislikes in ReactionHandler", err)
-		}
-
-		response := struct {
-			Likes    int
-			Dislikes int
-		}{
-			Likes:    likes,
-			Dislikes: dislikes,
-		}
-
-		jsonResponse, err := json.Marshal(response)
-		if err != nil {
-			log.Println("There was a problem marshalling in ReactionHandler.", err)
-			utils.HandleError("There was a problem marshalling in ReactionHandler.", err)
-
-		}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
-		w.Write(jsonResponse)
+		ReactionHandlerGetMethod(w, r)
 	}
 
 }
 
+// This deals with posting decoding reaction data and sending it to the relevant functions
+func ReactionHandlerPostMethod(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("POST")
+	var reactionEntry db.ReactionEntry
+	err := json.NewDecoder(r.Body).Decode(&reactionEntry)
+	if err != nil {
+		log.Println("Problem decoding JSON in ReactionHandler", err)
+		utils.HandleError("Problem decoding JSON in ReactionHandler", err)
+		return
+	}
+
+	log.Println("Received", reactionEntry.Action, "for", reactionEntry.Type, reactionEntry.ParentID, "from UserID:", reactionEntry.UserID, ", reactionID:", reactionEntry.ReactionID)
+
+	if reactionEntry.ReactionID == 0 {
+		fmt.Println("I made it here")
+		db.AddReactionToDatabase(reactionEntry.Type, reactionEntry.ParentID, reactionEntry.UserID, reactionEntry.Action)
+	} else {
+		db.UpdateReactionInDatabase(reactionEntry.Type, reactionEntry.ReactionID, reactionEntry.UserID, reactionEntry.Action)
+	}
+
+	w.WriteHeader(http.StatusCreated)
+}
+
+// Returns values for a given post/comment
+// This function is called by the JS after it has made a reaction post request
+func ReactionHandlerGetMethod(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("GET")
+	// Reads whether the reaction was to a post or a comment from the request URL
+	reactionParentClass := r.URL.Query().Get("reactionParentClass")
+	// Reads the reaction tables row ID from the request URL
+	rowID, err := strconv.Atoi(r.URL.Query().Get("rowID"))
+
+	if err != nil {
+		log.Println("There was an issue converting a string to an int in ReactionHandlerGetMethod", err)
+		utils.HandleError("There was an issue converting a string to an int in ReactionHandlerGetMethod", err)
+	}
+
+	// chooses the correct table name, based on the submitted class
+	tableName := ""
+	if reactionParentClass == "post" {
+		tableName = "POSTREACTIONS"
+	} else {
+		tableName = "COMMENTREACTIONS"
+	}
+
+	// if the submitted row ID was 0 then fear not!
+	// the row ID will be the latest entry into the relevant reaction table
+	// this function updates the supplied rowID to the new, correct value
+	if rowID == 0 {
+		rowID = obtainNewRowID(tableName)
+	}
+
+	likes, dislikes, err := GetLikesAndDislikes(tableName, rowID)
+	log.Println("likes are", likes, "and dislikes are", dislikes)
+	if err != nil {
+		log.Println("There was a problem with GetLikesAndDislikes in ReactionHandler")
+		utils.HandleError("There was a problem with GetLikesAndDislikes in ReactionHandler", err)
+	}
+
+	response := struct {
+		ReactionID int
+		Likes      int
+		Dislikes   int
+	}{
+		ReactionID: rowID,
+		Likes:      likes,
+		Dislikes:   dislikes,
+	}
+
+	jsonResponse, err := json.Marshal(response)
+	if err != nil {
+		log.Println("There was a problem marshalling in ReactionHandler.", err)
+		utils.HandleError("There was a problem marshalling in ReactionHandler.", err)
+
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	w.Write(jsonResponse)
+}
+
+func obtainNewRowID(tableName string) int {
+
+	var rowID int
+
+	query := fmt.Sprintf("SELECT Id FROM %s ORDER BY Id DESC LIMIT 1", tableName)
+	err := db.Database.QueryRow(query).Scan(&rowID)
+
+	if err != nil {
+		log.Println("Error querying latest ReactionID in ReactionHandlerGetMethod:", err)
+		utils.HandleError("Error querying latest ReactionID in ReactionHandlerGetMethod:", err)
+	}
+	return rowID
+}
+
 // Returns the likes and dislikes for a given post/comment, from the relevant table
-func GetLikesAndDislikes(reactionTable string, rowID int) (int, int, error) {
-	query := fmt.Sprintf("SELECT Likes, Dislikes FROM %s WHERE Id = ?", reactionTable)
+func GetLikesAndDislikes(tableName string, rowID int) (int, int, error) {
+
+	query := fmt.Sprintf("SELECT Likes, Dislikes FROM %s WHERE Id = ?", tableName)
 
 	var likes, dislikes int
 	err := db.Database.QueryRow(query, rowID).Scan(&likes, &dislikes)
 	if err != nil {
+		log.Println("there was a problem in GetLikesAndDislikes", err)
 		utils.HandleError("there was a problem in GetLikesAndDislikes", err)
 		return 0, 0, err
 	}

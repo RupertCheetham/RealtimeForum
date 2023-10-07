@@ -86,6 +86,8 @@ export default class Posts extends AbstractView {
 			let postElement = document.createElement("div");
 			postElement.id = "Post" + post.id;
 			postElement.classList.add("post");
+			postElement.setAttribute('reactionID', post.reactionID);
+
 
 			postElement.innerHTML = `
 			<ul>
@@ -94,10 +96,11 @@ export default class Posts extends AbstractView {
 			  <li><b>Img:</b> ${post.img}</li>
 			  <li><b>Body:</b> ${post.body}</li>
 			  <li><b>Categories:</b> ${post.categories}</li>
-			  <li><b>Reaction:</b> ${post.reactionID}</li>
+			  <li><b>Reaction:</b> ${postElement.getAttribute('reactionID')}</li>
 			  <li>
-			  <button class="reaction-button" reaction-type="POSTREACTIONS" reaction-parent-id="${post.id}" reaction-action="like" reaction-id = "${post.reactionID}">👍 ${post.postLikes}</button>
-			  <button class="reaction-button" reaction-type="POSTREACTIONS" reaction-parent-id="${post.id}" reaction-action="dislike" reaction-id = "${post.reactionID}">👎 ${post.postDislikes}</button>
+			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id}" reaction-action="like" reaction-id = "${postElement.getAttribute('reactionID')}">👍 ${post.postLikes}</button>
+			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id}" reaction-action="dislike" reaction-id = "${postElement.getAttribute('reactionID')}">👎 ${post.postDislikes}</button>
+			 
 			  </li>
 			</ul>
 		  `;

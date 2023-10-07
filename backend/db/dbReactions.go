@@ -10,7 +10,19 @@ import (
 
 // Adds a reaction to the database, if post/comment doesn't have any.
 // Updates the parent post/comment's ReactionID to relevant reactiontable's ID
-func AddReactionToDatabase(tableName string, parentID int, userID int, reaction string) {
+func AddReactionToDatabase(reactionParentClass string, parentID int, userID int, reaction string) {
+
+	fmt.Println(reactionParentClass, parentID, reaction)
+	// Fills in the table details, depending upon if the reaction's parent class is "post" or "comment"
+	tableName := ""
+	postOrCommentTable := ""
+	if reactionParentClass == "post" {
+		postOrCommentTable = "POSTS"
+		tableName = "POSTREACTIONS"
+	} else {
+		postOrCommentTable = "COMMENTS"
+		tableName = "COMMENTREACTIONS"
+	}
 
 	likes := 0
 	dislikes := 0
@@ -28,6 +40,7 @@ func AddReactionToDatabase(tableName string, parentID int, userID int, reaction 
 	} else {
 		// Just in case I make a type in the HTML
 		log.Println("Invalid reaction in AddReactionToDatabase:", reaction)
+		utils.HandleError("Invalid reaction in AddReactionToDatabase:", nil)
 	}
 
 	// Insert the reaction into the tableName table
@@ -40,12 +53,7 @@ func AddReactionToDatabase(tableName string, parentID int, userID int, reaction 
 
 	// Update the ReactionID of the specified post/comment (e.g. post 5),
 	// but first needs to decide whether to update posts or comments
-	postOrCommentTable := ""
-	if tableName == "POSTREACTIONS" {
-		postOrCommentTable = "POSTS"
-	} else {
-		postOrCommentTable = "COMMENTS"
-	}
+
 	updateQuery := fmt.Sprintf("UPDATE %s SET ReactionID = (SELECT Id FROM %s ORDER BY Id DESC LIMIT 1) WHERE Id = ?", postOrCommentTable, tableName)
 	_, err = Database.Exec(updateQuery, parentID)
 	if err != nil {
@@ -54,13 +62,15 @@ func AddReactionToDatabase(tableName string, parentID int, userID int, reaction 
 	}
 }
 
-func GetReactionData(reactionType string, reactionID int) (int, int, error) {
-
-	return 3, 0, nil
-}
-
 // Updates values already in the reaction table
-func UpdateReactionInDatabase(tableName string, rowID int, userID int, reaction string) {
+func UpdateReactionInDatabase(reactionParentClass string, rowID int, userID int, reaction string) {
+
+	tableName := ""
+	if reactionParentClass == "post" {
+		tableName = "POSTREACTIONS"
+	} else {
+		tableName = "COMMENTREACTIONS"
+	}
 
 	var likes int
 	var dislikes int
