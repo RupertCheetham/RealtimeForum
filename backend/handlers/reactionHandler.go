@@ -28,7 +28,6 @@ func ReactionHandler(w http.ResponseWriter, r *http.Request) {
 // This deals with posting decoding reaction data and sending it to the relevant functions
 func ReactionHandlerPostMethod(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("POST")
 	var reactionEntry db.ReactionEntry
 	err := json.NewDecoder(r.Body).Decode(&reactionEntry)
 	if err != nil {
@@ -40,7 +39,6 @@ func ReactionHandlerPostMethod(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received", reactionEntry.Action, "for", reactionEntry.Type, reactionEntry.ParentID, "from UserID:", reactionEntry.UserID, ", reactionID:", reactionEntry.ReactionID)
 
 	if reactionEntry.ReactionID == 0 {
-		fmt.Println("I made it here")
 		db.AddReactionToDatabase(reactionEntry.Type, reactionEntry.ParentID, reactionEntry.UserID, reactionEntry.Action)
 	} else {
 		db.UpdateReactionInDatabase(reactionEntry.Type, reactionEntry.ReactionID, reactionEntry.UserID, reactionEntry.Action)
@@ -53,7 +51,6 @@ func ReactionHandlerPostMethod(w http.ResponseWriter, r *http.Request) {
 // This function is called by the JS after it has made a reaction post request
 func ReactionHandlerGetMethod(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("GET")
 	// Reads whether the reaction was to a post or a comment from the request URL
 	reactionParentClass := r.URL.Query().Get("reactionParentClass")
 	// Reads the reaction tables row ID from the request URL
@@ -80,7 +77,7 @@ func ReactionHandlerGetMethod(w http.ResponseWriter, r *http.Request) {
 	}
 
 	likes, dislikes, err := GetLikesAndDislikes(tableName, rowID)
-	log.Println("likes are", likes, "and dislikes are", dislikes)
+
 	if err != nil {
 		log.Println("There was a problem with GetLikesAndDislikes in ReactionHandler")
 		utils.HandleError("There was a problem with GetLikesAndDislikes in ReactionHandler", err)

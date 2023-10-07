@@ -56,6 +56,8 @@ export default class Posts extends AbstractView {
 						document.getElementById("postText").value = "";
 						document.getElementById("categories").value = "";
 						document.getElementById("image").value = "";
+						const posts = document.getElementsByClassName("post");
+						console.log("posts length is", posts.length)
 						// reloads the posts
 						await this.displayCompletePosts();
 					}

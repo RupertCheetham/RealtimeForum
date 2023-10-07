@@ -107,36 +107,65 @@ func UpdateReactionInDatabase(reactionParentClass string, rowID int, userID int,
 }
 
 // Tweaks the values of likes/dislikes as needed
-func ReactionAdjuster(userID int, value1 int, value2 int, who1 string, who2 string) (int, int, string, string) {
+func ReactionAdjuster(userID int, actionToIncrement int, oppositeAction int, actionUsers string, oppositeActionUsers string) (int, int, string, string) {
 
 	userIDstring := strconv.Itoa(userID)
-	// checks to see if the like (or dislike) is a repeat action, if it is then returns values unchanged
-	splitA := strings.Split(who1, ",")
-	for _, idAccount := range splitA {
-		if idAccount == userIDstring {
-			return value1, value2, who1, who2
-		}
+
+	// If the reaction is a repeat of a previous reaction then nothing changes
+	if actionAlreadyPerformed(userIDstring, actionToIncrement, oppositeAction, actionUsers, oppositeActionUsers) {
+		return actionToIncrement, oppositeAction, actionUsers, oppositeActionUsers
 	}
 
-	// checks to see if the oppsite action has already taken place, if it has then returns removes the action from the db
-	splitB := strings.Split(who2, ",")
-	for i, idAccount := range splitB {
-		if idAccount == userIDstring {
-			value2 = value2 - 1
-			// removes userID so they're no longer on the list as having performed the opposite action
-			splitB = append(splitB[:i], splitB[i+1:]...)
-		}
+	oppositeActionAlreadyPerformed, user := oppositeActionChecker(userIDstring, oppositeActionUsers)
+	// If the User has already performed the opposite reaction then undoes the opposite reaction
+	if oppositeActionAlreadyPerformed {
+		oppositeAction = oppositeAction - 1
+		oppositeActionUsers = removeUserIDFromOppositeActionUsers(oppositeActionUsers, user)
 	}
 
-	// performs the action (like/dislike)
-	who2 = strings.Join(splitB, ",")
-	who2 = strings.TrimPrefix(who2, ",")
+	// Finally, performs the action (like/dislike)
+	actionUsers = addUsertoActionUsers(actionUsers, userIDstring)
+	actionToIncrement = actionToIncrement + 1
 
-	// adds userID to whoLiked or whoDisliked
-	who1 = who1 + "," + userIDstring
-	who1 = strings.TrimPrefix(who1, ",")
-	value1 = value1 + 1
+	return actionToIncrement, oppositeAction, actionUsers, oppositeActionUsers
+}
 
-	return value1, value2, who1, who2
+// checks to see if the like (or dislike) is a repeat action, if it is then returns values unchanged
+func actionAlreadyPerformed(userIDstring string, actionToIncrement int, oppositeAction int, actionUsers string, oppositeActionUsers string) bool {
+	splitActionUsers := strings.Split(actionUsers, ",")
+	for _, idAccount := range splitActionUsers {
+		if idAccount == userIDstring {
+			return true
+		}
+	}
+	return false
+}
 
+// checks to see if the oppsite action has already taken place, if so then removes it
+// and indicates which user to remove from the oppositeActionUsers list
+func oppositeActionChecker(userIDstring string, oppositeActionUsers string) (bool, int) {
+	splitOppositeActionUsers := strings.Split(oppositeActionUsers, ",")
+	for i, userNumber := range splitOppositeActionUsers {
+		if userNumber == userIDstring {
+			return true, i
+		}
+
+	}
+	return false, 0
+}
+
+// removes user from oppositeActionUsers list
+func removeUserIDFromOppositeActionUsers(oppositeActionUsers string, user int) string {
+	splitOppositeActionUsers := strings.Split(oppositeActionUsers, ",")
+	splitOppositeActionUsers = append(splitOppositeActionUsers[:user], splitOppositeActionUsers[user+1:]...)
+	oppositeActionUsers = strings.Join(splitOppositeActionUsers, ",")
+	oppositeActionUsers = strings.TrimPrefix(oppositeActionUsers, ",")
+	return oppositeActionUsers
+}
+
+// adds userID to actionUsers
+func addUsertoActionUsers(actionUsers string, userIDstring string) string {
+	actionUsers = actionUsers + "," + userIDstring
+	actionUsers = strings.TrimPrefix(actionUsers, ",")
+	return actionUsers
 }
