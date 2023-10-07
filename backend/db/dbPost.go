@@ -1,7 +1,6 @@
 package db
 
 import (
-	"encoding/json"
 	"log"
 	"realtimeForum/utils"
 )
@@ -49,13 +48,40 @@ func GetPostFromDatabase() ([]PostEntry, error) {
 	return posts, nil
 }
 
-func ConvertPostsToJSON() ([]byte, error) {
+// retrieves newest post from database and returns it
+func GetNewestPost() (PostEntry, error) {
+	query := `
+        SELECT
+            Id,
+            UserID,
+            Img,
+            Body,
+            Categories,
+            CreationDate,
+            ReactionID,
+            0 AS postLikes,
+            0 AS postDislikes
+        FROM POSTS
+        ORDER BY Id DESC
+        LIMIT 1;
+    `
+	var newestPost PostEntry
 
-	posts, _ := GetPostFromDatabase()
-	// Marshal the array of PostEntry structs into JSON
-	jsonPosts, err := json.Marshal(posts)
+	err := Database.QueryRow(query).Scan(
+		&newestPost.Id,
+		&newestPost.UserId,
+		&newestPost.Img,
+		&newestPost.Body,
+		&newestPost.Categories,
+		&newestPost.CreationDate,
+		&newestPost.ReactionID,
+		&newestPost.Likes,
+		&newestPost.Dislikes,
+	)
+
 	if err != nil {
-		return nil, err
+		return newestPost, err
 	}
-	return jsonPosts, nil
+
+	return newestPost, nil
 }

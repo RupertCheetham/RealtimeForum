@@ -28,7 +28,8 @@ export default class Posts extends AbstractView {
 	// The event listener for the post form
 	async postSubmitForm() {
 		const postForm = document.getElementById("post-form");
-
+		const postContainer = document.getElementById("postContainer");
+	
 		postForm.addEventListener(
 			"submit",
 			async function (event) {
@@ -37,7 +38,7 @@ export default class Posts extends AbstractView {
 				const categories = document.getElementById("categories").value;
 				const image = document.getElementById("image").value;
 				console.log("submitted post:", postText, categories, image);
-
+	
 				try {
 					const response = await fetch("http://localhost:8080/posts", {
 						method: "POST",
@@ -51,14 +52,13 @@ export default class Posts extends AbstractView {
 							img: image,
 						}),
 					});
-
+	
 					if (response.ok) {
 						document.getElementById("postText").value = "";
 						document.getElementById("categories").value = "";
 						document.getElementById("image").value = "";
-						const posts = document.getElementsByClassName("post");
-						console.log("posts length is", posts.length)
-						// reloads the posts
+	
+						// Call displayCompletePosts to refresh the post container
 						await this.displayCompletePosts();
 					}
 				} catch (error) {
@@ -70,17 +70,12 @@ export default class Posts extends AbstractView {
 
 	// Gets and displays posts; attaches a comments form to the bottom of each
 	async displayCompletePosts() {
-		let html = `
-      <div>
-        <div id="postContainer"></div>
-      </div>
-    `;
-
-		container.innerHTML += html;
-
-		const response = await fetch("http://localhost:8080/posts");
 		const postContainer = document.getElementById("postContainer");
 		postContainer.innerHTML = "";
+
+		const response = await fetch("http://localhost:8080/posts");
+		// const postContainer = document.getElementById("postContainer");
+		
 
 		const posts = await response.json();
 
@@ -112,6 +107,7 @@ export default class Posts extends AbstractView {
 
 			// fetch comments, if any, for this post
 			let comments = await fetchComments(post.id); // Wait for the comments to be fetched
+			
 			if (comments !== null) {
 				let postComments = attachCommentsToPost(comments)
 				postElement.appendChild(postComments);
@@ -166,4 +162,40 @@ function getPostFormHTML() {
           <button class="postSubmitButton" id="submit">Submit Post</button>
         </form>
       </div>`
+}
+
+// Function to create a new post element
+function createPostElement(postData) {
+    const postElement = document.createElement("div");
+    postElement.id = "Post" + postData.id;
+    postElement.classList.add("post");
+    postElement.setAttribute('reactionID', postData.reactionID);
+
+    postElement.innerHTML = `
+        <ul>
+            <li><b>Id:</b> ${postData.id}</li>
+            <li><b>Username:</b> ${postData.username}</li>
+            <li><b>Img:</b> ${postData.img}</li>
+            <li><b>Body:</b> ${postData.body}</li>
+            <li><b>Categories:</b> ${postData.categories}</li>
+            <li><b>Reaction:</b> ${postElement.getAttribute('reactionID')}</li>
+            <li>
+                <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${postData.id}" reaction-action="like" reaction-id="${postElement.getAttribute('reactionID')}">👍 ${postData.postLikes}</button>
+                <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${postData.id}" reaction-action="dislike" reaction-id="${postElement.getAttribute('reactionID')}">👎 ${postData.postDislikes}</button>
+            </li>
+        </ul>
+    `;
+
+    // Attach the comment form to the bottom of the post
+    attachCommentForm(postData, postElement);
+
+    // Fetch comments, if any, for this post
+    fetchComments(postData.id).then((comments) => {
+        if (comments !== null) {
+            const postComments = attachCommentsToPost(comments);
+            postElement.appendChild(postComments);
+        }
+    });
+
+    return postElement;
 }
