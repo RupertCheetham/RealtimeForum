@@ -22,7 +22,7 @@ func main() {
 	http.HandleFunc("/registrations", handlers.AddUserHandler)
 	http.HandleFunc("/login", handlers.AddLoginHandler)
 	http.HandleFunc("/reaction", handlers.ReactionHandler)
-	http.HandleFunc("/getNewestPost", handlers.GetNewestPostHandler)
+	http.HandleFunc("/chat", handlers.ChatHandler)
 
 	fmt.Printf("Starting server at port 8080\n")
 	log.Fatal(http.ListenAndServe(":8080", nil))

@@ -49,3 +49,10 @@ type Reaction struct {
 	WhoLiked    string `json:"wholiked"`
 	WhoDisliked string `json:"whodisliked"`
 }
+
+type ChatMessage struct {
+	Type      string `json:"type"`
+	Message   string `json:"message"`
+	Sender    int    `json:"sender"`
+	Recipient int    `json:"recipient"`
+}

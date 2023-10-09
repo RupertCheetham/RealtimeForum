@@ -43,13 +43,17 @@ const router = async () => {
 	// Call the submitForm and displayPosts method here
 	if (match.route.view === Posts) {
 		const postsView = new Posts()
-		postsView.displayCompletePosts()
+		postsView.displayPostContainer()
 		postsView.postSubmitForm()
 
 		setTimeout(() => {
-			// postsView.submitCommentForm()
 			postsView.reactions()
 		}, 1000)
+	}
+
+	if (match.route.view === Chat) {
+		const chatView = new Chat()
+		chatView.webSocketStuff()
 	}
 
 	console.log("match:", view)

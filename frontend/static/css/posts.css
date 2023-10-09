@@ -91,3 +91,15 @@
 	margin: 10px;
 }
 
+.postContent {
+	width: 100%;
+	background-color: #b5ccf3;
+	border: none;
+	outline: none;
+	border-radius: 49px;
+	/* color: #fff; */
+	text-transform: uppercase;
+	font-weight: 600;
+	margin: auto;
+}
+

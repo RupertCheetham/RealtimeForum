@@ -28,7 +28,6 @@ export default class Posts extends AbstractView {
 	// The event listener for the post form
 	async postSubmitForm() {
 		const postForm = document.getElementById("post-form");
-		const postContainer = document.getElementById("postContainer");
 	
 		postForm.addEventListener(
 			"submit",
@@ -54,12 +53,13 @@ export default class Posts extends AbstractView {
 					});
 	
 					if (response.ok) {
+						// clears the submitted form values, unsure if this helps but apparently it's good practice
 						document.getElementById("postText").value = "";
 						document.getElementById("categories").value = "";
 						document.getElementById("image").value = "";
 	
-						// Call displayCompletePosts to refresh the post container
-						await this.displayCompletePosts();
+						// Call displayPostContainer to refresh the post container
+						await this.displayPostContainer();
 					}
 				} catch (error) {
 					console.log(error);
@@ -69,13 +69,11 @@ export default class Posts extends AbstractView {
 	}
 
 	// Gets and displays posts; attaches a comments form to the bottom of each
-	async displayCompletePosts() {
+	async displayPostContainer() {
 		const postContainer = document.getElementById("postContainer");
 		postContainer.innerHTML = "";
 
 		const response = await fetch("http://localhost:8080/posts");
-		// const postContainer = document.getElementById("postContainer");
-		
 
 		const posts = await response.json();
 
@@ -93,7 +91,7 @@ export default class Posts extends AbstractView {
 			  <li><b>Img:</b> ${post.img}</li>
 			  <li><b>Body:</b> ${post.body}</li>
 			  <li><b>Categories:</b> ${post.categories}</li>
-			  <li><b>Reaction:</b> ${postElement.getAttribute('reactionID')}</li>
+			  <li><b>ReactionID:</b> ${postElement.getAttribute('reactionID')}</li>
 			  <li>
 			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id}" reaction-action="like" reaction-id = "${postElement.getAttribute('reactionID')}">👍 ${post.postLikes}</button>
 			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id}" reaction-action="dislike" reaction-id = "${postElement.getAttribute('reactionID')}">👎 ${post.postDislikes}</button>
@@ -120,6 +118,7 @@ export default class Posts extends AbstractView {
 	async reactions() {
 		handleReactions();
 	}
+
 }
 
 function getPostFormHTML() {
@@ -162,40 +161,4 @@ function getPostFormHTML() {
           <button class="postSubmitButton" id="submit">Submit Post</button>
         </form>
       </div>`
-}
-
-// Function to create a new post element
-function createPostElement(postData) {
-    const postElement = document.createElement("div");
-    postElement.id = "Post" + postData.id;
-    postElement.classList.add("post");
-    postElement.setAttribute('reactionID', postData.reactionID);
-
-    postElement.innerHTML = `
-        <ul>
-            <li><b>Id:</b> ${postData.id}</li>
-            <li><b>Username:</b> ${postData.username}</li>
-            <li><b>Img:</b> ${postData.img}</li>
-            <li><b>Body:</b> ${postData.body}</li>
-            <li><b>Categories:</b> ${postData.categories}</li>
-            <li><b>Reaction:</b> ${postElement.getAttribute('reactionID')}</li>
-            <li>
-                <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${postData.id}" reaction-action="like" reaction-id="${postElement.getAttribute('reactionID')}">👍 ${postData.postLikes}</button>
-                <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${postData.id}" reaction-action="dislike" reaction-id="${postElement.getAttribute('reactionID')}">👎 ${postData.postDislikes}</button>
-            </li>
-        </ul>
-    `;
-
-    // Attach the comment form to the bottom of the post
-    attachCommentForm(postData, postElement);
-
-    // Fetch comments, if any, for this post
-    fetchComments(postData.id).then((comments) => {
-        if (comments !== null) {
-            const postComments = attachCommentsToPost(comments);
-            postElement.appendChild(postComments);
-        }
-    });
-
-    return postElement;
 }

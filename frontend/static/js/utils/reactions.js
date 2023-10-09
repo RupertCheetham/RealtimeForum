@@ -1,5 +1,5 @@
 export function handleReactions() {
-
+    const postContainer = document.getElementById("postContainer");
     postContainer.addEventListener('click', async (event) => {
         const target = event.target;
 
@@ -65,3 +65,5 @@ export function handleReactions() {
     });
 
 }
+
+

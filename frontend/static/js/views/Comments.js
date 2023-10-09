@@ -49,14 +49,14 @@ export function attachCommentForm(post, postElement) {
 	});
 }
 
+// adds the com
 export function attachCommentsToPost(comments) {
 	const commentsContainer = document.createElement("div");
 	commentsContainer.id = "commentContainer";
 	commentsContainer.className = "commentContainer";
-	let commentsNum = 1;
 	comments.forEach((comment) => {
 		const commentElement = document.createElement("div");
-		commentElement.id = "comment" + commentsNum++
+		commentElement.id = "comment" + comment.id
 		commentElement.className = "comment";
 		commentElement.setAttribute('reactionID', comment.reactionID);
 		commentElement.innerHTML = `

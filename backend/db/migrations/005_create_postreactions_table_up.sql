@@ -1,4 +1,4 @@
--- 005_create_postlikes_table_up.sql
+-- 005_create_POSTREACTIONS_table_up.sql
 CREATE TABLE IF NOT EXISTS POSTREACTIONS (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     Likes INTEGER DEFAULT 0,
