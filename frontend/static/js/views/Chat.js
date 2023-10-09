@@ -31,9 +31,9 @@ export default class Chat extends AbstractView {
 	async webSocketStuff() {
 
 		// Example Sender
-		const Sender = 1
+		const Sender = 5
 		// Example Receiver
-		const Recipient = 3
+		const Recipient = 2
 
 		const socket = new WebSocket("ws://localhost:8080/chat");
 
