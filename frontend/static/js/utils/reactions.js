@@ -1,4 +1,5 @@
 export function handleReactions() {
+    console.log("made it to handleReaction")
     const postContainer = document.getElementById("postContainer");
     postContainer.addEventListener('click', async (event) => {
         const target = event.target;
@@ -17,7 +18,7 @@ export function handleReactions() {
 
             console.log(`Reacted to ${Type} ${ParentID} with action: ${Action}, whilst reactionID is ${ReactionID}`);
 
-            fetch("http://localhost:8080/reaction", {
+            fetch("https://localhost:8080/reaction", {
                 method: "POST",
                 headers: {
                     Accept: "application/json",
@@ -30,11 +31,14 @@ export function handleReactions() {
                     action: Action,
                     reactionID: parseInt(ReactionID),
                 }),
+                credentials: "include",
             })
                 .then(async (response) => {
                     if (response.ok) {
                         // If the POST request was successful, make a GET request for reactionID
-                        const reactionData = await fetch(`http://localhost:8080/reaction?rowID=${parseInt(ReactionID)}&reactionParentClass=${Type}`);
+                        const reactionData = await fetch(`https://localhost:8080/reaction?rowID=${parseInt(ReactionID)}&reactionParentClass=${Type}`, {
+                            credentials: "include", // Ensure cookies are included in the request
+                        });
 
                         if (reactionData.ok) {
                             const data = await reactionData.json();

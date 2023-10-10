@@ -35,7 +35,7 @@ export default class Chat extends AbstractView {
 		// Example Receiver
 		const Recipient = 2
 
-		const socket = new WebSocket("ws://localhost:8080/chat");
+		const socket = new WebSocket("wss://localhost:8080/chat");
 
 		socket.addEventListener("open", (event) => {
 			event.preventDefault();
