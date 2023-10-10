@@ -228,6 +228,8 @@ export default class Auth extends AbstractView {
 			const email = document.getElementById("email").value
 			const password = document.getElementById("new_password").value
 
+			console.log(userName, userAge)
+
 			fetch("https://localhost:8080/api/registrations", {
 				method: "POST",
 				headers: {
@@ -243,7 +245,8 @@ export default class Auth extends AbstractView {
 					email: email,
 					password: password,
 				}),
-			})
+			},
+			console.log("I'm in the post registrations JS"))
 				.then((response) => {
 					if (response.ok) {
 						const userError = document.querySelector(".username-error")
