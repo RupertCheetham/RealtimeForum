@@ -58,6 +58,7 @@ export default class Posts extends AbstractView {
 							categories: categories,
 							img: image,
 						}),
+						credentials: "include",
 					});
 	
 					if (response.ok) {

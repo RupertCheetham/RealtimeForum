@@ -1,6 +1,8 @@
 // Comments need to be reworked, currently very inefficient.  Probably foreign keys will be involved
 export async function fetchComments(parentPostID) {
-	const response = await fetch(`https://localhost:8080/api/getcomments?postID=${parentPostID}`);
+	const response = await fetch(`https://localhost:8080/api/getcomments?postID=${parentPostID}` , {
+		credentials: "include", // Ensure cookies are included in the request
+	});
 	const comments = await response.json();
 	return comments
 }
@@ -37,6 +39,7 @@ export function attachCommentForm(post, postElement) {
 				body: commentText,
 				parentPostId: Number(postID),
 			}),
+			credentials: "include",
 		}).catch((error) => {
 			console.log(error)
 		})
