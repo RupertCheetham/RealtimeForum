@@ -27,6 +27,12 @@ func main() {
 	http.HandleFunc("/reaction", handlers.ReactionHandler)
 	http.HandleFunc("/chat", handlers.ChatHandler)
 
+	// Specify the paths to your TLS certificate and private key files
+	certFile := "server.crt"
+	keyFile := "server.key"
 	fmt.Printf("Starting server at port 8080\n")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	err := http.ListenAndServeTLS(":8080", certFile, keyFile, nil)
+	if err != nil {
+		log.Fatal("ListenAndServeTLS: ", err)
+	}
 }
