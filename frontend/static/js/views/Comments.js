@@ -1,6 +1,6 @@
 // Comments need to be reworked, currently very inefficient.  Probably foreign keys will be involved
 export async function fetchComments(parentPostID) {
-	const response = await fetch(`http://localhost:8080/comments?postID=${parentPostID}`);
+	const response = await fetch(`https://localhost:8080/api/getcomments?postID=${parentPostID}`);
 	const comments = await response.json();
 	return comments
 }
@@ -26,7 +26,8 @@ export function attachCommentForm(post, postElement) {
 		const commentText = form.querySelector("#commentText").value;
 		const postID = form.querySelector("#postID").value;
 
-		const response = await fetch("http://localhost:8080/comments", {
+		const response = await fetch("https://localhost:8080/api/addcomments", {
+
 			method: "POST",
 			headers: {
 				Accept: "application/json",

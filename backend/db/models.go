@@ -1,5 +1,7 @@
 package db
 
+import "time"
+
 type UserEntry struct {
 	Id        int    `json:"id"`
 	Username  string `json:"username"`
@@ -9,6 +11,13 @@ type UserEntry struct {
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
+}
+
+type Session struct {
+	SessionID      string
+	UserId         int
+	CreationDate   time.Time
+	ExpirationTime time.Time
 }
 
 type PostEntry struct {

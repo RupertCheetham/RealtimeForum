@@ -2,16 +2,21 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"realtimeForum/db"
 	"realtimeForum/utils"
 )
 
-// Handler for posts page
+// Handler for adding post to DB
 func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
+
+	cookie, _ := r.Cookie("sessionID")
+
+	fmt.Println("get cookie in addposthandler:", cookie)
 
 	// This code block is handling the logic for adding a new post to the database.
 	if r.Method == "POST" {
@@ -48,6 +53,12 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		w.Write(jsonResponse)
 	}
+}
+
+// Handler for getting post from DB
+func GetPostHandler(w http.ResponseWriter, r *http.Request) {
+	// Enable CORS headers for this handler
+	SetupCORS(&w, r)
 
 	// This code block is handling the logic for retrieving posts from the database when the HTTP request
 	// method is GET.
@@ -65,5 +76,4 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("No posts available"))
 		}
 	}
-
 }

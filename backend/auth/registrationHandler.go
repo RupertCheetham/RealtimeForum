@@ -1,11 +1,10 @@
-package handlers
+package auth
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"realtimeForum/db"
+	"realtimeForum/handlers"
 	"realtimeForum/utils"
 
 	"golang.org/x/crypto/bcrypt"
@@ -16,7 +15,7 @@ import (
 // user, and interacting with the database.
 func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
-	SetupCORS(&w, r)
+	handlers.SetupCORS(&w, r)
 
 	// The code block is handling the POST request for adding a user entry to the database.
 	if r.Method == "POST" {
@@ -31,34 +30,17 @@ func AddUserHandler(w http.ResponseWriter, r *http.Request) {
 
 		hashPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 		if err != nil {
-			fmt.Println("error in encryption", err)
+			utils.HandleError("error in encryption", err)
 		}
 
-		log.Println("Received user:", user.Username, user.Age, user.Gender, user.FirstName, user.LastName, user.Email, string(hashPassword))
-
+		// log.Println("Received user:", user.Username, user.Age, user.Gender, user.FirstName, user.LastName, user.Email, string(hashPassword))
 		err = db.AddUserToDatabase(user.Username, user.Age, user.Gender, user.FirstName, user.LastName, user.Email, string(hashPassword))
 		if err != nil {
-			utils.HandleError("Problem adding to USERS in AddUserHandler", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			utils.HandleError("Unable to register a new user in AddUserHandler", err)
+			// fmt.Println("Unable to register a new user in AddUserHandler", err)
+			http.Error(w, "Unable to register a new user", http.StatusBadRequest)
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
 	}
-
-	// The code block is handling the GET request for retrieving user entries from the database.
-	if r.Method == "GET" {
-		users, err := db.GetUsersFromDatabase()
-		if err != nil {
-			utils.HandleError("Problem getting USERS from db in AddUserHandler", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		if len(users) > 0 {
-			json.NewEncoder(w).Encode(users)
-		} else {
-			w.Write([]byte("No users available"))
-		}
-	}
-
 }

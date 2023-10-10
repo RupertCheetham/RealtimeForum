@@ -9,7 +9,6 @@ import (
 	"realtimeForum/db"
 	"realtimeForum/utils"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
@@ -19,8 +18,8 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		// Allow WebSocket connections from http://localhost:8080
 		allowedOrigins := []string{
-			"http://localhost:8080", //backend
-			"http://localhost:3000", //frontend
+			"https://localhost:8080", //backend
+			"https://localhost:3000", //frontend
 		}
 		origin := r.Header.Get("Origin")
 		for _, allowedOrigin := range allowedOrigins {
@@ -73,7 +72,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			// if chat is new then generates new UUID for chat
 			if !previousChatEntryFound {
 				fmt.Println("chatIsNew", previousChatEntryFound)
-				chatUUID = generateNewUUID()
+				chatUUID = utils.GenerateNewUUID()
 				fmt.Println("Generated UUID:", chatUUID)
 			}
 
@@ -113,14 +112,4 @@ func previousChatChecker(firstID int, secondID int) (bool, string, error) {
 
 	// Entry exists, return true and the ChatUUID
 	return true, chatUUID, nil
-}
-
-// generates a new UUID
-func generateNewUUID() string {
-	newUUID := uuid.New()
-
-	// Convert the UUID to a string for display
-	uuidString := newUUID.String()
-
-	return uuidString
 }

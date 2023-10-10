@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-// Handler for comments
+// Handler for posting comments
 func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
@@ -39,8 +39,12 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		w.WriteHeader(http.StatusCreated)
 	}
+}
 
-	// This code block is handling the GET request for retrieving comments from the database.
+func GetCommentHandler(w http.ResponseWriter, r *http.Request) {
+
+	SetupCORS(&w, r)
+
 	if r.Method == "GET" {
 		parentPostID, err := strconv.Atoi(r.URL.Query().Get("postID"))
 		if err != nil {

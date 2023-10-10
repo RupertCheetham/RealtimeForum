@@ -25,6 +25,14 @@ export default class Posts extends AbstractView {
     `;
 	}
 
+	async clearCookie() {
+		let logoutBtn = document.getElementById("logout")
+		logoutBtn.addEventListener("click", () => {
+			document.cookie =
+				"sessionID=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;"
+		})
+	}
+
 	// The event listener for the post form
 	async postSubmitForm() {
 		const postForm = document.getElementById("post-form");
@@ -39,7 +47,7 @@ export default class Posts extends AbstractView {
 				console.log("submitted post:", postText, categories, image);
 	
 				try {
-					const response = await fetch("http://localhost:8080/posts", {
+					const response = await fetch("https://localhost:8080/api/addposts", {
 						method: "POST",
 						headers: {
 							Accept: "application/json",
@@ -73,7 +81,9 @@ export default class Posts extends AbstractView {
 		const postContainer = document.getElementById("postContainer");
 		postContainer.innerHTML = "";
 
-		const response = await fetch("http://localhost:8080/posts");
+		const response = await fetch("https://localhost:8080/api/getposts", {
+			credentials: "include", // Ensure cookies are included in the request
+		})
 
 		const posts = await response.json();
 

@@ -33,7 +33,10 @@ func InitDatabase() {
 	}
 
 	fmt.Println("Migrations applied successfully")
+
 	AddExampleEntries()
+	DeleteUserTest()
+	DeleteAllUsersTest()
 	WipeDatabaseOnCommand()
 }
 

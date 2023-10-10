@@ -1,19 +1,10 @@
 import AbstractView from "./AbstractView.js"
-import Posts from "./Posts.js"
-import { setSessionCookie } from "../utils/cookie.js"
-
-async function switchToPostsView() {
-	const container = document.getElementById("container")
-
-	// Create an instance of the Posts view and render it
-	const postsView = new Posts()
-	container.innerHTML = await postsView.renderHTML()
-}
+import { getCookie } from "../utils/utils.js"
 
 export default class Auth extends AbstractView {
 	constructor() {
 		super()
-		this.setTitle("Sign in  or sign up")
+		this.setTitle("Sign in or sign up")
 	}
 
 	async renderHTML() {
@@ -64,6 +55,7 @@ export default class Auth extends AbstractView {
 
 					<form class="sign-up-form">
 						<h2 class="title">Sign up</h2>
+						<div class="username-error">username is already taken</div>
 						<div class="input-field">
 							<i class="fas fa-user"></i>
 							<input
@@ -176,6 +168,7 @@ export default class Auth extends AbstractView {
 		const authcontainer = document.getElementById("auth-container")
 		const sign_in_btn = document.querySelector("#sign-in-btn")
 		const sign_up_btn = document.querySelector("#sign-up-btn")
+		const signupForm = document.querySelector(".sign-up-form")
 
 		sign_up_btn.addEventListener("click", () => {
 			authcontainer.classList.add("sign-up-mode")
@@ -186,46 +179,43 @@ export default class Auth extends AbstractView {
 		})
 
 		const signinForm = document.querySelector(".sign-in-form")
-		signinForm.addEventListener("submit", function (event) {
+		signinForm.addEventListener("submit", async function (event) {
 			event.preventDefault()
 
 			const userNameOrEmail = document.getElementById("usernameOrEmail").value
 			const password = document.getElementById("password").value
 
 			console.log(userNameOrEmail, password)
+			try {
+				const response = await fetch("https://localhost:8080/api/auth", {
+					method: "POST",
+					headers: {
+						Accept: "application/json",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						username: userNameOrEmail,
+						password: password,
+					}),
+					credentials: "include", // Ensure cookies are included in the request
+				})
 
-			fetch("http://localhost:8080/login", {
-				method: "POST",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					username: userNameOrEmail,
-					password: password,
-				}),
-			})
-				.then((response) => {
-					if (response.ok) {
-						return response.json()
+				if (response.ok) {
+					// Authentication successful, redirect to protected page
+					console.log("cookie in auth is:", document.cookie)
+					let cookie = getCookie("sessionID")
+					if (!cookie) {
+						window.location.href = "/"
 					} else {
-						throw new Error("POST request failed!")
+						window.location.href = "posts" // Update the URL
 					}
-				})
-				.then(async (data) => {
-					console.log("this is data", data)
-					if (data.message === "Login successful") {
-						setSessionCookie()
-						switchToPostsView()
-						window.location.pathname = "/posts"
-					}
-				})
-				.catch((error) => {
-					console.log(error)
-				})
+				} else {
+					throw new Error("Authentication failed!")
+				}
+			} catch (error) {
+				console.error(error)
+			}
 		})
-
-		const signupForm = document.querySelector(".sign-up-form")
 
 		signupForm.addEventListener("submit", function (event) {
 			event.preventDefault()
@@ -238,17 +228,7 @@ export default class Auth extends AbstractView {
 			const email = document.getElementById("email").value
 			const password = document.getElementById("new_password").value
 
-			console.log(
-				userName,
-				userAge,
-				userGender,
-				firstName,
-				lastName,
-				email,
-				password
-			)
-
-			fetch("http://localhost:8080/registrations", {
+			fetch("https://localhost:8080/api/registrations", {
 				method: "POST",
 				headers: {
 					Accept: "application/json",
@@ -263,10 +243,26 @@ export default class Auth extends AbstractView {
 					email: email,
 					password: password,
 				}),
-			}).catch((error) => {
-				console.log(error)
 			})
-			console.log("registration complete")
+				.then((response) => {
+					if (response.ok) {
+						const userError = document.querySelector(".username-error")
+						userError.style.display = "none"
+					}
+					if (response.status === 400) {
+						const userError = document.querySelector(".username-error")
+						userError.style.display = "block"
+
+						setTimeout(() => {
+							userError.style.display = "none"
+						}, 4000)
+
+						throw new Error("Unable to create user")
+					}
+				})
+				.catch((error) => {
+					console.log(error)
+				})
 		})
 	}
 }

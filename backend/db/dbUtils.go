@@ -76,12 +76,36 @@ func AddExampleEntries() {
 			if err != nil {
 				log.Fatalf("Error adding entry to COMMENT table in AddExampleEntries: %v", err)
 			}
-			AddReactionToDatabase("POSTREACTIONS", 1, 1, "dislike")
-			AddReactionToDatabase("POSTREACTIONS", 2, 3, "like")
-			AddReactionToDatabase("COMMENTREACTIONS", 1, 1, "dislike")
-			AddReactionToDatabase("COMMENTREACTIONS", 2, 2, "like")
+			AddReactionToDatabase("post", 1, 1, "dislike")
+			AddReactionToDatabase("post", 2, 3, "like")
+			AddReactionToDatabase("comment", 1, 1, "dislike")
+			AddReactionToDatabase("comment", 2, 2, "like")
 		}
 		log.Println("Example Database entries added successfully")
 
+	}
+}
+
+func DeleteUserTest() {
+	if len(os.Args) == 3 {
+		if os.Args[1] == "delete" && os.Args[2] == "user" {
+			// delete user
+			err := DeleteUserFromDatabase("b")
+			if err != nil {
+				log.Fatalf("Error adding entry to USERS table in DeleteUserFromDatabase: %v", err)
+			}
+		}
+	}
+}
+
+func DeleteAllUsersTest() {
+	if len(os.Args) == 4 {
+		if os.Args[1] == "delete" && os.Args[2] == "all" && os.Args[3] == "users" {
+			// delete user
+			err := DeleteAllUsersFromDatabase()
+			if err != nil {
+				log.Fatalf("Error adding entry to USERS table in DeleteAllUsersFromDatabase: %v", err)
+			}
+		}
 	}
 }

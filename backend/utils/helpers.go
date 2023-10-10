@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // The function "PrintErrOnCommandLine" prints an error message to the command line if an error is not
@@ -82,4 +84,14 @@ func trace() (string, int, string) {
 func AssertString(val interface{}) string {
 	v := val.(string)
 	return v
+}
+
+// generates a new UUID
+func GenerateNewUUID() string {
+	newUUID := uuid.New()
+
+	// Convert the UUID to a string for display
+	uuidString := newUUID.String()
+
+	return uuidString
 }
