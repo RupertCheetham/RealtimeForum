@@ -8,8 +8,8 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname)
 let urlReg = new RegExp(`\/.`)
 
 // Load your SSL certificate and key
-const privateKey = fs.readFileSync("client-key.pem", "utf8")
-const certificate = fs.readFileSync("client-cert.pem", "utf8")
+const privateKey = fs.readFileSync("client.key", "utf8")
+const certificate = fs.readFileSync("client.crt", "utf8")
 const credentials = { key: privateKey, cert: certificate }
 
 const handler = (req, res) => {

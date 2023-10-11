@@ -28,8 +28,8 @@ func main() {
 	http.HandleFunc("/chat", handlers.ChatHandler)
 
 	// Specify the paths to your TLS certificate and private key files
-	certFile := "server-cert.pem"
-	keyFile := "server-key.pem"
+	certFile := "server.crt"
+	keyFile := "server.key"
 	fmt.Printf("Starting server at port 8080\n")
 	err := http.ListenAndServeTLS(":8080", certFile, keyFile, nil)
 	if err != nil {
