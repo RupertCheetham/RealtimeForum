@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"realtimeForum/auth"
 	"realtimeForum/db"
 	"realtimeForum/handlers"
 	"realtimeForum/utils"
@@ -17,11 +18,21 @@ func main() {
 	utils.WriteMessageToLogFile("Database initialized successfully")
 
 	http.HandleFunc("/", handlers.HomeHandler)
-	http.HandleFunc("/posts", handlers.AddPostHandler)
-	http.HandleFunc("/comments", handlers.AddCommentHandler)
-	http.HandleFunc("/registrations", handlers.AddUserHandler)
-	http.HandleFunc("/login", handlers.AddLoginHandler)
+	http.HandleFunc("/api/auth", auth.LoginHandler)
+	http.HandleFunc("/api/registrations", auth.AddUserHandler)
+	http.HandleFunc("/api/getposts", handlers.GetPostHandler)
+	http.HandleFunc("/api/addposts", handlers.AddPostHandler)
+	http.HandleFunc("/api/addcomments", handlers.AddCommentHandler)
+	http.HandleFunc("/api/getcomments", handlers.GetCommentHandler)
+	http.HandleFunc("/reaction", handlers.ReactionHandler)
+	http.HandleFunc("/chat", handlers.ChatHandler)
 
-	fmt.Printf("Starting backend server at port 8080\n")
-	log.Fatal(http.ListenAndServeTLS(":8080", "server.crt", "server.key", nil))
+	// Specify the paths to your TLS certificate and private key files
+	certFile := "server.crt"
+	keyFile := "server.key"
+	fmt.Printf("Starting server at port 8080\n")
+	err := http.ListenAndServeTLS(":8080", certFile, keyFile, nil)
+	if err != nil {
+		log.Fatal("ListenAndServeTLS: ", err)
+	}
 }

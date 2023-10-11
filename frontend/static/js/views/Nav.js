@@ -1,17 +1,17 @@
 import AbstractView from "./AbstractView.js"
 
-export default class extends AbstractView {
+export default class Nav extends AbstractView {
 	constructor() {
 		super()
 		this.setTitle("Posts")
 	}
 
-	async getHTML() {
+	async renderHTML() {
 		return `
-		<div>Welcome to forum</div>
 		<nav id="nav" class="nav">
-			<a href="/" class="nav-link" data-link>Logout</a>
+			<a href="/" class="nav-link" data-link id="logout">Logout</a>
 			<a href="/posts" class="nav-link" data-link>Posts</a>
+			<a href="/chat" class="nav-link" data-link>Chat</a>
 		</nav>
     `
 	}

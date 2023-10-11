@@ -1,6 +1,6 @@
 import * as fs from "fs"
-import path, { dirname } from "path"
 import https from "https"
+import path from "path"
 
 const hostname = "localhost"
 //const port = 3000
@@ -14,6 +14,11 @@ const options = {
 }
 
 let urlReg = new RegExp(`\/.`)
+
+// Load your SSL certificate and key
+const privateKey = fs.readFileSync("client.key", "utf8")
+const certificate = fs.readFileSync("client.crt", "utf8")
+const credentials = { key: privateKey, cert: certificate }
 
 const handler = (req, res) => {
 	// Set the response header
@@ -48,7 +53,7 @@ const handler = (req, res) => {
 			}
 		})
 	} else if (urlReg.test(req.url) || req.url === "/") {
-		// Respond with "Hello, World!" for the root URL
+		// Respond with index for the root URL
 		fs.readFile(path.join(__dirname, "index.html"), "utf8", (err, data) => {
 			if (err) {
 				res.statusCode = 500
@@ -61,12 +66,13 @@ const handler = (req, res) => {
 	} else {
 		// Respond with a 404 Not Found for other URLs
 		res.statusCode = 404
-		res.end("Not Found\n bitat")
+		res.end("Not Found\n")
 	}
 }
 
-// Create an HTTPS server
-const server = https.createServer(options, handler)
+// Create an HTTP server
+// const server = http.createServer(handler)
+const server = https.createServer(credentials, handler)
 
 // Start the server
 server.listen(httpsPort, hostname, () => {

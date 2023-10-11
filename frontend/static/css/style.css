@@ -36,6 +36,47 @@ input {
 	left: 0;
 }
 
+.contentContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.contentContainer-left {
+	background-color: #282930;
+	flex: 1;
+	max-width: 33.333%;
+	overflow: hidden;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.contentContainer-post {
+	background-color: #263045;
+	flex: 1;
+	max-width: 33.333%;
+	overflow: hidden;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.contentContainer-right {
+	background-color: #1b2e4e;
+	flex: 1;
+	max-width: 33.333%;
+	overflow: hidden;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
 .signin-signup {
 	position: absolute;
 	top: 50%;
@@ -267,15 +308,7 @@ form.sign-in-form {
 	padding: 0.7rem 0;
 }
 
-.btn.transparent {
-	margin: 0;
-	background: none;
-	border: 2px solid #fff;
-	width: 130px;
-	height: 41px;
-	font-weight: 600;
-	font-size: 0.8rem;
-}
+
 
 .right-panel .image,
 .right-panel .content {
@@ -381,9 +414,13 @@ form.sign-in-form {
 	}
 
 	.btn.transparent {
-		width: 110px;
-		height: 35px;
-		font-size: 0.7rem;
+		margin: 0;
+		background: none;
+		border: 2px solid #fff;
+		width: 130px;
+		height: 41px;
+		font-weight: 600;
+		font-size: 0.8rem;
 	}
 
 	.container:before {

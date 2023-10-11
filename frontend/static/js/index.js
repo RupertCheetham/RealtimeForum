@@ -1,5 +1,7 @@
 import Auth from "./views/Auth.js"
 import Posts from "./views/Posts.js"
+import Chat from "./views/Chat.js"
+import { getCookie } from "./utils/utils.js"
 
 const navigateTo = (url) => {
 	history.pushState(null, null, url)
@@ -10,6 +12,7 @@ const router = async () => {
 	const routes = [
 		{ path: "/", view: Auth },
 		{ path: "/posts", view: Posts },
+		{ path: "/chat", view: Chat },
 	]
 
 	// test each route for potential match
@@ -31,18 +34,35 @@ const router = async () => {
 
 	const view = new match.route.view()
 
-	document.querySelector("#container").innerHTML = await view.getHTML()
+	document.querySelector("#container").innerHTML = await view.renderHTML()
 
 	if (match.route.view === Auth) {
+		document.querySelector("#container").innerHTML = await view.renderHTML()
 		const authView = new Auth()
 		authView.submitForm()
 	}
 
-	// Call the submitForm method here
+	// Call the submitForm and displayPosts method here
 	if (match.route.view === Posts) {
+		let cookie = getCookie("sessionID")
+		if (!cookie) {
+			window.location.href = "/"
+		} else {
+			document.querySelector("#container").innerHTML = await view.renderHTML()
+		}
 		const postsView = new Posts()
-		postsView.getPosts()
-		postsView.submitForm()
+		postsView.displayPostContainer()
+		postsView.postSubmitForm()
+		postsView.clearCookie()
+
+		setTimeout(() => {
+			postsView.reactions()
+		}, 1000)
+	}
+
+	if (match.route.view === Chat) {
+		const chatView = new Chat()
+		chatView.webSocketStuff()
 	}
 
 	console.log("match:", view)
