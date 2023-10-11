@@ -55,7 +55,10 @@ export default class Auth extends AbstractView {
 
 					<form class="sign-up-form">
 						<h2 class="title">Sign up</h2>
-						<div class="username-error">username is already taken</div>
+						<div =class"progress green">
+							<div =class"indeterminate"></div>
+						</div>
+						
 						<div class="input-field">
 							<i class="fas fa-user"></i>
 							<input
@@ -68,10 +71,6 @@ export default class Auth extends AbstractView {
 						<div class="input-field">
 							<i class="fas fa-user"></i>
 							<input type="text" placeholder="User Age" required id="age" />
-						</div>
-						<div class="input-field">
-							<i class="fas fa-user"></i>
-							<input type="text" placeholder="Gender" required id="gender" />
 						</div>
 						<div class="input-field">
 							<i class="fas fa-user"></i>
@@ -113,6 +112,10 @@ export default class Auth extends AbstractView {
 								id="password-repeat"
 							/>
 						</div>
+						<div class="input-field">
+							<i class="fas fa-user"></i>
+							<input type="text" placeholder="Gender" required id="gender" />
+						</div>
 
 						<input type="submit" value="Sign up" class="btn" />
 
@@ -141,8 +144,7 @@ export default class Auth extends AbstractView {
 				<div class="content">
 					<h3>New here ?</h3>
 					<p>
-						Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis,
-						ex ratione. Aliquid!
+						Become a member and let's get you started!
 					</p>
 					<button class="btn transparent" id="sign-up-btn">Sign up</button>
 				</div>
@@ -152,8 +154,7 @@ export default class Auth extends AbstractView {
 				<div class="content">
 					<h3>One of us ?</h3>
 					<p>
-						Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
-						laboriosam ad deleniti.
+						Check out the latest posts and share your thoughts and news.
 					</p>
 					<button class="btn transparent" id="sign-in-btn">Sign in</button>
 				</div>
@@ -161,6 +162,7 @@ export default class Auth extends AbstractView {
 			</div>
 		</div>
 		</div>
+</div>
  `
 	}
 

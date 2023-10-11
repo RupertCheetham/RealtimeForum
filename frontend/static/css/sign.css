@@ -1,10 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
+/*@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");*/
 
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
 }
+
 
 body,
 input {
@@ -22,10 +23,10 @@ input {
 .container-nostyle {
 	position: relative;
 	width: 100%;
-	background-color: #fff;
+	background-color: #ffffff;
 	min-height: 100vh;
 	overflow: hidden;
-}
+}z
 
 .forms-container {
 	position: absolute;
@@ -33,47 +34,6 @@ input {
 	height: 100%;
 	top: 0;
 	left: 0;
-}
-
-.contentContainer {
-    display: flex;
-    justify-content: space-between;
-}
-
-.contentContainer-left {
-	background-color: #282930;
-	flex: 1;
-	max-width: 33.333%;
-	overflow: hidden;
-    border: none;
-    outline: none;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.contentContainer-post {
-	background-color: #263045;
-	flex: 1;
-	max-width: 33.333%;
-	overflow: hidden;
-    border: none;
-    outline: none;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.contentContainer-right {
-	background-color: #1b2e4e;
-	flex: 1;
-	max-width: 33.333%;
-	overflow: hidden;
-    border: none;
-    outline: none;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-weight: 600;
 }
 
 .signin-signup {
@@ -107,7 +67,7 @@ form.sign-up-form {
 
 form.sign-in-form {
 	z-index: 2;
-}
+} */
 
 .title {
 	font-size: 2.2rem;
@@ -115,9 +75,32 @@ form.sign-in-form {
 	margin-bottom: 10px;
 }
 
-.input-field-container {
-	max-height: 400px; /* Set a maximum height as needed */
-	height: 400px;
+/*.input-field-container {
+	max-height: 400px; /* Set a maximum height as needed 
+	height: auto;
+	overflow-y: auto;  Enable vertical scrolling if content exceeds max height 
+}*/
+
+.sign-up-form {
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	left: 50%;
+	width: 75%;
+	max-height: 800px; /* Set a maximum height as needed */
+	height: auto;
+	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
+	/*transition-property: width;*/
+}
+
+.sign-in-form {
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	left: 50%;
+	width: 75%;
+	max-height: 800px; /* Set a maximum height as needed */
+	height: auto;
 	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
 }
 
@@ -284,7 +267,15 @@ form.sign-in-form {
 	padding: 0.7rem 0;
 }
 
-
+.btn.transparent {
+	margin: 0;
+	background: none;
+	border: 2px solid #fff;
+	width: 130px;
+	height: 41px;
+	font-weight: 600;
+	font-size: 0.8rem;
+}
 
 .right-panel .image,
 .right-panel .content {
@@ -339,7 +330,7 @@ form.sign-in-form {
 		width: 100%;
 		top: 95%;
 		transform: translate(-50%, -100%);
-		transition: 1s 0.8s ease-in-out;
+		transition: 1s 0.8s ;
 	}
 
 	.signin-signup,
@@ -390,13 +381,9 @@ form.sign-in-form {
 	}
 
 	.btn.transparent {
-		margin: 0;
-		background: none;
-		border: 2px solid #fff;
-		width: 130px;
-		height: 41px;
-		font-weight: 600;
-		font-size: 0.8rem;
+		width: 110px;
+		height: 35px;
+		font-size: 0.7rem;
 	}
 
 	.container:before {
