@@ -19,7 +19,7 @@ export async function userNameFromSessionID(sessionID) {
   
 	  if (response.ok) {
 		const username = await response.json();
-		console.log("usernameJSON:", username)
+
 		return username;
 	  } else {
 		// Handle the error or return a default value in case of an error
