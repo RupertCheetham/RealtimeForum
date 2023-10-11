@@ -64,4 +64,5 @@ type ChatMessage struct {
 	Message   string `json:"message"`
 	Sender    int    `json:"sender"`
 	Recipient int    `json:"recipient"`
+	Time      string `json:"time"`
 }

@@ -1,5 +1,5 @@
 export function handleReactions() {
-    console.log("made it to handleReaction")
+    
     const postContainer = document.getElementById("postContainer");
     postContainer.addEventListener('click', async (event) => {
         const target = event.target;

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"realtimeForum/db"
 	"realtimeForum/utils"
+	"strconv"
 
 	"github.com/gorilla/websocket"
 )
@@ -63,12 +64,12 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			previousChatEntryFound, chatUUID, err := previousChatChecker(chatMsg.Sender, chatMsg.Recipient)
-			log.Println("previousChatEntryFound, chatUUID, err", previousChatEntryFound, chatUUID, err)
+
 			if err != nil {
 				log.Println("Error with chatChecker in ChatHandler", err)
 				utils.HandleError("Error with chatChecker in ChatHandler", err)
 			}
-			log.Println("chatIsNew, chatUUID, err", previousChatEntryFound, chatUUID, err)
+
 			// if chat is new then generates new UUID for chat
 			if !previousChatEntryFound {
 				fmt.Println("chatIsNew", previousChatEntryFound)
@@ -112,4 +113,47 @@ func previousChatChecker(firstID int, secondID int) (bool, string, error) {
 
 	// Entry exists, return true and the ChatUUID
 	return true, chatUUID, nil
+}
+
+func GetChatHistoryHandler(w http.ResponseWriter, r *http.Request) {
+
+	SetupCORS(&w, r)
+
+	// // Upgrade the HTTP connection to a WebSocket connection
+	// connection, err := upgrader.Upgrade(w, r, nil)
+	// if err != nil {
+	// 	log.Println("There was an error with Upgrade in WebSocketHandler,", err)
+	// 	return
+	// }
+	// defer connection.Close()
+	//Extract the chat UUID from the request (you may pass it as a query parameter or in the URL path)
+	chatUser1 := r.URL.Query().Get("user1")
+	chatUser2 := r.URL.Query().Get("user2")
+
+	var user1 int
+	var user2 int
+
+	user1, _ = strconv.Atoi(chatUser1)
+	user2, _ = strconv.Atoi(chatUser2)
+	// if chatUUID == "" {
+	// 	http.Error(w, "Chat UUID is required", http.StatusBadRequest)
+	// 	return
+	// }
+	log.Println("we are in GetChatHistoryHandler")
+	// Get chat history from the database
+	_, chatUUID, _ := previousChatChecker(user1, user2)
+	chatHistory, err := db.GetChatFromDatabase(chatUUID)
+	if err != nil {
+		utils.HandleError("Error retrieving chat history from the database:", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	// Serialize chat history to JSON and send it as the response
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(chatHistory); err != nil {
+		utils.HandleError("Error encoding chat history to JSON:", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
 }
