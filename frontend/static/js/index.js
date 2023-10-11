@@ -54,10 +54,7 @@ const router = async () => {
 		postsView.displayPostContainer()
 		postsView.postSubmitForm()
 		postsView.clearCookie()
-
-		setTimeout(() => {
-			postsView.reactions()
-		}, 1000)
+		postsView.reactions()
 	}
 
 	if (match.route.view === Chat) {

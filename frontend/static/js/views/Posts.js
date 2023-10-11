@@ -36,7 +36,7 @@ export default class Posts extends AbstractView {
 	// The event listener for the post form
 	async postSubmitForm() {
 		const postForm = document.getElementById("post-form");
-	
+
 		postForm.addEventListener(
 			"submit",
 			async function (event) {
@@ -45,7 +45,7 @@ export default class Posts extends AbstractView {
 				const categories = document.getElementById("categories").value;
 				const image = document.getElementById("image").value;
 				console.log("submitted post:", postText, categories, image);
-	
+
 				try {
 					const response = await fetch("https://localhost:8080/api/addposts", {
 						method: "POST",
@@ -60,13 +60,13 @@ export default class Posts extends AbstractView {
 						}),
 						credentials: "include",
 					});
-	
+
 					if (response.ok) {
 						// clears the submitted form values, unsure if this helps but apparently it's good practice
 						document.getElementById("postText").value = "";
 						document.getElementById("categories").value = "";
 						document.getElementById("image").value = "";
-	
+
 						// Call displayPostContainer to refresh the post container
 						await this.displayPostContainer();
 					}
@@ -89,6 +89,9 @@ export default class Posts extends AbstractView {
 		const posts = await response.json();
 
 		for (const post of posts) {
+			let postBox = document.createElement("div");
+			postBox.id = "PostBox" + post.id;
+			postBox.classList.add("postBox");
 			let postElement = document.createElement("div");
 			postElement.id = "Post" + post.id;
 			postElement.classList.add("post");
@@ -115,13 +118,22 @@ export default class Posts extends AbstractView {
 			attachCommentForm(post, postElement)
 
 			// fetch comments, if any, for this post
+
+			postBox.appendChild(postElement);
 			let comments = await fetchComments(post.id); // Wait for the comments to be fetched
-			
+
 			if (comments !== null) {
 				let postComments = attachCommentsToPost(comments)
-				postElement.appendChild(postComments);
+				postBox.appendChild(postComments);
+				postComments.style.display = "none";
+				postElement.addEventListener("click", () => {
+					if (postComments.style.display === "none") {
+						postComments.style.display = "block";
+					}
+				});
+
 			}
-			postContainer.appendChild(postElement);
+			postContainer.appendChild(postBox);
 		}
 	}
 

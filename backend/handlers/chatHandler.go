@@ -32,6 +32,7 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+// deals with the websocket side of chat
 func ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Upgrade the HTTP connection to a WebSocket connection

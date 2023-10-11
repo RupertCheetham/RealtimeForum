@@ -20,6 +20,7 @@ func main() {
 	http.HandleFunc("/", handlers.HomeHandler)
 	http.HandleFunc("/api/auth", auth.LoginHandler)
 	http.HandleFunc("/api/registrations", auth.AddUserHandler)
+	http.HandleFunc("/api/getUsername", handlers.GetUsernameHandler)
 	http.HandleFunc("/api/getposts", handlers.GetPostHandler)
 	http.HandleFunc("/api/addposts", handlers.AddPostHandler)
 	http.HandleFunc("/api/addcomments", handlers.AddCommentHandler)

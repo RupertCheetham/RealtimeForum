@@ -27,7 +27,6 @@ func InitDatabase() {
 	// Apply "up" migrations from SQL files
 	err = RunMigrations(Database, "./db/migrations", "up")
 	if err != nil {
-		// log.Fatalf("Error applying 'up' migrations: %v", err)
 		utils.HandleError("Error applying 'up' migrations: ", err)
 		log.Println("Error applying 'up' migrations: ", err)
 	}
@@ -40,6 +39,7 @@ func InitDatabase() {
 	WipeDatabaseOnCommand()
 }
 
+// Applies "up" migrations from SQL files
 func RunMigrations(Database *sql.DB, migrationDir, direction string) error {
 	files, err := os.ReadDir(migrationDir)
 	if err != nil {

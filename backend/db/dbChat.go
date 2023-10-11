@@ -5,6 +5,7 @@ import (
 	"realtimeForum/utils"
 )
 
+// inserts new chat message to db
 func AddChatToDatabase(UUID string, Message string, Sender int, Recipient int) error {
 	_, err := Database.Exec("INSERT INTO CHAT (ChatUUID, Body, SenderID, RecipientID) VALUES (?, ?, ?, ?)", UUID, Message, Sender, Recipient)
 	if err != nil {
@@ -14,6 +15,7 @@ func AddChatToDatabase(UUID string, Message string, Sender int, Recipient int) e
 	return err
 }
 
+// retrieves chat messages for a particular chatUUID from db
 func GetChatFromDatabase(UUID string) ([]ChatMessage, error) {
 
 	var chatStruct []ChatMessage
