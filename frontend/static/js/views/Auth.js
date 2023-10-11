@@ -64,6 +64,10 @@ export default class extends AbstractView {
 
 					<form class="sign-up-form">
 						<h2 class="title">Sign up</h2>
+						<div =class"progress green">
+							<div =class"indeterminate"></div>
+						</div>
+						
 						<div class="input-field">
 							<i class="fas fa-user"></i>
 							<input
@@ -76,10 +80,6 @@ export default class extends AbstractView {
 						<div class="input-field">
 							<i class="fas fa-user"></i>
 							<input type="text" placeholder="User Age" required id="age" />
-						</div>
-						<div class="input-field">
-							<i class="fas fa-user"></i>
-							<input type="text" placeholder="Gender" required id="gender" />
 						</div>
 						<div class="input-field">
 							<i class="fas fa-user"></i>
@@ -120,6 +120,10 @@ export default class extends AbstractView {
 								required
 								id="password-repeat"
 							/>
+						</div>
+						<div class="input-field">
+							<i class="fas fa-user"></i>
+							<input type="text" placeholder="Gender" required id="gender" />
 						</div>
 
 						<input type="submit" value="Sign up" class="btn" />
@@ -167,6 +171,7 @@ export default class extends AbstractView {
 			</div>
 		</div>
 		</div>
+</div>
  `
 	}
 

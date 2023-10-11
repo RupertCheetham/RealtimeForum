@@ -1,10 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
+/*@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");*/
 
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
 }
+
 
 body,
 input {
@@ -14,7 +15,7 @@ input {
 .container {
 	position: relative;
 	width: 100%;
-	background-color: #fff;
+	background-color: #000000;
 	min-height: 100vh;
 	overflow: hidden;
 }
@@ -22,10 +23,10 @@ input {
 .container-nostyle {
 	position: relative;
 	width: 100%;
-	background-color: #fff;
+	background-color: #ffffff;
 	min-height: 100vh;
 	overflow: hidden;
-}
+}z
 
 .forms-container {
 	position: absolute;
@@ -66,7 +67,7 @@ form.sign-up-form {
 
 form.sign-in-form {
 	z-index: 2;
-}
+} */
 
 .title {
 	font-size: 2.2rem;
@@ -74,9 +75,32 @@ form.sign-in-form {
 	margin-bottom: 10px;
 }
 
-.input-field-container {
-	max-height: 400px; /* Set a maximum height as needed */
-	height: 400px;
+/*.input-field-container {
+	max-height: 400px; /* Set a maximum height as needed 
+	height: auto;
+	overflow-y: auto;  Enable vertical scrolling if content exceeds max height 
+}*/
+
+.sign-up-form {
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	left: 50%;
+	width: 75%;
+	max-height: 800px; /* Set a maximum height as needed */
+	height: auto;
+	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
+	/*transition-property: width;*/
+}
+
+.sign-in-form {
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	left: 50%;
+	width: 75%;
+	max-height: 800px; /* Set a maximum height as needed */
+	height: auto;
 	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
 }
 
@@ -306,7 +330,7 @@ form.sign-in-form {
 		width: 100%;
 		top: 95%;
 		transform: translate(-50%, -100%);
-		transition: 1s 0.8s ease-in-out;
+		transition: 1s 0.8s ;
 	}
 
 	.signin-signup,
