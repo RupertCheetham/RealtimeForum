@@ -40,7 +40,7 @@ input {
     justify-content: space-between;
 }
 
-.contentContainer-left {
+.contentContainer-user {
 	background-color: #282930;
 	flex: 1;
 	max-width: 33.333%;

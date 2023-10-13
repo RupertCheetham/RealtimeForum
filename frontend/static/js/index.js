@@ -51,6 +51,7 @@ const router = async () => {
 			document.querySelector("#container").innerHTML = await view.renderHTML()
 		}
 		const postsView = new Posts()
+		postsView.displayUserContainer()
 		postsView.displayPostContainer()
 		postsView.postSubmitForm()
 		postsView.clearCookie()
