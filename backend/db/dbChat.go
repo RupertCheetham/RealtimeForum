@@ -20,7 +20,7 @@ func GetChatFromDatabase(UUID string) ([]ChatMessage, error) {
 
 	var chatStruct []ChatMessage
 
-	rows, err := Database.Query("SELECT SenderID, Body, Timestamp FROM CHAT")
+	rows, err := Database.Query("SELECT SenderID, Body, Timestamp FROM CHAT WHERE ChatUUID = ?", UUID)
 	if err != nil {
 		utils.HandleError("Error selecting chat from UUID from database:", err)
 		log.Println("Error selecting chat from UUID from database:", err)

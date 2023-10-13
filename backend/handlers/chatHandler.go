@@ -125,12 +125,17 @@ func GetChatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 
 	var user1 int
 	var user2 int
+	var chatHistory []db.ChatMessage
+	var err error
 
 	user1, _ = strconv.Atoi(chatUser1)
 	user2, _ = strconv.Atoi(chatUser2)
 
-	_, chatUUID, _ := previousChatChecker(user1, user2)
-	chatHistory, err := db.GetChatFromDatabase(chatUUID)
+	previousChatEntryFound, chatUUID, _ := previousChatChecker(user1, user2)
+
+	if previousChatEntryFound {
+		chatHistory, err = db.GetChatFromDatabase(chatUUID)
+	}
 	if err != nil {
 		utils.HandleError("Error retrieving chat history from the database:", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -139,7 +144,7 @@ func GetChatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Serialize chat history to JSON and send it as the response
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(chatHistory); err != nil {
+	if err = json.NewEncoder(w).Encode(chatHistory); err != nil {
 		utils.HandleError("Error encoding chat history to JSON:", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return

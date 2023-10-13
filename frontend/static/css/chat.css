@@ -2,6 +2,11 @@
     color: #ffffff;
 }
 
-.chat{
+.sent{
     color: #ffffff;
 }
+
+.received{
+    color: green;
+}
+

@@ -1,5 +1,5 @@
 import Auth from "./views/Auth.js"
-import Posts from "./views/Posts.js"
+import MainPage from "./views/MainPage.js"
 import Chat from "./views/Chat.js"
 import { getCookie } from "./utils/utils.js"
 
@@ -11,7 +11,7 @@ const navigateTo = (url) => {
 const router = async () => {
 	const routes = [
 		{ path: "/", view: Auth },
-		{ path: "/posts", view: Posts },
+		{ path: "/main", view: MainPage },
 		{ path: "/chat", view: Chat },
 	]
 
@@ -43,23 +43,24 @@ const router = async () => {
 	}
 
 	// Call the submitForm and displayPosts method here
-	if (match.route.view === Posts) {
+	if (match.route.view === MainPage) {
 		let cookie = getCookie("sessionID")
 		if (!cookie) {
 			window.location.href = "/"
 		} else {
 			document.querySelector("#container").innerHTML = await view.renderHTML()
 		}
-		const postsView = new Posts()
-		postsView.displayUserContainer()
-		postsView.displayPostContainer()
-		postsView.postSubmitForm()
-		postsView.clearCookie()
-		postsView.reactions()
+		const mainView = new MainPage()
+		mainView.displayUserContainer()
+		mainView.displayPostContainer()
+		mainView.attachPostSubmitForm()
+		mainView.Logout()
+		mainView.reactions()
 	}
 
 	if (match.route.view === Chat) {
 		const chatView = new Chat()
+		chatView.getUserIDFromURL()
 		chatView.webSocketStuff()
 	}
 

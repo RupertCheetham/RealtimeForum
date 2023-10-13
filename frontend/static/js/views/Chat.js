@@ -9,16 +9,23 @@ export default class Chat extends AbstractView {
 	}
 
 	async renderHTML() {
-		
+
 		const nav = new Nav() // Create an instance of the Nav class
 		const navHTML = await nav.renderHTML() // Get the HTML content for the navigation
-		const chat = getChatHTML();
+		const chatTextBox = getChatTextBoxHTML();
 		return `
 		${navHTML}
         <h1 id="chat-font" class = "chat-font"> cHaT iS hErE</h1>
-		${chat}
 		<div id="chatContainer"></div>
+		${chatTextBox}
         `
+	}
+
+	// Function to extract a query parameter from the URL
+	async getUserIDFromURL() {
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		return Number(urlParams.get("userId"));
 	}
 
 	async webSocketStuff() {
@@ -27,14 +34,15 @@ export default class Chat extends AbstractView {
 		const Sender = await userIDFromSessionID()
 		console.log("This is Sender:", Sender)
 		// Example Receiver
-		const Recipient = 2
+		const Recipient = await this.getUserIDFromURL()
+		console.log("This is  Recipient:", Recipient)
 
 		const socket = new WebSocket("wss://localhost:8080/chat");
 
 		socket.addEventListener("open", (event) => {
 			event.preventDefault();
 			console.log("WebSocket connection is open.");
-			
+
 			// WebSocket connection established
 		});
 
@@ -63,42 +71,57 @@ export default class Chat extends AbstractView {
 
 	}
 	async displayChatContainer(user1, user2) {
-		console.log("I am in displayChatContainer.")
 		const chatContainer = document.getElementById("chatContainer");
 		chatContainer.innerHTML = "";
-	
+
 		const response = await fetch(`https://localhost:8080/getChatHistory?user1=${user1}&user2=${user2}`, {
 			credentials: "include", // Ensure cookies are included in the request
 		})
-		console.log("I am next to JSON", response)
+		const currentUser = user1
 		const chats = await response.json();
-		console.log("I am chat", chats)
-		console.log("I am chat length", chats.length)
-	
-		for (const chat of chats) {
+
+		const chatBox = document.createElement("div");
+		chatBox.className = "chatBox";
+		// const chatTarget =  await fetch(`https://localhost:8080/getUsernameFromUswerID?userID=${user2}`, {
+		// 	credentials: "include", // Ensure cookies are included in the request
+		// })
+
+		if (chats != null) {
+			for (const chat of chats) {
+				let chatElement = document.createElement("div");
+				const senderClassName = chat.sender === currentUser ? "sent" : "received";
+				chatElement.classList.add(senderClassName);
+
+				// Determine the appropriate class name based on the sender
+				
+
+				chatElement.innerHTML = `
+        <b>Username: </b> ${chat.sender}, <b>Message: </b> ${chat.message}, <b>Time: </b> ${chat.time}
+    `;
+
+
+				chatBox.appendChild(chatElement);
+			}
+
+		} else {
 			let chatElement = document.createElement("div");
 			chatElement.id = "Chat" + chat.id;
 			chatElement.classList.add("chat");
-		
-		 console.log("HERE")
+
 			chatElement.innerHTML = `
-	
-				${chat.sender}
-				${chat.message}
-				${chat.time}
-				<li><b>Username:</b> 	${chat.sender}</li>
-			  `;
-		
-			  chatContainer.appendChild(chatElement);
+		No messages yet
+	  `;
+			chatBox.appendChild(chatElement);
 		}
+		chatContainer.appendChild(chatBox)
 	}
 }
 
 
-
-function getChatHTML() {
+// The chatbox for new messages
+function getChatTextBoxHTML() {
 	return `
-return <div id="chat">
+<div id="chat">
 <div id="messages"></div>
 <input type="text" id="messageInput" />
 <button id="sendButton">Send</button>
@@ -106,7 +129,34 @@ return <div id="chat">
 `
 }
 
+export async function userList() {
+	const currentUser = await userIDFromSessionID()
+	const userContainer = document.getElementById("userContainer");
+	userContainer.innerHTML = "";
+	const userBox = document.createElement("div");
+
+	const response = await fetch("https://localhost:8080/api/getusers", {
+		credentials: "include", // Ensure cookies are included in the request
+	});
+
+	const users = await response.json();
 
 
 
-//handle func for chats specific to uuid
+	for (const user of users) {
+		if (user.id != currentUser) {
+			let userEntry = document.createElement("div");
+			userEntry.id = "UserBox";
+
+			userEntry.innerHTML = `
+			<a href="/chat?userId=${user.id}" class="chatUserButton">${user.username}</a>
+			`;
+
+			console.log("this is user.username:", user.username)
+			userBox.appendChild(userEntry);
+		}
+
+	}
+	userContainer.appendChild(userBox);
+
+}
