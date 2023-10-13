@@ -28,6 +28,7 @@ func main() {
 	http.HandleFunc("/reaction", handlers.ReactionHandler)
 	http.HandleFunc("/chat", handlers.ChatHandler)
 	http.HandleFunc("/getChatHistory", handlers.GetChatHistoryHandler)
+	http.HandleFunc("/api/getUserID", handlers.GetUserIDHandler)
 
 	// Specify the paths to your TLS certificate and private key files
 	certFile := "server.crt"

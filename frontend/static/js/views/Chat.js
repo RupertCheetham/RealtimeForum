@@ -1,5 +1,6 @@
 import AbstractView from "./AbstractView.js"
 import Nav from "./Nav.js"
+import { userIDFromSessionID } from "../utils/utils.js"
 
 export default class Chat extends AbstractView {
 	constructor() {
@@ -20,20 +21,11 @@ export default class Chat extends AbstractView {
         `
 	}
 
-	stylingBlue() {
-		const chatFont = document.getElementById("chat-font")
-		chatFont.style.color = "blue"
-	}
-
-	stylingBorder() {
-		const chatFont = document.getElementById("chat-font")
-		chatFont.style.border = "5px solid Red"
-	}
-
 	async webSocketStuff() {
 
 		// Example Sender
-		const Sender = 5
+		const Sender = await userIDFromSessionID()
+		console.log("This is Sender:", Sender)
 		// Example Receiver
 		const Recipient = 2
 

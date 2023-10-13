@@ -57,6 +57,23 @@ func GetUsernameFromSessionID(sessionID string) string {
 	return username
 }
 
+func GetUserIDFromSessionID(sessionID string) int {
+	// Initialize a database connection. Ensure you have a valid database connection setup.
+
+	// SQL query to retrieve the username associated with the provided SessionID
+	query := "SELECT UserID FROM COOKIES WHERE SessionID = ?"
+
+	// Execute the query and retrieve the username
+	var userID int
+	err := Database.QueryRow(query, sessionID).Scan(&userID)
+	if err != nil {
+		utils.HandleError("Error finding userID in GetUserIDFromSessionID:", err)
+		log.Println("Error finding username in GetUserIDFromSessionID:", err)
+	}
+	log.Println("UserID is:", userID)
+	return userID
+}
+
 func FindUserFromDatabase(username string) ([]UserEntry, error) {
 	rows, err := Database.Query("SELECT * FROM USERS WHERE Username = ?", username)
 	if err != nil {

@@ -8,9 +8,8 @@ export default class Nav extends AbstractView {
 	}
 
 	async renderHTML() {
-
-		const sessionID = getCookie("sessionID");
-		const username = await userNameFromSessionID(sessionID)
+		
+		const username = await userNameFromSessionID()
 
 		return `
 		<nav id="nav" class="nav">
