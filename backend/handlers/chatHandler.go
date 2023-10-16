@@ -32,6 +32,8 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+// var clients []websocket.Conn
+
 // deals with the websocket side of chat
 func ChatHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -42,6 +44,8 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer connection.Close()
+
+	// clients = append(clients, *connection)
 
 	// Handle incoming and outgoing WebSocket messages here
 	// Use Go channels to broadcast messages to all connected clients
@@ -88,7 +92,25 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Message:", chatMsg.Message)
 			fmt.Println("Sender:", chatMsg.Sender)
 			fmt.Println("Recipient:", chatMsg.Recipient)
+
+			// Print the message to the console
+			fmt.Printf("%s sent: %s\n", connection.RemoteAddr(), string(chatMsg.Message))
+
+			// for _, client := range clients {
+			// 	// Write message back to browser
+			// 	if err = client.WriteMessage(messageType, payload); err != nil {
+			// 		return
+			// 	}
+			// }
+
+			for {
+				// Write message back to browser
+				if err = connection.WriteMessage(messageType, payload); err != nil {
+					return
+				}
+			}
 		}
+
 	}
 }
 
