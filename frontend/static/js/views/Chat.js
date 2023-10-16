@@ -37,12 +37,18 @@ export default class Chat extends AbstractView {
 		const Recipient = await this.getUserIDFromURL()
 		console.log("This is  Recipient:", Recipient)
 
-		const socket = new WebSocket("wss://localhost:8080/chat");
+		const socket = new WebSocket(`wss://localhost:8080/chat?sender=${Sender}&recipient=${Recipient}`);
 
 		socket.addEventListener("open", (event) => {
 			event.preventDefault();
 			console.log("WebSocket connection is open.");
-
+			// Construct a message with sender and recipient information and send it
+			const message = {
+				type: "metadata",
+				sender: Sender,
+				recipient: Recipient,
+			};
+			socket.send(JSON.stringify(message));
 			// WebSocket connection established
 		});
 

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"runtime"
 	"strconv"
@@ -42,6 +43,7 @@ func HandleError(message string, err error) {
 		errorMessage := fmt.Sprintf("***** %s: %v on line %s in %s at file %s *****", message, err, strconv.Itoa(line), functionName, filename[len(filename)-1])
 		errorMessageWithFormatTime := formatTime + ": " + errorMessage + "\n"
 		WriteToLogFile(errorMessageWithFormatTime)
+		log.Println(errorMessageWithFormatTime)
 	}
 }
 

@@ -33,19 +33,28 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-// Maintain a map of connected clients
-var clients = make(map[*websocket.Conn]bool)
-
-// Maintain a map that associates chat UUIDs with connected clients
-var chatClientMap = make(map[string]map[*websocket.Conn]bool)
-
 // deals with the websocket side of chat
 func ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Upgrade the HTTP connection to a WebSocket connection
 	connection := upgradeConnection(w, r)
 	defer connection.Close()
-	defer delete(clients, connection)
+
+	sender, recipient := obtainSenderAndRecipient(r)
+
+	log.Println("sender in ChatHandler:", sender)
+	log.Println("recipient in ChatHandler:", recipient)
+
+	previousChatEntryFound, chatUUID, err := previousChatChecker(sender, recipient)
+	if err != nil {
+		utils.HandleError("Error with chatChecker in ChatHandler", err)
+	}
+	// if chat is new then generates new UUID for chat
+	if !previousChatEntryFound {
+		fmt.Println("chatIsNew", previousChatEntryFound)
+		chatUUID = utils.GenerateNewUUID()
+		fmt.Println("Generated UUID:", chatUUID)
+	}
 
 	for {
 		messageType, payload, err := connection.ReadMessage()
@@ -62,25 +71,6 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Received a WebSocket message:", string(payload))
 			// Handle the message and broadcast it to other clients if needed
 
-			// Unmarshal the JSON into the struct
-
-			previousChatEntryFound, chatUUID, err := previousChatChecker(chatMsg.Sender, chatMsg.Recipient)
-
-			if err != nil {
-				log.Println("Error with chatChecker in ChatHandler", err)
-				utils.HandleError("Error with chatChecker in ChatHandler", err)
-			}
-
-			// if chat is new then generates new UUID for chat
-			if !previousChatEntryFound {
-				fmt.Println("chatIsNew", previousChatEntryFound)
-				chatUUID = utils.GenerateNewUUID()
-				fmt.Println("Generated UUID:", chatUUID)
-			}
-
-			currentTime := time.Now()
-			formattedTime := currentTime.Format("15:04:05 02-01-2006") // Format for date and time up to seconds
-
 			err = db.AddChatToDatabase(chatUUID, chatMsg.Message, chatMsg.Sender, chatMsg.Recipient)
 			if err != nil {
 				log.Println("There has been an issue with AddChatToDatabase in ChatHandler", err)
@@ -91,7 +81,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Message:", chatMsg.Message)
 			fmt.Println("Sender:", chatMsg.Sender)
 			fmt.Println("Recipient:", chatMsg.Recipient)
-			fmt.Println("Time:", formattedTime)
+			fmt.Println("Time:", chatMsg.Time)
 
 			// Print the message to the console
 			fmt.Printf("%s sent: %s\n", connection.RemoteAddr(), string(chatMsg.Message))
@@ -110,16 +100,29 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println("There has been an issue with marshalling in ChatHandler", err)
 			utils.HandleError("There has been an issue with marshalling in ChatHandler", err)
 		}
-		// for client := range clients {
-		fmt.Println("I made it here, thank fuck for that!")
+
 		// Write message back to each client
 		if err := connection.WriteMessage(messageType, payload); err != nil {
 			// Handle the error if needed
 			log.Println("Error sending message to a client:", err)
 		}
-		// }
+
 	}
 
+}
+
+func obtainSenderAndRecipient(r *http.Request) (int, int) {
+	senderString := r.URL.Query().Get("sender")
+	recipientString := r.URL.Query().Get("recipient")
+	sender, err := strconv.Atoi(senderString)
+	if err != nil {
+		utils.HandleError("There has been an issue with Atoi sender in obtainSenderAndRecipient", err)
+	}
+	recipient, err := strconv.Atoi(recipientString)
+	if err != nil {
+		utils.HandleError("There has been an issue with Atoi recipient in obtainSenderAndRecipient", err)
+	}
+	return sender, recipient
 }
 
 // Checks to see if chat between two users has taken place before, if so then returns chat UUID
@@ -202,34 +205,6 @@ func GetUsersForChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Handle incoming messages from clients
-func handleWebSocketConnection(conn *websocket.Conn, chatUUID string) {
-	clients[conn] = true
-	if _, ok := chatClientMap[chatUUID]; !ok {
-		chatClientMap[chatUUID] = make(map[*websocket.Conn]bool)
-	}
-	chatClientMap[chatUUID][conn] = true
-
-	defer func() {
-		delete(clients, conn)
-		delete(chatClientMap[chatUUID], conn)
-		conn.Close()
-	}()
-
-	for {
-		messageType, p, err := conn.ReadMessage()
-		if err != nil {
-			return
-		}
-		// Broadcast the message to clients associated with the same chat UUID
-		for client := range chatClientMap[chatUUID] {
-			if err := client.WriteMessage(messageType, p); err != nil {
-				return
-			}
-		}
-	}
-}
-
 // Upgrade the HTTP connection to a WebSocket connection
 func upgradeConnection(w http.ResponseWriter, r *http.Request) *websocket.Conn {
 
@@ -251,7 +226,6 @@ func payloadUnmarshaller(payload []byte) db.ChatMessage {
 		log.Println("Error unmarshaling JSON in payloadUnmarshaller:", err)
 		return chatMsg
 	}
-
 	currentTime := time.Now()
 	formattedTime := currentTime.Format("15:04:05 02-01-2006")
 	chatMsg.Time = formattedTime // Format for date and time up to seconds
