@@ -42,14 +42,6 @@ export default class Chat extends AbstractView {
 		socket.addEventListener("open", (event) => {
 			event.preventDefault();
 			console.log("WebSocket connection is open.");
-			// Construct a message with sender and recipient information and send it
-			const message = {
-				type: "metadata",
-				sender: Sender,
-				recipient: Recipient,
-			};
-			socket.send(JSON.stringify(message));
-			// WebSocket connection established
 		});
 
 		this.displayChatContainer(Sender, Recipient)

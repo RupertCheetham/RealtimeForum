@@ -49,7 +49,7 @@ func AddExampleEntries() {
 			}
 
 			hashPassword, _ = bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
-			err = AddUserToDatabase("MFenton", 35, "Male", "Martin", "Fenton", "john.doe@example.com", string(hashPassword))
+			err = AddUserToDatabase("Mfenton", 35, "Male", "Martin", "Fenton", "john.doe@example.com", string(hashPassword))
 			if err != nil {
 				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
 			}

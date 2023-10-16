@@ -34,13 +34,13 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// if chat is new then generates new UUID for chat
 	if !previousChatEntryFound {
-		fmt.Println("chatIsNew", previousChatEntryFound)
 		chatUUID = utils.GenerateNewUUID()
 		fmt.Println("Generated UUID:", chatUUID)
 	}
 
 	// Add the connection to the chatConnections map
 	chatConnections[chatUUID] = append(chatConnections[chatUUID], connection)
+	log.Println("length of chatConnections:", len(chatConnections))
 
 	for {
 		messageType, payload, err := connection.ReadMessage()
@@ -56,7 +56,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			// Process the incoming message
 			fmt.Println("Received a WebSocket message:", string(payload))
 			// Handle the message and broadcast it to other clients if needed
-			if chatMsg.Message != "" {
+			if chatMsg.Type == "chat" {
 				err = db.AddChatToDatabase(chatUUID, chatMsg.Message, chatMsg.Sender, chatMsg.Recipient)
 			}
 			if err != nil {
@@ -69,25 +69,15 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Recipient:", chatMsg.Recipient)
 			fmt.Println("Time:", chatMsg.Time)
 
-			// Print the message to the console
-			fmt.Printf("%s sent: %s\n", connection.RemoteAddr(), string(chatMsg.Message))
-
-			// for _, client := range clients {
-			// 	// Write message back to browser
-			// 	if err = client.WriteMessage(messageType, payload); err != nil {
-			// 		return
-			// 	}
-			// }
-
 		}
-
-		payload, err = json.Marshal(chatMsg)
-		if err != nil {
-			utils.HandleError("There has been an issue with marshalling in ChatHandler", err)
+		if chatMsg.Type == "chat" {
+			payload, err = json.Marshal(chatMsg)
+			if err != nil {
+				utils.HandleError("There has been an issue with marshalling in ChatHandler", err)
+			}
+			// Write message back to each client
+			broadcastToChat(chatUUID, messageType, payload)
 		}
-
-		// Write message back to each client
-		broadcastToChat(chatUUID, messageType, payload)
 
 	}
 
@@ -157,7 +147,7 @@ func broadcastToChat(chatUUID string, messageType int, payload []byte) {
 		// Chat UUID not found in the map, handle this error if needed
 		return
 	}
-
+	log.Println("broadcastToChat, length of connections:", len(connections))
 	for _, conn := range connections {
 		if err := conn.WriteMessage(messageType, payload); err != nil {
 			// Handle the error if needed
