@@ -48,9 +48,23 @@ export default class Chat extends AbstractView {
 
 		this.displayChatContainer(Sender, Recipient)
 
+		// when chat receives a message...
 		socket.addEventListener("message", (event) => {
 			console.log("Received a WebSocket message:", event.data);
+
+			let chat = JSON.parse(event.data)
+			console.log("hello", chat.message, chat.sender)
 			// Handle incoming messages
+			const chatBox = document.getElementById("chatBox");
+
+			let chatElement = document.createElement("div");
+			const senderClassName = chat.sender === Sender ? "sent" : "received";
+			chatElement.classList.add(senderClassName);
+
+			chatElement.innerHTML = `
+        <b>Username: </b> ${chat.sender}, <b>Message: </b> ${chat.message}, <b>Time: </b> ${chat.time}
+    `;
+			chatBox.appendChild(chatElement)
 		});
 
 		document.getElementById("sendButton").addEventListener("click", () => {
@@ -70,6 +84,7 @@ export default class Chat extends AbstractView {
 		});
 
 	}
+
 	async displayChatContainer(user1, user2) {
 		const chatContainer = document.getElementById("chatContainer");
 		chatContainer.innerHTML = "";
@@ -82,9 +97,7 @@ export default class Chat extends AbstractView {
 
 		const chatBox = document.createElement("div");
 		chatBox.className = "chatBox";
-		// const chatTarget =  await fetch(`https://localhost:8080/getUsernameFromUswerID?userID=${user2}`, {
-		// 	credentials: "include", // Ensure cookies are included in the request
-		// })
+		chatBox.id = "chatBox";
 
 		if (chats != null) {
 			for (const chat of chats) {
@@ -93,7 +106,7 @@ export default class Chat extends AbstractView {
 				chatElement.classList.add(senderClassName);
 
 				// Determine the appropriate class name based on the sender
-				
+
 
 				chatElement.innerHTML = `
         <b>Username: </b> ${chat.sender}, <b>Message: </b> ${chat.message}, <b>Time: </b> ${chat.time}
@@ -105,8 +118,7 @@ export default class Chat extends AbstractView {
 
 		} else {
 			let chatElement = document.createElement("div");
-			chatElement.id = "Chat" + chat.id;
-			chatElement.classList.add("chat");
+			chatElement.classList.add("sent");
 
 			chatElement.innerHTML = `
 		No messages yet

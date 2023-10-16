@@ -33,7 +33,7 @@ func AddExampleEntries() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "test" {
 			// Adds example users to USERS
-			hashPassword, err := bcrypt.GenerateFromPassword([]byte("password12345"), bcrypt.DefaultCost)
+			hashPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
 			if err != nil {
 				log.Fatalf("Error bcrypting in AddExampleEntries: %v", err)
 			}
