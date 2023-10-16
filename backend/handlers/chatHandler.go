@@ -14,24 +14,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		// Allow WebSocket connections from http://localhost:8080
-		allowedOrigins := []string{
-			"https://localhost:8080", //backend
-			"https://localhost:3000", //frontend
-		}
-		origin := r.Header.Get("Origin")
-		for _, allowedOrigin := range allowedOrigins {
-			if origin == allowedOrigin {
-				return true
-			}
-		}
-		return false
-	},
-}
+var chatConnections = make(map[string][]*websocket.Conn)
 
 // deals with the websocket side of chat
 func ChatHandler(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +30,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 	previousChatEntryFound, chatUUID, err := previousChatChecker(sender, recipient)
 	if err != nil {
-		utils.HandleError("Error with chatChecker in ChatHandler", err)
+		utils.HandleError("Error with previousChatChecker in ChatHandler", err)
 	}
 	// if chat is new then generates new UUID for chat
 	if !previousChatEntryFound {
@@ -55,6 +38,9 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		chatUUID = utils.GenerateNewUUID()
 		fmt.Println("Generated UUID:", chatUUID)
 	}
+
+	// Add the connection to the chatConnections map
+	chatConnections[chatUUID] = append(chatConnections[chatUUID], connection)
 
 	for {
 		messageType, payload, err := connection.ReadMessage()
@@ -70,10 +56,10 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			// Process the incoming message
 			fmt.Println("Received a WebSocket message:", string(payload))
 			// Handle the message and broadcast it to other clients if needed
-
-			err = db.AddChatToDatabase(chatUUID, chatMsg.Message, chatMsg.Sender, chatMsg.Recipient)
+			if chatMsg.Message != "" {
+				err = db.AddChatToDatabase(chatUUID, chatMsg.Message, chatMsg.Sender, chatMsg.Recipient)
+			}
 			if err != nil {
-				log.Println("There has been an issue with AddChatToDatabase in ChatHandler", err)
 				utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
 			}
 			// Access the individual fields
@@ -97,18 +83,33 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 		payload, err = json.Marshal(chatMsg)
 		if err != nil {
-			log.Println("There has been an issue with marshalling in ChatHandler", err)
 			utils.HandleError("There has been an issue with marshalling in ChatHandler", err)
 		}
 
 		// Write message back to each client
-		if err := connection.WriteMessage(messageType, payload); err != nil {
-			// Handle the error if needed
-			log.Println("Error sending message to a client:", err)
-		}
+		broadcastToChat(chatUUID, messageType, payload)
 
 	}
 
+}
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		// Allow WebSocket connections from http://localhost:8080
+		allowedOrigins := []string{
+			"https://localhost:8080", //backend
+			"https://localhost:3000", //frontend
+		}
+		origin := r.Header.Get("Origin")
+		for _, allowedOrigin := range allowedOrigins {
+			if origin == allowedOrigin {
+				return true
+			}
+		}
+		return false
+	},
 }
 
 func obtainSenderAndRecipient(r *http.Request) (int, int) {
@@ -147,6 +148,22 @@ func previousChatChecker(firstID int, secondID int) (bool, string, error) {
 
 	// Entry exists, return true and the ChatUUID
 	return true, chatUUID, nil
+}
+
+func broadcastToChat(chatUUID string, messageType int, payload []byte) {
+	// Retrieve the list of connections for the specified chatUUID
+	connections, ok := chatConnections[chatUUID]
+	if !ok {
+		// Chat UUID not found in the map, handle this error if needed
+		return
+	}
+
+	for _, conn := range connections {
+		if err := conn.WriteMessage(messageType, payload); err != nil {
+			// Handle the error if needed
+			log.Println("Error sending message to a client:", err)
+		}
+	}
 }
 
 func GetChatHistoryHandler(w http.ResponseWriter, r *http.Request) {
@@ -194,7 +211,6 @@ func GetUsersForChatHandler(w http.ResponseWriter, r *http.Request) {
 		users, err := db.GetUsersFromDatabase()
 		if err != nil {
 			utils.HandleError("Error fetching users in GetUsersForChatHandler:", err)
-			log.Println("Error fetching users in GetUsersForChatHandler:", err)
 		}
 
 		// Set the response content type to JSON
@@ -211,7 +227,6 @@ func upgradeConnection(w http.ResponseWriter, r *http.Request) *websocket.Conn {
 	connection, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		utils.HandleError("There was an error with Upgrade in upgradeConnection,", err)
-		log.Println("There was an error with Upgrade in upgradeConnection,", err)
 		return nil
 	}
 	return connection
@@ -223,7 +238,6 @@ func payloadUnmarshaller(payload []byte) db.ChatMessage {
 	err := json.Unmarshal([]byte(payload), &chatMsg)
 	if err != nil {
 		utils.HandleError("Error unmarshaling JSON in payloadUnmarshaller:", err)
-		log.Println("Error unmarshaling JSON in payloadUnmarshaller:", err)
 		return chatMsg
 	}
 	currentTime := time.Now()
