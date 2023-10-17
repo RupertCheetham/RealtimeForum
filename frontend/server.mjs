@@ -4,7 +4,7 @@ import path from "path"
 
 const hostname = "localhost"
 //const port = 3000
-const httpsPort = 3001 // Use a different port to HTTPS
+const httpsPort = 3000 // Use a different port to HTTPS
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 

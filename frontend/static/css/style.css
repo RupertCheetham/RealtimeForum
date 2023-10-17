@@ -110,6 +110,8 @@ form.sign-in-form {
 	z-index: 2;
 } */
 
+
+
 .title {
 	font-size: 2.2rem;
 	color: #444;
@@ -132,6 +134,10 @@ form.sign-in-form {
 	height: auto;
 	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
 	/*transition-property: width;*/
+}
+#step2-form {
+	top: 12px;
+	left: 900px
 }
 
 .sign-in-form {
@@ -237,6 +243,32 @@ form.sign-in-form {
 	left: 0;
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
+}
+
+/* Step two Style for your "Back" and "Next" buttons */
+.button-container {
+    display: flex;
+    align-items: center;
+    margin-top: 0px; /* Adjust this margin as needed */
+}
+
+#next-step2-btn {
+	width: 120px;
+}
+
+#back-step1-btn {
+    width: 120px; /* Adjust the width as needed */
+	margin-right: 0px; /* Add margin to separate the buttons */
+}
+
+#submit-btn {
+    margin-left: 50px; /* Add margin to separate the buttons */
+	width: 120px;
+}
+
+#step-1 {
+    /* Initially show only the first step */
+    display: block;
 }
 
 .auth-container:before {
