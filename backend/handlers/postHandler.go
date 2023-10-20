@@ -15,7 +15,7 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 	SetupCORS(&w, r)
 
 	cookie, _ := r.Cookie("sessionID")
-	fmt.Println("get cookie in addposthandler:", cookie)
+	fmt.Println("[currently unused?] get cookie in addposthandler:", cookie)
 
 	// This code block is handling the logic for adding a new post to the database.
 	if r.Method == "POST" {
@@ -27,7 +27,7 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-
+		post.UserId = db.GetUserIDFromSessionID("sessionID")
 		log.Println("Received post:", post.UserId, post.Img, post.Body, post.Categories)
 
 		err = db.AddPostToDatabase(post.UserId, post.Img, post.Body, post.Categories)

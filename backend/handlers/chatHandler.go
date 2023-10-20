@@ -144,6 +144,7 @@ func broadcastToChat(chatUUID string, messageType int, payload []byte) {
 	// Retrieve the list of connections for the specified chatUUID
 	connections, ok := chatConnections[chatUUID]
 	if !ok {
+		utils.HandleError("There were no connections that use this chatUUID in broadcastToChat", nil)
 		// Chat UUID not found in the map, handle this error if needed
 		return
 	}
@@ -151,11 +152,12 @@ func broadcastToChat(chatUUID string, messageType int, payload []byte) {
 	for _, conn := range connections {
 		if err := conn.WriteMessage(messageType, payload); err != nil {
 			// Handle the error if needed
-			log.Println("Error sending message to a client:", err)
+			utils.HandleError("Error sending message to a client in broadcastToChat:", err)
 		}
 	}
 }
 
+// Retrieves chat history between two users based on the UserIDs in the URL
 func GetChatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 
 	SetupCORS(&w, r)
@@ -191,6 +193,7 @@ func GetChatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Returns a list of registered users; we'll use this in the frontend to start a chat with one of them
 func GetUsersForChatHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)

@@ -7,6 +7,7 @@ import (
 
 // adds a post to the database
 func AddPostToDatabase(userID int, img string, body string, categories string) error {
+
 	_, err := Database.Exec("INSERT INTO POSTS (UserId, Img, Body, Categories) VALUES (?, ?, ?, ?)", userID, img, body, categories)
 	if err != nil {
 		utils.HandleError("Error adding post to database in addPostToDatabase:", err)
