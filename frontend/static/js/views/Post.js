@@ -18,11 +18,12 @@ export function getPostFormHTML() {
               </div>
 
               <label for="categories"><b>Categories</b></label>
+              <ul>
              <label><input type="checkbox" name="Category" value="Dogs"> Dogs </label>
               <label><input type="checkbox" name="Category" value="Sausages"> Sausages</label>
               <label><input type="checkbox" name="Category" value="Cats"> Cats</label>
               <label><input type="checkbox" name="Category" value="Meows"> Meows </label>
-             
+             </ul>
               <div class="post-form-input-field">
                 <label for="image"><b>Image</b></label>
                 <input
@@ -74,7 +75,7 @@ export async function postSubmitForm() {
           // clears the submitted form values, unsure if this helps but apparently it's good practice
           document.getElementById("postText").value = "";
           const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  checkboxes.forEach(checkbox => { checkbox.checked = false; });
+          checkboxes.forEach(checkbox => { checkbox.checked = false; });
           document.getElementById("image").value = "";
           // Call displayPostContainer to refresh the post container
           await handlePostContainer()
@@ -109,13 +110,10 @@ export async function handlePostContainer() {
 
     postElement.innerHTML = `
 			<ul>
-			  <li><b>Id:</b> ${post.id}</li>
 			  <li><b>Username:</b> ${post.username}</li>
 			  <li><b>Img:</b> ${post.img}</li>
 			  <li><b>Body:</b> ${post.body}</li>
 			  <li><b>Categories:</b> ${post.categories}</li>
-			  <li><b>ReactionID:</b> ${postElement.getAttribute("reactionID")}</li>
-			  <li>
 			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id
       }" reaction-action="like" reaction-id = "${postElement.getAttribute(
         "reactionID"
@@ -124,7 +122,6 @@ export async function handlePostContainer() {
       }" reaction-action="dislike" reaction-id = "${postElement.getAttribute(
         "reactionID"
       )}">👎 ${post.postDislikes}</button>
-			 
 			  </li>
 			</ul>
 		  `;

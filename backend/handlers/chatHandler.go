@@ -25,8 +25,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 	sender, recipient := obtainSenderAndRecipient(r)
 
-	log.Println("sender in ChatHandler:", sender)
-	log.Println("recipient in ChatHandler:", recipient)
+	log.Println("[ChatHandler]sender:", sender, ", recipient:", recipient)
 
 	previousChatEntryFound, chatUUID, err := previousChatChecker(sender, recipient)
 	if err != nil {
@@ -36,6 +35,11 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	if !previousChatEntryFound {
 		chatUUID = utils.GenerateNewUUID()
 		fmt.Println("Generated UUID:", chatUUID)
+		err = db.AddChatToDatabase(chatUUID, "", sender, recipient)
+
+		if err != nil {
+			utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
+		}
 	}
 
 	// Add the connection to the chatConnections map
@@ -62,12 +66,8 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
 			}
-			// Access the individual fields
-			fmt.Println("Type:", chatMsg.Type)
-			fmt.Println("Message:", chatMsg.Message)
-			fmt.Println("Sender:", chatMsg.Sender)
-			fmt.Println("Recipient:", chatMsg.Recipient)
-			fmt.Println("Time:", chatMsg.Time)
+
+			fmt.Println("Type:", chatMsg.Type, "Message:", chatMsg.Message, "Sender:", chatMsg.Sender, "Recipient:", chatMsg.Recipient, "Time:", chatMsg.Time)
 
 		}
 		if chatMsg.Type == "chat" {

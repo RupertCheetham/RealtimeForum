@@ -38,25 +38,26 @@ func GetChatFromDatabase(UUID string) ([]ChatMessage, error) {
 			log.Println("Error scanning row from database GetChatFromDatabase:", err)
 			return nil, err
 		}
+		if message.Message != "" {
+			// Parse the timestamp string
+			timeObj, parseErr := time.Parse(time.RFC3339, timestamp)
+			if parseErr != nil {
+				utils.HandleError("Error parsing timestamp:", parseErr)
+				log.Println("Error parsing timestamp:", parseErr)
+				return nil, parseErr
+			}
 
-		// Parse the timestamp string
-		timeObj, parseErr := time.Parse(time.RFC3339, timestamp)
-		if parseErr != nil {
-			utils.HandleError("Error parsing timestamp:", parseErr)
-			log.Println("Error parsing timestamp:", parseErr)
-			return nil, parseErr
+			// Add an hour to the time
+			timeWithHourAdded := timeObj.Add(time.Hour)
+
+			// Format the time as a string in the desired format
+			formattedTime := timeWithHourAdded.Format("15:04:05 02-01-2006")
+
+			// Assign the formatted time to the message
+			message.Time = formattedTime
+
+			chatStruct = append(chatStruct, message)
 		}
-
-		// Add an hour to the time
-		timeWithHourAdded := timeObj.Add(time.Hour)
-
-		// Format the time as a string in the desired format
-		formattedTime := timeWithHourAdded.Format("15:04:05 02-01-2006")
-
-		// Assign the formatted time to the message
-		message.Time = formattedTime
-
-		chatStruct = append(chatStruct, message)
 	}
 
 	return chatStruct, nil
