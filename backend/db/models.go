@@ -23,6 +23,7 @@ type Session struct {
 type PostEntry struct {
 	Id           int    `json:"id"`
 	UserId       int    `json:"userID"`
+	Username     string `json:"username"`
 	Img          string `json:"img"`
 	Body         string `json:"body"`
 	Categories   string `json:"categories"`
