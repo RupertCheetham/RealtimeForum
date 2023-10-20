@@ -60,7 +60,6 @@ const router = async () => {
 
 	if (match.route.view === Chat) {
 		const chatView = new Chat()
-		chatView.getUserIDFromURL()
 		chatView.webSocketStuff()
 	}
 

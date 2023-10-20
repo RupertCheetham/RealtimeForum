@@ -247,8 +247,7 @@ export default class Auth extends AbstractView {
 					email: email,
 					password: password,
 				}),
-			},
-			console.log("I'm in the post registrations JS"))
+			},)
 				.then((response) => {
 					if (response.ok) {
 						const userError = document.querySelector(".username-error")

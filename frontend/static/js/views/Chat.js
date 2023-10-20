@@ -1,6 +1,6 @@
 import AbstractView from "./AbstractView.js"
 import Nav from "./Nav.js"
-import { userIDFromSessionID } from "../utils/utils.js"
+import { userIDFromSessionID, usernameFromUserID } from "../utils/utils.js"
 
 export default class Chat extends AbstractView {
 	constructor() {
@@ -12,17 +12,20 @@ export default class Chat extends AbstractView {
 
 		const nav = new Nav() // Create an instance of the Nav class
 		const navHTML = await nav.renderHTML() // Get the HTML content for the navigation
+		const RecipientID = await this.getRecipientIDFromURL()
+		const Recipient = await usernameFromUserID(RecipientID)
 		const chatTextBox = getChatTextBoxHTML();
 		return `
 		${navHTML}
         <h1 id="chat-font" class = "chat-font"> cHaT iS hErE</h1>
+		<h1 id="recipient" class = "chat-font"> ${Recipient}</h1>
 		<div id="chatContainer"></div>
 		${chatTextBox}
         `
 	}
 
 	// Function to extract a query parameter from the URL
-	async getUserIDFromURL() {
+	async getRecipientIDFromURL() {
 		const queryString = window.location.search;
 		const urlParams = new URLSearchParams(queryString);
 		return Number(urlParams.get("userId"));
@@ -30,12 +33,10 @@ export default class Chat extends AbstractView {
 
 	async webSocketStuff() {
 
-		// Example Sender
+
 		const Sender = await userIDFromSessionID()
-		console.log("This is Sender:", Sender)
-		// Example Receiver
-		const Recipient = await this.getUserIDFromURL()
-		console.log("This is  Recipient:", Recipient)
+
+		const Recipient = await this.getRecipientIDFromURL()
 
 		const socket = new WebSocket(`wss://localhost:8080/chat?sender=${Sender}&recipient=${Recipient}`);
 
@@ -60,7 +61,7 @@ export default class Chat extends AbstractView {
 			chatElement.classList.add(senderClassName);
 
 			chatElement.innerHTML = `
-        <b>Username: </b> ${chat.sender}, <b>Message: </b> ${chat.message}, <b>Time: </b> ${chat.time}
+			${chat.message} <b>Time: </b> <i>${chat.time}</i>
     `;
 			chatBox.appendChild(chatElement)
 		});
@@ -115,7 +116,7 @@ export default class Chat extends AbstractView {
 
 
 				chatElement.innerHTML = `
-        <b>Username: </b> ${chat.sender}, <b>Message: </b> ${chat.message}, <b>Time: </b> ${chat.time}
+       ${chat.message} <b>Time: </b> <i>${chat.time}</i>
     `;
 
 
