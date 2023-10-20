@@ -37,6 +37,7 @@ type CommentEntry struct {
 	Id           int    `json:"id"`
 	ParentPostID int    `json:"parentPostId"`
 	UserId       int    `json:"userID"`
+	Username     string `json:"username"`
 	Body         string `json:"body"`
 	CreationDate string `json:"creationDate"`
 	ReactionID   int    `json:"reactionID"`

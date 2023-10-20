@@ -1,3 +1,5 @@
+import { userIDFromSessionID } from "../utils/utils.js";
+
 // Comments need to be reworked, currently very inefficient.  Probably foreign keys will be involved
 export async function fetchComments(parentPostID) {
 	const response = await fetch(`https://localhost:8080/api/getcomments?postID=${parentPostID}`, {
@@ -25,6 +27,7 @@ export function attachCommentForm(post, postElement) {
 
 		// Extract data from the submitted form
 		const form = event.target;
+		const currentUserID = await userIDFromSessionID()
 		const commentText = form.querySelector("#commentText").value;
 		const postID = form.querySelector("#postID").value;
 
@@ -36,6 +39,7 @@ export function attachCommentForm(post, postElement) {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
+				userID: currentUserID,
 				body: commentText,
 				parentPostId: Number(postID),
 			}),
@@ -64,11 +68,14 @@ export function attachCommentsToPost(comments) {
 		commentElement.className = "comment";
 		commentElement.setAttribute('reactionID', comment.reactionID);
 		commentElement.innerHTML = `
-					Comment: ${comment.body}
+		
+		<li>Username: ${comment.username}</li>
+		<li>Comment: ${comment.body}</li>
 					<ul>
 					<button class="reaction-button" reaction-action="like" reaction-parent-class="comment" reaction-parent-id="${comment.id}"  reaction-id = "${commentElement.getAttribute('reactionID')}">👍 ${comment.commentLikes}</button>
 					<button class="reaction-button" reaction-action="dislike" reaction-parent-class="comment" reaction-parent-id="${comment.id}"  reaction-id = "${commentElement.getAttribute('reactionID')}">👎 ${comment.commentDislikes}</button>
-					</ul>`
+					</ul>
+		`
 		commentsContainer.appendChild(commentElement);
 	});
 	const closeCommentsButton = document.createElement("button");

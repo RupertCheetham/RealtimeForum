@@ -25,12 +25,13 @@ func GetCommentsFromDatabase(parentPostID int) ([]CommentEntry, error) {
 	// Gets all of the comments data related to a post, including any likes/dislikes data from COMMENTSREACTIONS.
 	// If there is no data then defaults to 0 likes/dislikes
 	query := `
-        SELECT c.Id, c.PostID, c.UserId, c.Body, c.CreationDate, c.ReactionID,
-               COALESCE(cr.Likes, 0) AS Likes, COALESCE(cr.Dislikes, 0) AS Dislikes
-        FROM COMMENTS c
-        LEFT JOIN COMMENTREACTIONS cr ON c.ReactionID = cr.Id
-		Where c.PostID = ?
-        ORDER BY c.Id ASC
+	SELECT c.Id, c.PostID, u.Username, c.Body, c.CreationDate, c.ReactionID,
+		COALESCE(cr.Likes, 0) AS Likes, COALESCE(cr.Dislikes, 0) AS Dislikes
+	FROM COMMENTS c
+	LEFT JOIN COMMENTREACTIONS cr ON c.ReactionID = cr.Id
+	LEFT JOIN USERS u ON c.UserId = u.Id
+	WHERE c.PostID = ?
+	ORDER BY c.Id ASC;
     `
 
 	rows, err := Database.Query(query, parentPostID)
@@ -44,7 +45,7 @@ func GetCommentsFromDatabase(parentPostID int) ([]CommentEntry, error) {
 	var comments []CommentEntry
 	for rows.Next() {
 		var comment CommentEntry
-		err := rows.Scan(&comment.Id, &comment.ParentPostID, &comment.UserId, &comment.Body, &comment.CreationDate, &comment.ReactionID, &comment.Likes, &comment.Dislikes)
+		err := rows.Scan(&comment.Id, &comment.ParentPostID, &comment.Username, &comment.Body, &comment.CreationDate, &comment.ReactionID, &comment.Likes, &comment.Dislikes)
 		if err != nil {
 			utils.HandleError("Error scanning row from database:", err)
 			log.Println("Error scanning row from database:", err)
