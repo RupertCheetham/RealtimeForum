@@ -164,12 +164,22 @@ export default class Auth extends AbstractView {
 			const email = document.getElementById("email").value
 			const password = document.getElementById("new_password").value
 
-			const stepOne = document.getElementById("step1-form");
-			const stepBack = document.getElementById("step2-form");
+			const stepOne = document.getElementById("step1-form")
+			const stepTwo = document.getElementById("step2-form")
 
-			stepOne.onclick = function(){
-					
+			const next1 = document.getElementById("next-step2-btn")
+			const back1 = document.getElementById("back-step1-btn")
+
+			next1.onclick = function(){
+				stepOne.style.left = "-900px"
+				stepTwo.style.left = "900px"	
 			}
+
+			back1.onclick = function(){
+				stepOne.style.right = "900px"
+				stepTwo.style.right = "900px"	
+			}
+
 
 			console.log(userName, userAge)
 
