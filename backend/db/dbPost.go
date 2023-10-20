@@ -44,7 +44,6 @@ ORDER BY p.Id DESC;
 		err := rows.Scan(&post.Id, &post.Username, &post.Img, &post.Body, &categoriesString, &post.CreationDate, &post.ReactionID, &post.Likes, &post.Dislikes)
 		if err != nil {
 			utils.HandleError("Error scanning row from database:", err)
-			log.Println("Error scanning row from database:", err)
 			return nil, err
 		}
 		post.Categories = strings.Split(categoriesString, ",")

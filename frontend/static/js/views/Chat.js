@@ -67,17 +67,25 @@ export default class Chat extends AbstractView {
 
 		document.getElementById("sendButton").addEventListener("click", () => {
 			const messageInput = document.getElementById("messageInput");
-			const Message = messageInput.value;
-			console.log("Sending message:", Message);
-			// Send the message to the server via WebSocket
-			socket.send(JSON.stringify({
-				type: "chat",
-				message: Message,
-				sender: Sender,
-				recipient: Recipient
-			}));
-			// Clear the input field
-			messageInput.value = "";
+			// Get the value of the input and trim leading/trailing spaces
+			const Message = messageInput.value.trim();
+
+			if (Message !== "") {
+				// Check if the message contains at least one non-space character
+				if (/\S/.test(Message)) {
+					console.log("Sending message:", Message);
+					// Send the message to the server via WebSocket
+					socket.send(JSON.stringify({
+						type: "chat",
+						message: Message,
+						sender: Sender,
+						recipient: Recipient
+					}));
+					// Clear the input field
+					messageInput.value = "";
+				}
+			}
+
 
 		});
 
@@ -131,11 +139,11 @@ export default class Chat extends AbstractView {
 // The chatbox for new messages
 function getChatTextBoxHTML() {
 	return `
-<div id="chat">
-<div id="messages"></div>
-<input type="text" id="messageInput" />
-<button id="sendButton">Send</button>
-</div>
+	<div id="chat">
+    <div id="messages"></div>
+    <input type="text" id="messageInput" />
+    <button id="sendButton">Send</button>
+  </div>
 `
 }
 
@@ -162,7 +170,6 @@ export async function userList() {
 			<a href="/chat?userId=${user.id}" class="chatUserButton">${user.username}</a>
 			`;
 
-			console.log("this is user.username:", user.username)
 			userBox.appendChild(userEntry);
 		}
 
