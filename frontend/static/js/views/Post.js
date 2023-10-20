@@ -1,11 +1,8 @@
-import {
-    fetchComments,
-    attachCommentForm,
-    attachCommentsToPost,
-} from "./Comments.js";
+import { fetchComments, attachCommentForm, attachCommentsToPost } from "./Comments.js";
+import { userIDFromSessionID } from "../utils/utils.js";
 
 export function getPostFormHTML() {
-    return `<div class="post-form">
+  return `<div class="post-form">
           <form id="post-form" method="POST">
             <p>Kindly fill in this form to post.</p>
            
@@ -46,69 +43,71 @@ export function getPostFormHTML() {
 }
 
 export async function postSubmitForm() {
-    const postForm = document.getElementById("post-form");
+  const postForm = document.getElementById("post-form");
 
-    postForm.addEventListener(
-        "submit",
-        async function (event) {
-            event.preventDefault();
-            const postText = document.getElementById("postText").value;
-            const categories = document.getElementById("categories").value;
-            const image = document.getElementById("image").value;
-            console.log("submitted post:", postText, categories, image);
+  postForm.addEventListener(
+    "submit",
+    async function (event) {
+      event.preventDefault();
+      const currentUserID = await userIDFromSessionID()
+      const postText = document.getElementById("postText").value;
+      const categories = document.getElementById("categories").value;
+      const image = document.getElementById("image").value;
+      console.log("submitted post:", postText, categories, image);
 
-            try {
-                const response = await fetch("https://localhost:8080/api/addposts", {
-                    method: "POST",
-                    headers: {
-                        Accept: "application/json",
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        body: postText,
-                        categories: categories,
-                        img: image,
-                    }),
-                    credentials: "include",
-                });
+      try {
+        const response = await fetch("https://localhost:8080/api/addposts", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userID: currentUserID,
+            body: postText,
+            categories: categories,
+            img: image,
+          }),
+          credentials: "include",
+        });
 
-                if (response.ok) {
-                    // clears the submitted form values, unsure if this helps but apparently it's good practice
-                    document.getElementById("postText").value = "";
-                    document.getElementById("categories").value = "";
-                    document.getElementById("image").value = "";
-                    // Call displayPostContainer to refresh the post container
-                    await handlePostContainer()
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }.bind(this)
-    );
+        if (response.ok) {
+          // clears the submitted form values, unsure if this helps but apparently it's good practice
+          document.getElementById("postText").value = "";
+          document.getElementById("categories").value = "";
+          document.getElementById("image").value = "";
+          // Call displayPostContainer to refresh the post container
+          await handlePostContainer()
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }.bind(this)
+  );
 }
 
 
 // Gets and displays posts; attaches a comments form to the bottom of each
 export async function handlePostContainer() {
-    const postContainer = document.getElementById("postContainer");
-    postContainer.innerHTML = "";
+  const postContainer = document.getElementById("postContainer");
+  postContainer.innerHTML = "";
 
-    const response = await fetch("https://localhost:8080/api/getposts", {
-        credentials: "include", // Ensure cookies are included in the request
-    });
+  const response = await fetch("https://localhost:8080/api/getposts", {
+    credentials: "include", // Ensure cookies are included in the request
+  });
 
-    const posts = await response.json();
+  const posts = await response.json();
 
-    for (const post of posts) {
-        let postBox = document.createElement("div");
-        postBox.id = "PostBox" + post.id;
-        postBox.classList.add("postBox");
-        let postElement = document.createElement("div");
-        postElement.id = "Post" + post.id;
-        postElement.classList.add("post");
-        postElement.setAttribute("reactionID", post.reactionID);
+  for (const post of posts) {
+    let postBox = document.createElement("div");
+    postBox.id = "PostBox" + post.id;
+    postBox.classList.add("postBox");
+    let postElement = document.createElement("div");
+    postElement.id = "Post" + post.id;
+    postElement.classList.add("post");
+    postElement.setAttribute("reactionID", post.reactionID);
 
-        postElement.innerHTML = `
+    postElement.innerHTML = `
 			<ul>
 			  <li><b>Id:</b> ${post.id}</li>
 			  <li><b>Username:</b> ${post.username}</li>
@@ -118,36 +117,36 @@ export async function handlePostContainer() {
 			  <li><b>ReactionID:</b> ${postElement.getAttribute("reactionID")}</li>
 			  <li>
 			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id
-            }" reaction-action="like" reaction-id = "${postElement.getAttribute(
-                "reactionID"
-            )}">👍 ${post.postLikes}</button>
+      }" reaction-action="like" reaction-id = "${postElement.getAttribute(
+        "reactionID"
+      )}">👍 ${post.postLikes}</button>
 			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id
-            }" reaction-action="dislike" reaction-id = "${postElement.getAttribute(
-                "reactionID"
-            )}">👎 ${post.postDislikes}</button>
+      }" reaction-action="dislike" reaction-id = "${postElement.getAttribute(
+        "reactionID"
+      )}">👎 ${post.postDislikes}</button>
 			 
 			  </li>
 			</ul>
 		  `;
 
-        // attaches the comment form to the bottom of each post
-        attachCommentForm(post, postElement);
+    // attaches the comment form to the bottom of each post
+    attachCommentForm(post, postElement);
 
-        // fetch comments, if any, for this post
+    // fetch comments, if any, for this post
 
-        postBox.appendChild(postElement);
-        let comments = await fetchComments(post.id); // Wait for the comments to be fetched
+    postBox.appendChild(postElement);
+    let comments = await fetchComments(post.id); // Wait for the comments to be fetched
 
-        if (comments !== null) {
-            let postComments = attachCommentsToPost(comments);
-            postBox.appendChild(postComments);
-            postComments.style.display = "none";
-            postElement.addEventListener("click", () => {
-                if (postComments.style.display === "none") {
-                    postComments.style.display = "block";
-                }
-            });
+    if (comments !== null) {
+      let postComments = attachCommentsToPost(comments);
+      postBox.appendChild(postComments);
+      postComments.style.display = "none";
+      postElement.addEventListener("click", () => {
+        if (postComments.style.display === "none") {
+          postComments.style.display = "block";
         }
-        postContainer.appendChild(postBox);
+      });
     }
+    postContainer.appendChild(postBox);
+  }
 }
