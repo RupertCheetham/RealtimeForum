@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"realtimeForum/db"
 	"realtimeForum/utils"
+	"strings"
 )
 
 // Handler for adding post to DB
@@ -26,8 +27,8 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		log.Println("Received post:", post.UserId, post.Img, post.Body, post.Categories)
-
-		err = db.AddPostToDatabase(post.UserId, post.Img, post.Body, post.Categories)
+		categoriesStringed := strings.Join(post.Categories, ",")
+		err = db.AddPostToDatabase(post.UserId, post.Img, post.Body, categoriesStringed)
 		if err != nil {
 			utils.HandleError("Problem adding to POSTS in AddPostHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)

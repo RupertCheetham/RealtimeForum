@@ -16,16 +16,13 @@ export function getPostFormHTML() {
                   required
                 />
               </div>
-              <div class="post-form-input-field">
-                <label for="categories"><b>Categories</b></label>
-                <input
-                  type="text"
-                  placeholder="Enter Categories"
-                  name="categories"
-                  id="categories"
-                  required
-                />
-              </div>
+
+              <label for="categories"><b>Categories</b></label>
+             <label><input type="checkbox" name="Category" value="Dogs"> Dogs </label>
+              <label><input type="checkbox" name="Category" value="Sausages"> Sausages</label>
+              <label><input type="checkbox" name="Category" value="Cats"> Cats</label>
+              <label><input type="checkbox" name="Category" value="Meows"> Meows </label>
+             
               <div class="post-form-input-field">
                 <label for="image"><b>Image</b></label>
                 <input
@@ -51,7 +48,9 @@ export async function postSubmitForm() {
       event.preventDefault();
       const currentUserID = await userIDFromSessionID()
       const postText = document.getElementById("postText").value;
-      const categories = document.getElementById("categories").value;
+      const categoriesCheckboxes = document.querySelectorAll('input[name="Category"]:checked');
+      const categories = Array.from(categoriesCheckboxes).map(categoriesCheckboxes => categoriesCheckboxes.value);
+
       const image = document.getElementById("image").value;
       console.log("submitted post:", postText, categories, image);
 
@@ -74,7 +73,8 @@ export async function postSubmitForm() {
         if (response.ok) {
           // clears the submitted form values, unsure if this helps but apparently it's good practice
           document.getElementById("postText").value = "";
-          document.getElementById("categories").value = "";
+          const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(checkbox => { checkbox.checked = false; });
           document.getElementById("image").value = "";
           // Call displayPostContainer to refresh the post container
           await handlePostContainer()

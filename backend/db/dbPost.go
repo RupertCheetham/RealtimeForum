@@ -3,6 +3,7 @@ package db
 import (
 	"log"
 	"realtimeForum/utils"
+	"strings"
 )
 
 // adds a post to the database
@@ -39,12 +40,14 @@ ORDER BY p.Id DESC;
 	var posts []PostEntry
 	for rows.Next() {
 		var post PostEntry
-		err := rows.Scan(&post.Id, &post.Username, &post.Img, &post.Body, &post.Categories, &post.CreationDate, &post.ReactionID, &post.Likes, &post.Dislikes)
+		var categoriesString string
+		err := rows.Scan(&post.Id, &post.Username, &post.Img, &post.Body, &categoriesString, &post.CreationDate, &post.ReactionID, &post.Likes, &post.Dislikes)
 		if err != nil {
 			utils.HandleError("Error scanning row from database:", err)
 			log.Println("Error scanning row from database:", err)
 			return nil, err
 		}
+		post.Categories = strings.Split(categoriesString, ",")
 		posts = append(posts, post)
 	}
 

@@ -21,16 +21,16 @@ type Session struct {
 }
 
 type PostEntry struct {
-	Id           int    `json:"id"`
-	UserId       int    `json:"userID"`
-	Username     string `json:"username"`
-	Img          string `json:"img"`
-	Body         string `json:"body"`
-	Categories   string `json:"categories"`
-	CreationDate string `json:"creationDate"`
-	ReactionID   int    `json:"reactionID"`
-	Likes        int    `json:"postLikes"`
-	Dislikes     int    `json:"postDislikes"`
+	Id           int      `json:"id"`
+	UserId       int      `json:"userID"`
+	Username     string   `json:"username"`
+	Img          string   `json:"img"`
+	Body         string   `json:"body"`
+	Categories   []string `json:"categories"`
+	CreationDate string   `json:"creationDate"`
+	ReactionID   int      `json:"reactionID"`
+	Likes        int      `json:"postLikes"`
+	Dislikes     int      `json:"postDislikes"`
 }
 
 type CommentEntry struct {

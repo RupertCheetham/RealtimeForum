@@ -39,6 +39,7 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Deals with Get requests for Comments
 func GetCommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	SetupCORS(&w, r)
