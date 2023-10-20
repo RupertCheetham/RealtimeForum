@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"realtimeForum/db"
@@ -17,9 +16,6 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 	// This code block is handling the logic for adding a new post to the database.
 	if r.Method == "POST" {
 
-		cookie, _ := r.Cookie("sessionID")
-		fmt.Println("[AddPostHandler?] get cookie in addposthandler:", cookie)
-
 		var post db.PostEntry
 		err := json.NewDecoder(r.Body).Decode(&post)
 
@@ -28,7 +24,7 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		post.UserId = db.GetUserIDFromSessionID(cookie.Value)
+
 		log.Println("Received post:", post.UserId, post.Img, post.Body, post.Categories)
 
 		err = db.AddPostToDatabase(post.UserId, post.Img, post.Body, post.Categories)
