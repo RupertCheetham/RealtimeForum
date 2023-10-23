@@ -57,27 +57,24 @@ func GetUsernameFromSessionID(sessionID string) string {
 	return username
 }
 
-func FindUserFromDatabase(username string) ([]UserEntry, error) {
+func FindUserFromDatabase(username string) (UserEntry, error) {
 	rows, err := Database.Query("SELECT * FROM USERS WHERE Username = ?", username)
 	if err != nil {
 		utils.HandleError("Error querying USERS from database in FindUserFromDatabase:", err)
 		// log.Println("Error querying USERS from database in FindUserFromDatabase:", err)
-		return nil, err
+		return UserEntry{}, err
 	}
 	defer rows.Close()
 
-	var usr []UserEntry
+	var user UserEntry
 	for rows.Next() {
-		var entry UserEntry
-		err := rows.Scan(&entry.Id, &entry.Username, &entry.Age, &entry.Gender, &entry.FirstName, &entry.LastName, &entry.Email, &entry.Password)
+		err := rows.Scan(&user.Id, &user.Username, &user.Age, &user.Gender, &user.FirstName, &user.LastName, &user.Email, &user.Password)
 		if err != nil {
 			utils.HandleError("Error scanning row from database in FindUserFromDatabase:", err)
-			// log.Println("Error scanning row from database in FindUserFromDatabase:", err)
-			return nil, err
+			return UserEntry{}, err
 		}
-		usr = append(usr, entry)
 	}
-	return usr, nil
+	return user, nil
 }
 
 func DeleteUserFromDatabase(username string) error {

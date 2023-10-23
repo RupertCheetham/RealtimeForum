@@ -1,31 +1,38 @@
 package db
 
 import (
+	"fmt"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-func GetLoginEntry(loginCheck UserEntry) (message map[string]any, err error) {
-	// dbLoginCheck, _ := GetUsersFromDatabase()
-	dbLoginCheck, _ := FindUserFromDatabase(loginCheck.Username)
-
-	message = map[string]any{
+func GetLoginEntry(loginCheck UserEntry) (message map[string]string, id int, err error) {
+	id = 0
+	message = map[string]string{
 		"message": "",
 	}
 
-	// // Check if the input contains an '@' sign
-	isEmail := strings.Contains(loginCheck.Username, "@")
+	dbLoginCheck, err := FindUserFromDatabase(loginCheck.Username)
 
-	if (isEmail && dbLoginCheck[0].Email == loginCheck.Username) || (!isEmail && dbLoginCheck[0].Username == loginCheck.Username) {
-		err := bcrypt.CompareHashAndPassword([]byte(dbLoginCheck[0].Password), []byte(loginCheck.Password))
-		if err != nil {
-			message["message"] = "Incorrect username or password"
-			return message, err
-		}
-		message["message"] = "Login successfully"
-		return message, err
+	if err != nil {
+		return message, 0, err
 	}
 
-	return message, err
+	// Check if the input contains an '@' sign
+	isEmail := strings.Contains(loginCheck.Username, "@")
+
+	fmt.Println("dbLoginCheck:", dbLoginCheck)
+
+	if (isEmail && dbLoginCheck.Email == loginCheck.Email) || (!isEmail && dbLoginCheck.Username == loginCheck.Username) {
+		err := bcrypt.CompareHashAndPassword([]byte(dbLoginCheck.Password), []byte(loginCheck.Password))
+		if err != nil {
+			message["message"] = "Incorrect username or password"
+			return message, id, err
+		}
+		id = dbLoginCheck.Id
+		message["message"] = "Login successfully"
+	}
+
+	return message, id, err
 }

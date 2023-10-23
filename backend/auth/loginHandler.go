@@ -22,16 +22,20 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		err := json.NewDecoder(r.Body).Decode(&login)
 
+		fmt.Println("login data:", login)
+
 		if err != nil {
 			utils.HandleError("Unable to decode json", err)
-			http.Error(w, "Unable to decode json", http.StatusBadRequest)
+			http.Error(w, "Internal sever error", http.StatusBadRequest)
 			return
 		}
 
-		msg, err := db.GetLoginEntry(login)
+		// use the login data to find the user in the database
+		msg, id, err := db.GetLoginEntry(login)
+
 		if err != nil {
-			utils.HandleError("Unable to sign in user", err)
-			http.Error(w, "Unable to sign in user", http.StatusBadRequest)
+			utils.HandleError("Unable to get user's id", err)
+			http.Error(w, "Internal sever error", http.StatusBadRequest)
 			return
 		}
 
@@ -41,24 +45,16 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			utils.HandleError("Unable to decode json", err)
-			http.Error(w, "Unable to decode json", http.StatusBadRequest)
+			http.Error(w, "Internal sever error", http.StatusBadRequest)
 			return
 		}
 
-		dbLoginCheck, err := db.FindUserFromDatabase(login.Username)
+		// after getting username from login check, use the user's id to create a session for the user
+		userSession, err := db.CreateSession(id, sessionExpiration)
 
 		if err != nil {
-			fmt.Println("unable to create user session:", err)
-		}
-
-		fmt.Println("sessionExpiration:", sessionExpiration)
-
-		userSession, err := db.CreateSession(dbLoginCheck[0].Id, sessionExpiration)
-
-		if err != nil {
-			fmt.Println("unable to create user session:", err)
 			utils.HandleError("unable to create user session:", err)
-			http.Error(w, "Unable to get user id", http.StatusBadRequest)
+			http.Error(w, "Internal sever error", http.StatusBadRequest)
 			return
 		}
 
