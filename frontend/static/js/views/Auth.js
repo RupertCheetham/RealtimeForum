@@ -14,6 +14,45 @@ export default class Auth extends AbstractView {
     <div class="forms-container">
         <div class="signin-signup">
             <div class="input-field-container">
+			<form id="sign-up-form" action="#" class="sign-in-form">
+			<h2 class="title">Sign in</h2>
+			<div class="input-field">
+				<i class="fas fa-user"></i>
+				<input
+					type="text"
+					placeholder="Username or Email"
+					required
+					id="usernameOrEmail"
+				/>
+			</div>
+			<div class="input-field">
+				<i class="fas fa-lock"></i>
+				<input
+					type="password"
+					placeholder="Password"
+					required
+					id="password"
+				/>
+			</div>
+
+			<input type="submit" value="Login" class="btn solid" />
+
+			<p class="social-text">Or Sign in with social platforms</p>
+			<div class="social-media">
+				<a href="#" class="social-icon">
+					<i class="fab fa-facebook-f"></i>
+				</a>
+				<a href="#" class="social-icon">
+					<i class="fab fa-twitter"></i>
+				</a>
+				<a href="#" class="social-icon">
+					<i class="fab fa-google"></i>
+				</a>
+				<a href="#" class="social-icon">
+					<i class="fab fa-linkedin-in"></i>
+				</a>
+			</div>
+			</form>
                 <!-- Step 1: User Information -->
                 <form id="step1-form" action="#" class="sign-up-form">
                     <h2 class="title">Step 1: User Information</h2>
@@ -76,6 +115,7 @@ export default class Auth extends AbstractView {
 					<p>
 						Become a member and let's get you started!
 					</p>
+
 					<button class="btn transparent" id="sign-up-btn">Sign up</button>
 				</div>
 				<img src="img/log.svg" class="image" alt="" />

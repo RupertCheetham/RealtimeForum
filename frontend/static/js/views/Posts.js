@@ -15,13 +15,16 @@ export default class Posts extends AbstractView {
 		const navHTML = await nav.renderHTML(); // Get the HTML content for the navigation
 		const postForm = getPostFormHTML()
 		return `
+	<div id="main-page">
       ${navHTML}
 	  ${postForm}
+	
       <div class="contentContainer">
         <div id="leftContainer" class="contentContainer-left">left container</div>
         <div id="postContainer" class="contentContainer-post"></div>
         <div id="rightContainer" class="contentContainer-right">right container, probably chat</div>
       </div>
+	</div>
     `;
 	}
 
@@ -131,6 +134,16 @@ export default class Posts extends AbstractView {
 	}
 
 }
+
+/* Open the sidenav */
+function openNav() {
+	document.getElementById("mySidenav").style.width = "100%";
+  }
+  
+  /* Close/hide the sidenav */
+  function closeNav() {
+	document.getElementById("mySidenav").style.width = "0";
+  }
 
 function getPostFormHTML() {
 
