@@ -45,11 +45,19 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		dbLoginCheck, _ := db.FindUserFromDatabase(login.Username)
-		userSession, _ := db.CreateSession(dbLoginCheck[0].Id, sessionExpiration)
+		dbLoginCheck, err := db.FindUserFromDatabase(login.Username)
 
 		if err != nil {
-			utils.HandleError("Unable to get user id", err)
+			fmt.Println("unable to create user session:", err)
+		}
+
+		fmt.Println("sessionExpiration:", sessionExpiration)
+
+		userSession, err := db.CreateSession(dbLoginCheck[0].Id, sessionExpiration)
+
+		if err != nil {
+			fmt.Println("unable to create user session:", err)
+			utils.HandleError("unable to create user session:", err)
 			http.Error(w, "Unable to get user id", http.StatusBadRequest)
 			return
 		}
