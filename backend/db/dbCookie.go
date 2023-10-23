@@ -7,8 +7,8 @@ import (
 )
 
 // creates a session
-func CreateSession(userId int) (session Session, err error) {
-	statement := `INSERT INTO Cookies (SessionID, UserID, CreationDate) values (?, ?, ?) returning SessionID, UserID, CreationDate`
+func CreateSession(userId int, expirationDate time.Time) (session Session, err error) {
+	statement := `INSERT INTO Cookies (SessionID, UserID, CreationDate, ExpirationDate) values (?, ?, ?) returning SessionID, UserID, CreationDate, ExpirationDate`
 
 	stmt, err := Database.Prepare(statement)
 	utils.HandleError("session error:", err)
@@ -18,7 +18,7 @@ func CreateSession(userId int) (session Session, err error) {
 	UUID := utils.GenerateNewUUID()
 	timeNow := time.Now()
 
-	err = stmt.QueryRow(UUID, userId, timeNow).Scan(&session.SessionID, &session.UserId, &session.CreationDate)
+	err = stmt.QueryRow(UUID, userId, timeNow, expirationDate).Scan(&session.SessionID, &session.UserId, &session.CreationDate, &session.ExpirationTime)
 	return
 }
 

@@ -12,6 +12,8 @@ import (
 
 const timeout = 30 * time.Minute
 
+var sessionExpiration = time.Now().Add(timeout)
+
 // Handler to login page
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
@@ -44,7 +46,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		dbLoginCheck, _ := db.FindUserFromDatabase(login.Username)
-		userSession, _ := db.CreateSession(dbLoginCheck[0].Id)
+		userSession, _ := db.CreateSession(dbLoginCheck[0].Id, sessionExpiration)
 
 		if err != nil {
 			utils.HandleError("Unable to get user id", err)
@@ -56,7 +58,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		sessionCookie := http.Cookie{
 			Name:    "sessionID",
 			Value:   userSession.SessionID,
-			Expires: time.Now().Add(timeout),
+			Expires: sessionExpiration,
 			// HttpOnly: true,
 			Secure: true,
 			Path:   "/",
