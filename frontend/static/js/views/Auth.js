@@ -183,7 +183,7 @@ export default class Auth extends AbstractView {
 					if (!cookie) {
 						window.location.href = "/"
 					} else {
-						window.location.href = "posts" // Update the URL
+						window.location.href = "main" // Update the URL
 					}
 				} else {
 					throw new Error("Authentication failed!")
@@ -238,8 +238,7 @@ export default class Auth extends AbstractView {
 					email: email,
 					password: password,
 				}),
-			},
-			console.log("I'm in the post registrations JS"))
+			},)
 				.then((response) => {
 					if (response.ok) {
 						const userError = document.querySelector(".username-error")
@@ -262,3 +261,11 @@ export default class Auth extends AbstractView {
 		})
 	}
 }
+
+export async function clearCookie() {
+    let logoutBtn = document.getElementById("logout");
+    logoutBtn.addEventListener("click", () => {
+      document.cookie =
+        "sessionID=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+    });
+  }

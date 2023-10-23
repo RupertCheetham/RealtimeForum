@@ -1,6 +1,8 @@
+import { userIDFromSessionID } from "../utils/utils.js";
+
 // Comments need to be reworked, currently very inefficient.  Probably foreign keys will be involved
 export async function fetchComments(parentPostID) {
-	const response = await fetch(`https://localhost:8080/api/getcomments?postID=${parentPostID}` , {
+	const response = await fetch(`https://localhost:8080/api/getcomments?postID=${parentPostID}`, {
 		credentials: "include", // Ensure cookies are included in the request
 	});
 	const comments = await response.json();
@@ -25,6 +27,7 @@ export function attachCommentForm(post, postElement) {
 
 		// Extract data from the submitted form
 		const form = event.target;
+		const currentUserID = await userIDFromSessionID()
 		const commentText = form.querySelector("#commentText").value;
 		const postID = form.querySelector("#postID").value;
 
@@ -36,6 +39,7 @@ export function attachCommentForm(post, postElement) {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
+				userID: currentUserID,
 				body: commentText,
 				parentPostId: Number(postID),
 			}),
@@ -64,23 +68,37 @@ export function attachCommentsToPost(comments) {
 		commentElement.className = "comment";
 		commentElement.setAttribute('reactionID', comment.reactionID);
 		commentElement.innerHTML = `
-					Comment: ${comment.body}
+		
+		<li>Username: ${comment.username}</li>
+		<li>Comment: ${comment.body}</li>
 					<ul>
 					<button class="reaction-button" reaction-action="like" reaction-parent-class="comment" reaction-parent-id="${comment.id}"  reaction-id = "${commentElement.getAttribute('reactionID')}">👍 ${comment.commentLikes}</button>
 					<button class="reaction-button" reaction-action="dislike" reaction-parent-class="comment" reaction-parent-id="${comment.id}"  reaction-id = "${commentElement.getAttribute('reactionID')}">👎 ${comment.commentDislikes}</button>
-					</ul>`
+					</ul>
+		`
 		commentsContainer.appendChild(commentElement);
 	});
+	const closeCommentsButton = document.createElement("button");
+	closeCommentsButton.id = "closeCommentsButton";
+	closeCommentsButton.innerText = "Close Comments";
 
+	// Add an event listener to the "Close" button to hide the comments container
+	closeCommentsButton.addEventListener("click", () => {
+		commentsContainer.style.display = "none";
+		console.log("made")
+	});
+
+	// Append the "Close" button to the comments container
+	commentsContainer.appendChild(closeCommentsButton);
 	return commentsContainer;
 }
 
 // The comment submission form
-function getCommentFormHTML(postID){
+function getCommentFormHTML(postID) {
 	return `
 	<label for="commentText"><b>Comment</b></label>
 	<input type="text" placeholder="Enter comment" name="commentText" commentText="commentText" id="commentText" required"/><br>
 	<input type="submit" value="REPLY" class="btn">
 	<input type="hidden" id="postID" name="postID" value="${postID}"></input>
-	` 
+	`
 }

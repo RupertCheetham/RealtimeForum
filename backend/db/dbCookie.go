@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// creates a session
 func CreateSession(userId int) (session Session, err error) {
 	statement := `INSERT INTO Cookies (SessionID, UserID, CreationDate) values (?, ?, ?) returning SessionID, UserID, CreationDate`
 

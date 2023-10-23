@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // files, err := os.ReadDir("./db/migrations")
@@ -31,12 +33,35 @@ func AddExampleEntries() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "test" {
 			// Adds example users to USERS
-			err := AddUserToDatabase("Ardek", int(35), "male", "Rupert", "Cheetham", "cheethamthing@gmail.com", "password12345")
+			hashPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+			if err != nil {
+				log.Fatalf("Error bcrypting in AddExampleEntries: %v", err)
+			}
+			err = AddUserToDatabase("Ardek", int(35), "male", "Rupert", "Cheetham", "cheethamthing@gmail.com", string(hashPassword))
 			if err != nil {
 				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
 			}
 
-			err = AddUserToDatabase("john_doe", 30, "Male", "John", "Doe", "john.doe@example.com", "password123")
+			hashPassword, _ = bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+			err = AddUserToDatabase("Knikoi", 40, "Male", "Kwashie", "Nikoi", "john.doe@example.com", string(hashPassword))
+			if err != nil {
+				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
+			}
+
+			hashPassword, _ = bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+			err = AddUserToDatabase("Mfenton", 35, "Male", "Martin", "Fenton", "john.doe@example.com", string(hashPassword))
+			if err != nil {
+				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
+			}
+
+			hashPassword, _ = bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+			err = AddUserToDatabase("Madeleke", 20, "Male", "Mike", "A", "john.doe@example.com", string(hashPassword))
+			if err != nil {
+				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
+			}
+
+			hashPassword, _ = bcrypt.GenerateFromPassword([]byte("t"), bcrypt.DefaultCost)
+			err = AddUserToDatabase("t", 255, "Male", "Mr", "E", "john.doe@example.com", string(hashPassword))
 			if err != nil {
 				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
 			}

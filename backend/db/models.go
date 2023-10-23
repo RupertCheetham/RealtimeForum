@@ -21,21 +21,23 @@ type Session struct {
 }
 
 type PostEntry struct {
-	Id           int    `json:"id"`
-	UserId       int    `json:"userID"`
-	Img          string `json:"img"`
-	Body         string `json:"body"`
-	Categories   string `json:"categories"`
-	CreationDate string `json:"creationDate"`
-	ReactionID   int    `json:"reactionID"`
-	Likes        int    `json:"postLikes"`
-	Dislikes     int    `json:"postDislikes"`
+	Id           int      `json:"id"`
+	UserId       int      `json:"userID"`
+	Username     string   `json:"username"`
+	Img          string   `json:"img"`
+	Body         string   `json:"body"`
+	Categories   []string `json:"categories"`
+	CreationDate string   `json:"creationDate"`
+	ReactionID   int      `json:"reactionID"`
+	Likes        int      `json:"postLikes"`
+	Dislikes     int      `json:"postDislikes"`
 }
 
 type CommentEntry struct {
 	Id           int    `json:"id"`
 	ParentPostID int    `json:"parentPostId"`
 	UserId       int    `json:"userID"`
+	Username     string `json:"username"`
 	Body         string `json:"body"`
 	CreationDate string `json:"creationDate"`
 	ReactionID   int    `json:"reactionID"`
@@ -64,4 +66,5 @@ type ChatMessage struct {
 	Message   string `json:"message"`
 	Sender    int    `json:"sender"`
 	Recipient int    `json:"recipient"`
+	Time      string `json:"time"`
 }

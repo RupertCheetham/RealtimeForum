@@ -1,3 +1,15 @@
 .chat-font{
     color: #ffffff;
 }
+
+.sent{
+    color: #ffffff;
+}
+
+.received{
+    color: green;
+}
+
+#recipient{
+    color: lightblue;
+}
