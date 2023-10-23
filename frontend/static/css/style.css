@@ -64,7 +64,7 @@ input {
     font-weight: 600;
 }
 
-.contentContainer-right {
+.contentContainer-chat {
 	background-color: #1b2e4e;
 	flex: 1;
 	max-width: 33.333%;

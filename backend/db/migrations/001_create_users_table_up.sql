@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS USERS (
 	First_name Text,
 	Last_name TEXT,
 	Email TEXT,
-	Password TEXT
+	Password TEXT,
+	UNIQUE (Username, Email)
 );

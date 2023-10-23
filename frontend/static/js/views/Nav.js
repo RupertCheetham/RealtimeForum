@@ -14,12 +14,17 @@ export default class Nav extends AbstractView {
 		return `
 		<nav id="nav" class="nav">
 			<a href="/" class="nav-link" data-link id="logout">Logout</a>
-			<a href="/main" class="nav-link" data-link>Home</a>
-			<a href="/chat" class="nav-link" data-link>Chat</a>
 			<span id="username">${username}</span>
 		</nav>
     `
 	}
-
-	
 }
+
+// Nav with home button still there
+// `
+// <nav id="nav" class="nav">
+// 	<a href="/" class="nav-link" data-link id="logout">Logout</a>
+// 	<a href="/main" class="nav-link" data-link>Home</a>
+// 	<span id="username">${username}</span>
+// </nav>
+// `

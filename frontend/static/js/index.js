@@ -12,7 +12,6 @@ const router = async () => {
 	const routes = [
 		{ path: "/", view: Auth },
 		{ path: "/main", view: MainPage },
-		{ path: "/chat", view: Chat },
 	]
 
 	// test each route for potential match
@@ -51,16 +50,13 @@ const router = async () => {
 			document.querySelector("#container").innerHTML = await view.renderHTML()
 		}
 		const mainView = new MainPage()
+		mainView.attachPostSubmitForm()
 		mainView.displayUserContainer()
 		mainView.displayPostContainer()
-		mainView.attachPostSubmitForm()
+		mainView.displayChatContainer()
+
 		mainView.Logout()
 		mainView.reactions()
-	}
-
-	if (match.route.view === Chat) {
-		const chatView = new Chat()
-		chatView.webSocketStuff()
 	}
 
 	console.log("match:", view)

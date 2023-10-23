@@ -1,5 +1,4 @@
 import AbstractView from "./AbstractView.js"
-import Nav from "./Nav.js"
 import { userIDFromSessionID, usernameFromUserID } from "../utils/utils.js"
 
 export default class Chat extends AbstractView {
@@ -8,20 +7,53 @@ export default class Chat extends AbstractView {
 		this.setTitle("Chat")
 	}
 
-	async renderHTML() {
 
-		const nav = new Nav() // Create an instance of the Nav class
-		const navHTML = await nav.renderHTML() // Get the HTML content for the navigation
+	async userList() {
+		const currentUser = await userIDFromSessionID()
+		const userContainer = document.getElementById("userContainer");
+		userContainer.innerHTML = "";
+		const userBox = document.createElement("div");
+
+		const response = await fetch("https://localhost:8080/api/getusers", {
+			credentials: "include", // Ensure cookies are included in the request
+		});
+
+		const users = await response.json();
+
+
+
+		for (const user of users) {
+			if (user.id != currentUser) {
+				let userEntry = document.createElement("div");
+				userEntry.id = "UserBox";
+
+				userEntry.innerHTML = `
+				<a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
+				`;
+
+				userBox.appendChild(userEntry);
+			}
+
+		}
+		userContainer.appendChild(userBox);
+
+	}
+
+	async renderHTML() {
+		const chatContainer = document.getElementById("chatContainer");
 		const RecipientID = await this.getRecipientIDFromURL()
-		const Recipient = await usernameFromUserID(RecipientID)
-		const chatTextBox = getChatTextBoxHTML();
-		return `
-		${navHTML}
-        <h1 id="chat-font" class = "chat-font"> cHaT iS hErE</h1>
-		<h1 id="recipient" class = "chat-font"> ${Recipient}</h1>
-		<div id="chatContainer"></div>
-		${chatTextBox}
-        `
+		console.log("in Chat, RecipientID", RecipientID)
+		if (RecipientID != 0) {
+			const Recipient = await usernameFromUserID(RecipientID)
+			const chatTextBox = this.getChatTextBoxHTML();
+			chatContainer.innerHTML = `
+			
+			<h1 id="recipient" class = "chat-font"> ${Recipient}</h1>
+			<div id="chatHistory"></div>
+			${chatTextBox}
+			`
+			await this.webSocketChat()
+		}	
 	}
 
 	// Function to extract a query parameter from the URL
@@ -31,8 +63,7 @@ export default class Chat extends AbstractView {
 		return Number(urlParams.get("userId"));
 	}
 
-	async webSocketStuff() {
-
+	async webSocketChat() {
 
 		const Sender = await userIDFromSessionID()
 
@@ -45,7 +76,7 @@ export default class Chat extends AbstractView {
 			console.log("WebSocket connection is open.");
 		});
 
-		this.displayChatContainer(Sender, Recipient)
+		this.displayChatHistory(Sender, Recipient)
 
 		// when chat receives a message...
 		socket.addEventListener("message", (event) => {
@@ -92,9 +123,10 @@ export default class Chat extends AbstractView {
 
 	}
 
-	async displayChatContainer(user1, user2) {
-		const chatContainer = document.getElementById("chatContainer");
-		chatContainer.innerHTML = "";
+	// displays chat history (if any) between two users
+	async displayChatHistory(user1, user2) {
+	
+		const chatHistory = document.getElementById("chatHistory");
 
 		const response = await fetch(`https://localhost:8080/getChatHistory?user1=${user1}&user2=${user2}`, {
 			credentials: "include", // Ensure cookies are included in the request
@@ -128,53 +160,26 @@ export default class Chat extends AbstractView {
 			chatElement.classList.add("sent");
 
 			chatElement.innerHTML = `
-		No messages yet
+		- Your Chat Starts Here -
 	  `;
 			chatBox.appendChild(chatElement);
 		}
-		chatContainer.appendChild(chatBox)
+		chatHistory.appendChild(chatBox)
 	}
-}
 
-
-// The chatbox for new messages
-function getChatTextBoxHTML() {
-	return `
-	<div id="chat">
+	// The chatbox for new messages
+	getChatTextBoxHTML() {
+		return `
+	<div id="chatTextBox">
     <div id="messages"></div>
     <input type="text" id="messageInput" />
     <button id="sendButton">Send</button>
   </div>
 `
-}
-
-export async function userList() {
-	const currentUser = await userIDFromSessionID()
-	const userContainer = document.getElementById("userContainer");
-	userContainer.innerHTML = "";
-	const userBox = document.createElement("div");
-
-	const response = await fetch("https://localhost:8080/api/getusers", {
-		credentials: "include", // Ensure cookies are included in the request
-	});
-
-	const users = await response.json();
-
-
-
-	for (const user of users) {
-		if (user.id != currentUser) {
-			let userEntry = document.createElement("div");
-			userEntry.id = "UserBox";
-
-			userEntry.innerHTML = `
-			<a href="/chat?userId=${user.id}" class="chatUserButton">${user.username}</a>
-			`;
-
-			userBox.appendChild(userEntry);
-		}
-
 	}
-	userContainer.appendChild(userBox);
-
 }
+
+
+
+
+
