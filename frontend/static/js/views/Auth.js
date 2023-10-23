@@ -233,26 +233,22 @@ export default class Auth extends AbstractView {
 
 			console.log(userName, userAge)
 
-			fetch(
-				"https://localhost:8080/api/registrations",
-				{
-					method: "POST",
-					headers: {
-						Accept: "application/json",
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						username: userName,
-						age: userAge,
-						gender: userGender,
-						first_name: firstName,
-						last_name: lastName,
-						email: email,
-						password: password,
-					}),
+			fetch("https://localhost:8080/api/registrations", {
+				method: "POST",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
 				},
-				console.log("I'm in the post registrations JS")
-			)
+				body: JSON.stringify({
+					username: userName,
+					age: userAge,
+					gender: userGender,
+					first_name: firstName,
+					last_name: lastName,
+					email: email,
+					password: password,
+				}),
+			})
 				.then((response) => {
 					if (response.ok) {
 						const userError = document.querySelector(".username-error")
@@ -265,7 +261,6 @@ export default class Auth extends AbstractView {
 						setTimeout(() => {
 							userError.style.display = "none"
 						}, 4000)
-
 						throw new Error("Unable to create user")
 					}
 				})
