@@ -12,6 +12,16 @@ export default class Mainpage extends AbstractView {
     this.setTitle("Mainpage");
   }
 
+  /* Open the sidenav */
+async openNav() {
+	document.getElementById("mySidenav").style.width = "100%";
+  }
+  
+  /* Close/hide the sidenav */
+  async closeNav() {
+	document.getElementById("mySidenav").style.width = "0";
+  }
+
   async renderHTML() {
     const nav = new Nav(); // Create an instance of the Nav class
     const navHTML = await nav.renderHTML(); // Get the HTML content for the navigation
