@@ -55,10 +55,7 @@ export default class Auth extends AbstractView {
 
 					<form class="sign-up-form">
 						<h2 class="title">Sign up</h2>
-						<div =class"progress green">
-							<div =class"indeterminate"></div>
-						</div>
-						
+						<div class="username-error">username is already taken</div>
 						<div class="input-field">
 							<i class="fas fa-user"></i>
 							<input
@@ -250,6 +247,7 @@ export default class Auth extends AbstractView {
 				}),
 			})
 				.then((response) => {
+					console.log("response:", response)
 					if (response.ok) {
 						const userError = document.querySelector(".username-error")
 						userError.style.display = "none"

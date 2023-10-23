@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS USERS (
 	Last_name TEXT,
 	Email TEXT,
 	Password TEXT,
-	UNIQUE(Username,Email)
+	UNIQUE(Username)
 );

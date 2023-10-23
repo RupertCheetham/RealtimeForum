@@ -36,8 +36,8 @@ input {
 }
 
 .contentContainer {
-    display: flex;
-    justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 }
 
 .contentContainer-left {
@@ -45,11 +45,11 @@ input {
 	flex: 1;
 	max-width: 33.333%;
 	overflow: hidden;
-    border: none;
-    outline: none;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-weight: 600;
+	border: none;
+	outline: none;
+	color: #ffffff;
+	text-transform: uppercase;
+	font-weight: 600;
 }
 
 .contentContainer-post {
@@ -57,11 +57,11 @@ input {
 	flex: 1;
 	max-width: 33.333%;
 	overflow: hidden;
-    border: none;
-    outline: none;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-weight: 600;
+	border: none;
+	outline: none;
+	color: #ffffff;
+	text-transform: uppercase;
+	font-weight: 600;
 }
 
 .contentContainer-right {
@@ -69,11 +69,16 @@ input {
 	flex: 1;
 	max-width: 33.333%;
 	overflow: hidden;
-    border: none;
-    outline: none;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-weight: 600;
+	border: none;
+	outline: none;
+	color: #ffffff;
+	text-transform: uppercase;
+	font-weight: 600;
+}
+
+.username-error {
+	color: red;
+	display: none;
 }
 
 .signin-signup {
@@ -283,8 +288,6 @@ form.sign-in-form {
 	font-size: 0.95rem;
 	padding: 0.7rem 0;
 }
-
-
 
 .right-panel .image,
 .right-panel .content {
