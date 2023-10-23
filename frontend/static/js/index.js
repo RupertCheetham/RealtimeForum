@@ -37,19 +37,20 @@ const router = async () => {
 	document.querySelector("#container").innerHTML = await view.renderHTML()
 
 	if (match.route.view === Auth) {
-		document.querySelector("#container").innerHTML = await view.renderHTML()
+		// document.querySelector("#container").innerHTML = await view.renderHTML()
 		const authView = new Auth()
 		authView.submitForm()
 	}
 
 	// Call the submitForm and displayPosts method here
 	if (match.route.view === Posts) {
-		let cookie = getCookie("sessionID")
-		if (!cookie) {
-			window.location.href = "/"
-		} else {
-			document.querySelector("#container").innerHTML = await view.renderHTML()
-		}
+		// let cookie = getCookie("sessionID")
+		// if (!cookie) {
+		// 	window.location.href = "/"
+		// } else {
+		// 	document.querySelector("#container").innerHTML = await view.renderHTML()
+		// }
+		// document.querySelector("#container").innerHTML = await view.renderHTML()
 		const postsView = new Posts()
 		postsView.displayPostContainer()
 		postsView.postSubmitForm()

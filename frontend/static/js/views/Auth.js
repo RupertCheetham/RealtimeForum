@@ -204,13 +204,14 @@ export default class Auth extends AbstractView {
 
 				if (response.ok) {
 					// Authentication successful, redirect to protected page
-					console.log("cookie in auth is:", document.cookie)
-					let cookie = getCookie("sessionID")
-					if (!cookie) {
-						window.location.href = "/"
-					} else {
-						window.location.href = "posts" // Update the URL
-					}
+					// console.log("cookie in auth is:", document.cookie)
+					// let cookie = getCookie("sessionID")
+					// if (!cookie) {
+					// 	window.location.href = "/"
+					// } else {
+					// 	window.location.href = "posts" // Update the URL
+					// }
+					window.location.href = "posts" // Update the URL
 				} else {
 					throw new Error("Authentication failed!")
 				}
@@ -232,23 +233,26 @@ export default class Auth extends AbstractView {
 
 			console.log(userName, userAge)
 
-			fetch("https://localhost:8080/api/registrations", {
-				method: "POST",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
+			fetch(
+				"https://localhost:8080/api/registrations",
+				{
+					method: "POST",
+					headers: {
+						Accept: "application/json",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						username: userName,
+						age: userAge,
+						gender: userGender,
+						first_name: firstName,
+						last_name: lastName,
+						email: email,
+						password: password,
+					}),
 				},
-				body: JSON.stringify({
-					username: userName,
-					age: userAge,
-					gender: userGender,
-					first_name: firstName,
-					last_name: lastName,
-					email: email,
-					password: password,
-				}),
-			},
-			console.log("I'm in the post registrations JS"))
+				console.log("I'm in the post registrations JS")
+			)
 				.then((response) => {
 					if (response.ok) {
 						const userError = document.querySelector(".username-error")

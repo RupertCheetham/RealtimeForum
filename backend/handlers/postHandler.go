@@ -14,9 +14,9 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
 
-	cookie, _ := r.Cookie("sessionID")
+	sessionCookie, _ := r.Cookie("sessionID")
 
-	fmt.Println("get cookie in addposthandler:", cookie)
+	fmt.Println("get cookie in addposthandler:", sessionCookie.Value)
 
 	// This code block is handling the logic for adding a new post to the database.
 	if r.Method == "POST" {
@@ -30,6 +30,8 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		log.Println("Received post:", post.UserId, post.Img, post.Body, post.Categories)
+
+		// checkSessionCookieExists, err := db.GetSessionByToken(sessionCookie.Value)
 
 		err = db.AddPostToDatabase(post.UserId, post.Img, post.Body, post.Categories)
 		if err != nil {

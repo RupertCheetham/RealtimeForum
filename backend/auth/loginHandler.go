@@ -60,15 +60,15 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Set the session ID as a cookie
 		sessionCookie := http.Cookie{
-			Name:    "sessionID",
-			Value:   userSession.SessionID,
-			Expires: sessionExpiration,
-			// HttpOnly: true,
-			Secure: true,
-			Path:   "/",
-			Domain: "localhost",
-			MaxAge: int(timeout.Seconds()),
-			// SameSite: http.SameSiteNoneMode,
+			Name:     "sessionID",
+			Value:    userSession.SessionID,
+			Expires:  sessionExpiration,
+			HttpOnly: true,
+			Secure:   true,
+			Path:     "/",
+			Domain:   "localhost",
+			MaxAge:   int(timeout.Seconds()),
+			SameSite: http.SameSiteNoneMode,
 		}
 		http.SetCookie(w, &sessionCookie)
 
