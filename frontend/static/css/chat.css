@@ -13,3 +13,8 @@
 #recipient{
     color: lightblue;
 }
+
+#chatHistory {
+    height: 240px;
+    overflow-y: scroll;
+}

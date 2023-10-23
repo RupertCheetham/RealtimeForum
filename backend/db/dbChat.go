@@ -32,13 +32,13 @@ func GetChatFromDatabase(UUID string) ([]ChatMessage, error) {
 	for rows.Next() {
 		var message ChatMessage
 		var timestamp string
-		err := rows.Scan(&message.Sender, &message.Message, &timestamp)
+		err := rows.Scan(&message.Sender, &message.Body, &timestamp)
 		if err != nil {
 			utils.HandleError("Error scanning row from database in GetChatFromDatabase:", err)
 			log.Println("Error scanning row from database GetChatFromDatabase:", err)
 			return nil, err
 		}
-		if message.Message != "" {
+		if message.Body != "" {
 			// Parse the timestamp string
 			timeObj, parseErr := time.Parse(time.RFC3339, timestamp)
 			if parseErr != nil {

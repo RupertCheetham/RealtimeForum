@@ -63,7 +63,7 @@ type Reaction struct {
 
 type ChatMessage struct {
 	Type      string `json:"type"`
-	Message   string `json:"message"`
+	Body      string `json:"body"`
 	Sender    int    `json:"sender"`
 	Recipient int    `json:"recipient"`
 	Time      string `json:"time"`

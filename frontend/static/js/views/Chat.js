@@ -53,7 +53,7 @@ export default class Chat extends AbstractView {
 			${chatTextBox}
 			`
 			await this.webSocketChat()
-		}	
+		}
 	}
 
 	// Function to extract a query parameter from the URL
@@ -82,20 +82,24 @@ export default class Chat extends AbstractView {
 		socket.addEventListener("message", (event) => {
 			console.log("Received a WebSocket message:", event.data);
 
-			let chat = JSON.parse(event.data)
-			console.log("hello", chat.message, chat.sender)
+			let chat = JSON.parse(event.data);
+
 			// Handle incoming messages
-			const chatBox = document.getElementById("chatBox");
 
 			let chatElement = document.createElement("div");
 			const senderClassName = chat.sender === Sender ? "sent" : "received";
 			chatElement.classList.add(senderClassName);
 
 			chatElement.innerHTML = `
-			${chat.message} <b>Time: </b> <i>${chat.time}</i>
-    `;
-			chatBox.appendChild(chatElement)
+	  ${chat.body} <b>Time: </b> <i>${chat.time}</i>
+	`;
+
+			chatHistory.appendChild(chatElement);
+
+			// Scroll to the bottom of chatBox
+			chatHistory.scrollTop = chatHistory.scrollHeight;
 		});
+
 
 		document.getElementById("sendButton").addEventListener("click", () => {
 			const messageInput = document.getElementById("messageInput");
@@ -109,7 +113,7 @@ export default class Chat extends AbstractView {
 					// Send the message to the server via WebSocket
 					socket.send(JSON.stringify({
 						type: "chat",
-						message: Message,
+						body: Message,
 						sender: Sender,
 						recipient: Recipient
 					}));
@@ -125,35 +129,30 @@ export default class Chat extends AbstractView {
 
 	// displays chat history (if any) between two users
 	async displayChatHistory(user1, user2) {
-	
+
 		const chatHistory = document.getElementById("chatHistory");
 
 		const response = await fetch(`https://localhost:8080/getChatHistory?user1=${user1}&user2=${user2}`, {
 			credentials: "include", // Ensure cookies are included in the request
 		})
 		const currentUser = user1
-		const chats = await response.json();
+		const chat = await response.json();
 
-		const chatBox = document.createElement("div");
-		chatBox.className = "chatBox";
-		chatBox.id = "chatBox";
 
-		if (chats != null) {
-			for (const chat of chats) {
+		if (chat != null) {
+			for (const message of chat) {
 				let chatElement = document.createElement("div");
-				const senderClassName = chat.sender === currentUser ? "sent" : "received";
+				const senderClassName = message.sender === currentUser ? "sent" : "received";
 				chatElement.classList.add(senderClassName);
 
-				// Determine the appropriate class name based on the sender
-
-
 				chatElement.innerHTML = `
-       ${chat.message} <b>Time: </b> <i>${chat.time}</i>
+       ${message.body} <b>Time: </b> <i>${message.time}</i>
     `;
 
 
-				chatBox.appendChild(chatElement);
+				chatHistory.appendChild(chatElement);
 			}
+			chatHistory.scrollTop = chatHistory.scrollHeight;
 
 		} else {
 			let chatElement = document.createElement("div");
@@ -162,9 +161,8 @@ export default class Chat extends AbstractView {
 			chatElement.innerHTML = `
 		- Your Chat Starts Here -
 	  `;
-			chatBox.appendChild(chatElement);
+			chatHistory.appendChild(chatElement);
 		}
-		chatHistory.appendChild(chatBox)
 	}
 
 	// The chatbox for new messages

@@ -61,13 +61,13 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Received a WebSocket message:", string(payload))
 			// Handle the message and broadcast it to other clients if needed
 			if chatMsg.Type == "chat" {
-				err = db.AddChatToDatabase(chatUUID, chatMsg.Message, chatMsg.Sender, chatMsg.Recipient)
+				err = db.AddChatToDatabase(chatUUID, chatMsg.Body, chatMsg.Sender, chatMsg.Recipient)
 			}
 			if err != nil {
 				utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
 			}
 
-			fmt.Println("Type:", chatMsg.Type, "Message:", chatMsg.Message, "Sender:", chatMsg.Sender, "Recipient:", chatMsg.Recipient, "Time:", chatMsg.Time)
+			fmt.Println("Type:", chatMsg.Type, "Message:", chatMsg.Body, "Sender:", chatMsg.Sender, "Recipient:", chatMsg.Recipient, "Time:", chatMsg.Time)
 
 		}
 		if chatMsg.Type == "chat" {
