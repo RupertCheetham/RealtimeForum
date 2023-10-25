@@ -203,12 +203,12 @@ export default class Auth extends AbstractView {
 				if (response.ok) {
 					// Authentication successful, redirect to protected page
 					console.log("cookie in auth is:", document.cookie)
-					let cookie = getCookie("sessionID")
-					if (!cookie) {
-						window.location.href = "/"
-					} else {
-						window.location.href = "posts" // Update the URL
-					}
+					// let cookie = getCookie("sessionID")
+					// if (!cookie) {
+					// 	window.location.href = "/"
+					// } else {
+					// 	window.location.href = "posts" // Update the URL
+					// }
 					window.location.href = "posts" // Update the URL
 				}
 

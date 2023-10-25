@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
@@ -21,8 +20,6 @@ func GetLoginEntry(loginCheck UserEntry) (message map[string]string, id int, err
 
 	// Check if the input contains an '@' sign
 	isEmail := strings.Contains(loginCheck.Username, "@")
-
-	fmt.Println("dbLoginCheck:", dbLoginCheck)
 
 	if (isEmail && dbLoginCheck.Email == loginCheck.Email) || (!isEmail && dbLoginCheck.Username == loginCheck.Username) {
 		err := bcrypt.CompareHashAndPassword([]byte(dbLoginCheck.Password), []byte(loginCheck.Password))
