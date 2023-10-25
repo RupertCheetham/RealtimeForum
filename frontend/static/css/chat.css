@@ -13,10 +13,6 @@
     overflow-y: scroll;
     scrollbar-width: auto;
     scrollbar-color: rebeccapurple yellow; 
-    scrollbar-track-color: #ccc; 
-
-    /* Move the scrollbar to the left */
-    scrollbar-gutter: 100px; /* Adjust the value as needed.  Doesn't work */
 }
 
 .sent {
@@ -33,13 +29,15 @@
 }
 
 #body {
-    flex: 1; /* Allow "body" to grow and shrink to fit available space */
-    white-space: nowrap; /* Prevent "body" from wrapping within its container */
-    overflow: hidden; /* Hide overflow content */
-    text-overflow: ellipsis; /* Display ellipsis (...) if "body" overflows */
+    flex: 2; /* "body" takes up two-thirds of the available space */
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #time {
-    flex-shrink: 0; /* Don't allow "time" to shrink, so it stays on the same line as "body" */
-    margin-left: 8px; /* Add some space between "body" and "time" */
+    flex: 1; /* "time" takes up one-third of the available space */
+    flex-shrink: 0;
+    margin-left: 8px;
+    font-size: 0.6em;
 }
+

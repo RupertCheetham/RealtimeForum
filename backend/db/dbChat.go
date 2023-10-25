@@ -1,7 +1,6 @@
 package db
 
 import (
-	"log"
 	"realtimeForum/utils"
 	"time"
 )
@@ -11,7 +10,6 @@ func AddChatToDatabase(UUID string, Message string, Sender int, Recipient int) e
 	_, err := Database.Exec("INSERT INTO CHAT (ChatUUID, Body, SenderID, RecipientID) VALUES (?, ?, ?, ?)", UUID, Message, Sender, Recipient)
 	if err != nil {
 		utils.HandleError("Error adding CHAT to database in AddChatToDatabase:", err)
-		log.Println("Error adding CHAT to database in AddChatToDatabase:", err)
 	}
 
 	return err
@@ -32,7 +30,6 @@ func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, err
 	rows, err := Database.Query(query, UUID, limit, offset)
 	if err != nil {
 		utils.HandleError("Error selecting chat from UUID from database:", err)
-		log.Println("Error selecting chat from UUID from database:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -43,7 +40,6 @@ func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, err
 		err := rows.Scan(&message.Sender, &message.Body, &timestamp)
 		if err != nil {
 			utils.HandleError("Error scanning row from database in GetChatFromDatabase:", err)
-			log.Println("Error scanning row from database GetChatFromDatabase:", err)
 			return nil, err
 		}
 		if message.Body != "" {
@@ -51,7 +47,6 @@ func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, err
 			timeObj, parseErr := time.Parse(time.RFC3339, timestamp)
 			if parseErr != nil {
 				utils.HandleError("Error parsing timestamp:", parseErr)
-				log.Println("Error parsing timestamp:", parseErr)
 				return nil, parseErr
 			}
 
@@ -67,6 +62,5 @@ func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, err
 			chatStruct = append(chatStruct, message)
 		}
 	}
-	log.Println("the length of the chat is:", len(chatStruct))
 	return chatStruct, nil
 }
