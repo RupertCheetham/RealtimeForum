@@ -76,7 +76,8 @@ input {
 	font-weight: 600;
 }
 
-.username-error {
+.username-error,
+.login-error {
 	color: red;
 	display: none;
 }

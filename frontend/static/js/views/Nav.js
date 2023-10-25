@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js"
-import { getCookie, userNameFromSessionID } from "../utils/utils.js";
+// import { getCookie, userNameFromSessionID } from "../utils/utils.js"
 
 export default class Nav extends AbstractView {
 	constructor() {
@@ -8,9 +8,8 @@ export default class Nav extends AbstractView {
 	}
 
 	async renderHTML() {
-
-		const sessionID = getCookie("sessionID");
-		const username = await userNameFromSessionID(sessionID)
+		// const sessionID = getCookie("sessionID");
+		// const username = await userNameFromSessionID(sessionID)
 
 		return `
 		<nav id="nav" class="nav">

@@ -24,6 +24,7 @@ export default class Auth extends AbstractView {
 								id="usernameOrEmail"
 							/>
 						</div>
+						<div class="login-error">incorrect username or password</div>
 						<div class="input-field">
 							<i class="fas fa-lock"></i>
 							<input
@@ -201,15 +202,23 @@ export default class Auth extends AbstractView {
 
 				if (response.ok) {
 					// Authentication successful, redirect to protected page
-					// console.log("cookie in auth is:", document.cookie)
-					// let cookie = getCookie("sessionID")
-					// if (!cookie) {
-					// 	window.location.href = "/"
-					// } else {
-					// 	window.location.href = "posts" // Update the URL
-					// }
+					console.log("cookie in auth is:", document.cookie)
+					let cookie = getCookie("sessionID")
+					if (!cookie) {
+						window.location.href = "/"
+					} else {
+						window.location.href = "posts" // Update the URL
+					}
 					window.location.href = "posts" // Update the URL
-				} else {
+				}
+
+				if (response.status === 400) {
+					const userError = document.querySelector(".login-error")
+					userError.style.display = "block"
+
+					setTimeout(() => {
+						userError.style.display = "none"
+					}, 4000)
 					throw new Error("Authentication failed!")
 				}
 			} catch (error) {
