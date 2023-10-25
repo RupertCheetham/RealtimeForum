@@ -1,20 +1,20 @@
-.chat-font{
+.chat-font {
     color: #ffffff;
 }
 
-.sent{
+.sent {
     color: #ffffff;
 }
 
-.received{
+.received {
     color: green;
 }
 
-#recipient{
+#recipient {
     color: lightblue;
 }
 
 #chatHistory {
-    height: 245px;
+    height: 235px;
     overflow-y: scroll;
 }

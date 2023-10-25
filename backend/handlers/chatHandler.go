@@ -42,14 +42,14 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Add the connection to the chatConnections map
+	// add current connection to list of connections that use this chatUUID
 	chatConnections[chatUUID] = append(chatConnections[chatUUID], connection)
-	log.Println("length of chatConnections:", len(chatConnections))
 
 	for {
 		messageType, payload, err := connection.ReadMessage()
 		if err != nil {
 			log.Println("WebSocket read error:", err)
+			removeConnection(chatUUID, connection)
 			return
 		}
 
@@ -57,6 +57,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		// var chatUUID string
 
 		if messageType == websocket.TextMessage {
+			log.Println("Message type is: ", chatMsg.Type)
 			// Process the incoming message
 			fmt.Println("Received a WebSocket message:", string(payload))
 			// Handle the message and broadcast it to other clients if needed
@@ -162,21 +163,38 @@ func GetChatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 
 	SetupCORS(&w, r)
 
-	chatUser1 := r.URL.Query().Get("user1")
-	chatUser2 := r.URL.Query().Get("user2")
+	User1String := r.URL.Query().Get("user1")
+	User2String := r.URL.Query().Get("user2")
+	offsetString := r.URL.Query().Get("offset")
+	limitString := r.URL.Query().Get("limit")
+	user1, err := strconv.Atoi(User1String)
 
-	var user1 int
-	var user2 int
+	// converts the values to ints
+	if err != nil {
+		utils.HandleError("There has been a problem with AtoI User1String in GetChatHistoryHandler", err)
+	}
+	user2, err := strconv.Atoi(User2String)
+	if err != nil {
+		utils.HandleError("There has been a problem with AtoI User2String in GetChatHistoryHandler", err)
+	}
+	offset, err := strconv.Atoi(offsetString)
+	if err != nil {
+		utils.HandleError("There has been a problem with AtoI offsetString in GetChatHistoryHandler", err)
+	}
+	limit, err := strconv.Atoi(limitString)
+	if err != nil {
+		utils.HandleError("There has been a problem with AtoI limitString in GetChatHistoryHandler", err)
+	}
+
 	var chatHistory []db.ChatMessage
-	var err error
 
-	user1, _ = strconv.Atoi(chatUser1)
-	user2, _ = strconv.Atoi(chatUser2)
-
-	previousChatEntryFound, chatUUID, _ := previousChatChecker(user1, user2)
+	previousChatEntryFound, chatUUID, err := previousChatChecker(user1, user2)
+	if err != nil {
+		utils.HandleError("There has been a problem with previousChatChecker in GetChatHistoryHandler", err)
+	}
 
 	if previousChatEntryFound {
-		chatHistory, err = db.GetChatFromDatabase(chatUUID)
+		chatHistory, err = db.GetChatFromDatabase(chatUUID, offset, limit)
 	}
 	if err != nil {
 		utils.HandleError("Error retrieving chat history from the database:", err)
@@ -191,6 +209,31 @@ func GetChatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
+}
+
+// remove an unused connection from chatConnections
+func removeConnection(chatUUID string, connectionToRemove *websocket.Conn) {
+	connections, ok := chatConnections[chatUUID]
+	if !ok {
+		utils.HandleError("Chat UUID not found in map in removeConnection, in chatHandler", nil)
+		return
+	}
+
+	// Find the index of the connection to remove
+	index := -1
+	for i, conn := range connections {
+		if conn == connectionToRemove {
+			index = i
+			break
+		}
+	}
+
+	// If the connection was found, remove it
+	if index != -1 {
+		chatConnections[chatUUID] = append(connections[:index], connections[index+1:]...)
+		log.Println("Removed closed connection from chatConnections")
+	}
+
 }
 
 // Returns a list of registered users; we'll use this in the frontend to start a chat with one of them

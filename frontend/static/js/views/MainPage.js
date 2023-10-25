@@ -23,7 +23,7 @@ export default class Mainpage extends AbstractView {
     const navHTML = await nav.renderHTML(); // Get the HTML content for the navigation
     const postForm = await postSubmitForm.renderHTML();
     return `
-      ${navHTML}
+    ${navHTML}
 	  ${postForm}
       <div class="contentContainer">
         <div id="userContainer" class="contentContainer-user">user container</div>

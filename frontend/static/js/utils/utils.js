@@ -84,3 +84,15 @@ export async function usernameFromUserID(userID) {
 		throw error;
 	}
 }
+
+	// A throttle function to limit the frequency of calling another function
+	export function throttle(func, delay) {
+		let lastCall = 0;
+		return function (...args) {
+		  const now = new Date().getTime();
+		  if (now - lastCall >= delay) {
+			func(...args);
+			lastCall = now;
+		  }
+		};
+	  }

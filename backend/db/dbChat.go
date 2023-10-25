@@ -18,10 +18,18 @@ func AddChatToDatabase(UUID string, Message string, Sender int, Recipient int) e
 }
 
 // retrieves chat messages for a particular chatUUID from db
-func GetChatFromDatabase(UUID string) ([]ChatMessage, error) {
+func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, error) {
 	var chatStruct []ChatMessage
+	// Query to retrieve chat entries starting from the most recent entries working backward
+	query := `
+		SELECT SenderID, Body, Timestamp
+		FROM CHAT
+		WHERE ChatUUID = ?
+		ORDER BY Timestamp DESC
+		LIMIT ? OFFSET ?
+	`
 
-	rows, err := Database.Query("SELECT SenderID, Body, Timestamp FROM CHAT WHERE ChatUUID = ?", UUID)
+	rows, err := Database.Query(query, UUID, limit, offset)
 	if err != nil {
 		utils.HandleError("Error selecting chat from UUID from database:", err)
 		log.Println("Error selecting chat from UUID from database:", err)
@@ -59,6 +67,6 @@ func GetChatFromDatabase(UUID string) ([]ChatMessage, error) {
 			chatStruct = append(chatStruct, message)
 		}
 	}
-
+	log.Println("the length of the chat is:", len(chatStruct))
 	return chatStruct, nil
 }

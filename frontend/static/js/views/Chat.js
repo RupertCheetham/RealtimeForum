@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js"
-import { userIDFromSessionID, usernameFromUserID } from "../utils/utils.js"
+import { userIDFromSessionID, usernameFromUserID, throttle } from "../utils/utils.js"
 
 export default class Chat extends AbstractView {
 	constructor() {
@@ -7,7 +7,7 @@ export default class Chat extends AbstractView {
 		this.setTitle("Chat")
 	}
 
-
+	// List of users to click on to initialise chat
 	async userList() {
 		const currentUser = await userIDFromSessionID()
 		const userContainer = document.getElementById("userContainer");
@@ -15,7 +15,7 @@ export default class Chat extends AbstractView {
 		const userBox = document.createElement("div");
 
 		const response = await fetch("https://localhost:8080/api/getusers", {
-			credentials: "include", // Ensure cookies are included in the request
+			credentials: "include",
 		});
 
 		const users = await response.json();
@@ -52,6 +52,7 @@ export default class Chat extends AbstractView {
 			<div id="chatHistory"></div>
 			${chatTextBox}
 			`
+
 			await this.webSocketChat()
 		}
 	}
@@ -64,19 +65,26 @@ export default class Chat extends AbstractView {
 	}
 
 	async webSocketChat() {
-
-		const Sender = await userIDFromSessionID()
-
-		const Recipient = await this.getRecipientIDFromURL()
-
+		const Sender = await userIDFromSessionID();
+		const Recipient = await this.getRecipientIDFromURL();
 		const socket = new WebSocket(`wss://localhost:8080/chat?sender=${Sender}&recipient=${Recipient}`);
+
+
 
 		socket.addEventListener("open", (event) => {
 			event.preventDefault();
 			console.log("WebSocket connection is open.");
 		});
 
-		this.displayChatHistory(Sender, Recipient)
+
+		// socket.addEventListener("close", (event) => {
+		// 	event.preventDefault();
+		// 	console.log("WebSocket connection is closed.");
+		// 	console.log("socket: ", socket)
+		// 	socket.send(JSON.stringify({ type: "disconnect", body: socket}));
+		// });
+
+		this.displayChatHistory(Sender, Recipient);
 
 		// when chat receives a message...
 		socket.addEventListener("message", (event) => {
@@ -91,8 +99,8 @@ export default class Chat extends AbstractView {
 			chatElement.classList.add(senderClassName);
 
 			chatElement.innerHTML = `
-	  ${chat.body} <b>Time: </b> <i>${chat.time}</i>
-	`;
+			${chat.body} <b>Time: </b> <i>${chat.time}</i>
+		`;
 
 			chatHistory.appendChild(chatElement);
 
@@ -100,6 +108,11 @@ export default class Chat extends AbstractView {
 			chatHistory.scrollTop = chatHistory.scrollHeight;
 		});
 
+		// Handle the WebSocket connection's close event
+		socket.addEventListener("close", () => {
+				// An abrupt connection closure, e.g., a page reload
+				// Send a disconnect message to the server before closing the connection
+		});
 
 		document.getElementById("sendButton").addEventListener("click", () => {
 			const messageInput = document.getElementById("messageInput");
@@ -121,48 +134,66 @@ export default class Chat extends AbstractView {
 					messageInput.value = "";
 				}
 			}
-
-
 		});
-
 	}
 
-	// displays chat history (if any) between two users
-	async displayChatHistory(user1, user2) {
 
+	// displays chat history (if any) between two users
+	// Modify the displayChatHistory function
+	async displayChatHistory(user1, user2) {
 		const chatHistory = document.getElementById("chatHistory");
 
-		const response = await fetch(`https://localhost:8080/getChatHistory?user1=${user1}&user2=${user2}`, {
-			credentials: "include", // Ensure cookies are included in the request
-		})
-		const currentUser = user1
-		const chat = await response.json();
-
-
-		if (chat != null) {
-			for (const message of chat) {
-				let chatElement = document.createElement("div");
-				const senderClassName = message.sender === currentUser ? "sent" : "received";
-				chatElement.classList.add(senderClassName);
-
-				chatElement.innerHTML = `
-       ${message.body} <b>Time: </b> <i>${message.time}</i>
-    `;
-
-
-				chatHistory.appendChild(chatElement);
-			}
-			chatHistory.scrollTop = chatHistory.scrollHeight;
-
-		} else {
-			let chatElement = document.createElement("div");
-			chatElement.classList.add("sent");
-
-			chatElement.innerHTML = `
-		- Your Chat Starts Here -
-	  `;
-			chatHistory.appendChild(chatElement);
+		// Function to fetch messages in chunks
+		async function fetchMessagesInChunks(offset, limit) {
+			const response = await fetch(`https://localhost:8080/getChatHistory?user1=${user1}&user2=${user2}&offset=${offset}&limit=${limit}`, {
+				credentials: "include", // Ensure cookies are included in the request
+			});
+			return await response.json();
 		}
+
+		// Load and display an initial set of messages (e.g., 20)
+		const initialMessages = await fetchMessagesInChunks(0, 10);
+		if (initialMessages.length > 0) {
+			for (const message of initialMessages.reverse()) {
+				appendMessageToChatHistory(message);
+				chatHistory.scrollTop = chatHistory.scrollHeight;
+			}
+		}
+
+		// Define a variable to keep track of the message offset
+		let messageOffset = 10;
+
+		// Function to append a single message to the chat history container
+		function appendMessageToChatHistory(message) {
+			const chatElement = document.createElement("div");
+			const senderClassName = message.sender === user1 ? "sent" : "received";
+			chatElement.classList.add(senderClassName);
+			chatElement.innerHTML = `${message.body} <b>Time: </b> <i>${message.time}</i>`;
+			chatHistory.appendChild(chatElement);
+			chatHistory.scrollTop = chatHistory.scrollHeight;
+		}
+
+		// Define the scroll threshold for loading more messages (e.g., 10% of the chat history container's height)
+		const scrollThreshold = chatHistory.scrollHeight * 0.1;
+
+		// Function to load and append more messages
+		async function loadMoreMessages() {
+			const nextMessages = await fetchMessagesInChunks(messageOffset, 10);
+			if (nextMessages.length > 0) {
+				for (const message of nextMessages.reverse()) {
+					appendMessageToChatHistory(message);
+				}
+				messageOffset += 10;
+			}
+		}
+
+		// Add a scroll event listener to the chat history container
+		chatHistory.addEventListener("scroll", () => {
+			if (chatHistory.scrollTop < scrollThreshold) {
+				// Load and append more messages
+				loadMoreMessages();
+			}
+		});
 	}
 
 	// The chatbox for new messages
