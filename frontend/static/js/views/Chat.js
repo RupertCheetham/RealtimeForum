@@ -76,42 +76,32 @@ export default class Chat extends AbstractView {
 			console.log("WebSocket connection is open.");
 		});
 
-
-		// socket.addEventListener("close", (event) => {
-		// 	event.preventDefault();
-		// 	console.log("WebSocket connection is closed.");
-		// 	console.log("socket: ", socket)
-		// 	socket.send(JSON.stringify({ type: "disconnect", body: socket}));
-		// });
-
 		this.displayChatHistory(Sender, Recipient);
 
 		// when chat receives a message...
 		socket.addEventListener("message", (event) => {
 			console.log("Received a WebSocket message:", event.data);
 
-			let chat = JSON.parse(event.data);
+			let message = JSON.parse(event.data);
 
 			// Handle incoming messages
 
 			let chatElement = document.createElement("div");
-			const senderClassName = chat.sender === Sender ? "sent" : "received";
+			const senderClassName = message.sender === Sender ? "sent" : "received";
 			chatElement.classList.add(senderClassName);
 
-			chatElement.innerHTML = `
-			${chat.body} <b>Time: </b> <i>${chat.time}</i>
-		`;
+			chatElement.innerHTML = 
+			`
+				<div id="message-content">
+					<div id="body">${message.body}</div>
+					<div id="time"><i>${message.time}</i></div>
+				</div>
+			`;
 
-			chatHistory.appendChild(chatElement);
+			chatHistory.insertBefore(chatElement, chatHistory.firstChild);
 
 			// Scroll to the bottom of chatBox
 			chatHistory.scrollTop = chatHistory.scrollHeight;
-		});
-
-		// Handle the WebSocket connection's close event
-		socket.addEventListener("close", () => {
-				// An abrupt connection closure, e.g., a page reload
-				// Send a disconnect message to the server before closing the connection
 		});
 
 		document.getElementById("sendButton").addEventListener("click", () => {
@@ -139,7 +129,6 @@ export default class Chat extends AbstractView {
 
 
 	// displays chat history (if any) between two users
-	// Modify the displayChatHistory function
 	async displayChatHistory(user1, user2) {
 		const chatHistory = document.getElementById("chatHistory");
 
@@ -152,38 +141,50 @@ export default class Chat extends AbstractView {
 		}
 
 		// Load and display an initial set of messages (e.g., 20)
-		const initialMessages = await fetchMessagesInChunks(0, 10);
-		if (initialMessages.length > 0) {
-			for (const message of initialMessages.reverse()) {
-				appendMessageToChatHistory(message);
-				chatHistory.scrollTop = chatHistory.scrollHeight;
+		const initialMessages = await fetchMessagesInChunks(1, 11);
+		if (initialMessages != null) {
+			if (initialMessages.length > 0) {
+				for (const message of initialMessages) {
+					appendMessageToChatHistory(message);
+					chatHistory.scrollTop = chatHistory.scrollHeight;
+				}
 			}
+		} else {
+			// add an encouraging message
+			const chatElement = document.createElement("div");
+			chatElement.innerHTML = `${"- Start your chat journey -"}`;
+			chatHistory.appendChild(chatElement);
 		}
 
 		// Define a variable to keep track of the message offset
-		let messageOffset = 10;
+		let messageOffset = 11;
 
 		// Function to append a single message to the chat history container
 		function appendMessageToChatHistory(message) {
 			const chatElement = document.createElement("div");
 			const senderClassName = message.sender === user1 ? "sent" : "received";
 			chatElement.classList.add(senderClassName);
-			chatElement.innerHTML = `${message.body} <b>Time: </b> <i>${message.time}</i>`;
+			chatElement.innerHTML =
+				`<div id="message-content">
+					<div id="body">${message.body}</div>
+					<div id="time"><i>${message.time}</i></div>
+				</div>`;
 			chatHistory.appendChild(chatElement);
-			chatHistory.scrollTop = chatHistory.scrollHeight;
 		}
 
 		// Define the scroll threshold for loading more messages (e.g., 10% of the chat history container's height)
-		const scrollThreshold = chatHistory.scrollHeight * 0.1;
+		const scrollThreshold = chatHistory.scrollHeight * 0.3;
 
 		// Function to load and append more messages
 		async function loadMoreMessages() {
 			const nextMessages = await fetchMessagesInChunks(messageOffset, 10);
-			if (nextMessages.length > 0) {
-				for (const message of nextMessages.reverse()) {
-					appendMessageToChatHistory(message);
+			if (nextMessages != null) {
+				if (nextMessages.length > 0) {
+					for (const message of nextMessages) {
+						appendMessageToChatHistory(message);
+					}
+					messageOffset += 10;
 				}
-				messageOffset += 10;
 			}
 		}
 

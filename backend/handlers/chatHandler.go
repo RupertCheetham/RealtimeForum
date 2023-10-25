@@ -25,8 +25,6 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 
 	sender, recipient := obtainSenderAndRecipient(r)
 
-	log.Println("[ChatHandler]sender:", sender, ", recipient:", recipient)
-
 	previousChatEntryFound, chatUUID, err := previousChatChecker(sender, recipient)
 	if err != nil {
 		utils.HandleError("Error with previousChatChecker in ChatHandler", err)

@@ -2,6 +2,23 @@
     color: #ffffff;
 }
 
+#recipient {
+    color: lightblue;
+}
+
+#chatHistory {
+    display: flex;
+    flex-direction: column-reverse; 
+    height: 235px;
+    overflow-y: scroll;
+    scrollbar-width: auto;
+    scrollbar-color: rebeccapurple yellow; 
+    scrollbar-track-color: #ccc; 
+
+    /* Move the scrollbar to the left */
+    scrollbar-gutter: 100px; /* Adjust the value as needed.  Doesn't work */
+}
+
 .sent {
     color: #ffffff;
 }
@@ -10,11 +27,19 @@
     color: green;
 }
 
-#recipient {
-    color: lightblue;
+#message-content {
+    display: flex;
+    flex-wrap: wrap;
 }
 
-#chatHistory {
-    height: 235px;
-    overflow-y: scroll;
+#body {
+    flex: 1; /* Allow "body" to grow and shrink to fit available space */
+    white-space: nowrap; /* Prevent "body" from wrapping within its container */
+    overflow: hidden; /* Hide overflow content */
+    text-overflow: ellipsis; /* Display ellipsis (...) if "body" overflows */
+}
+
+#time {
+    flex-shrink: 0; /* Don't allow "time" to shrink, so it stays on the same line as "body" */
+    margin-left: 8px; /* Add some space between "body" and "time" */
 }

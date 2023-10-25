@@ -92,7 +92,6 @@ func GetUserIDFromSessionID(sessionID string) int {
 		utils.HandleError("Error finding userID in GetUserIDFromSessionID:", err)
 		log.Println("Error finding username in GetUserIDFromSessionID:", err)
 	}
-	log.Println("[GetUserIDFromSessionID] UserID is:", userID)
 	return userID
 }
 
@@ -108,7 +107,7 @@ func GetUsernameFromUserID(userID string) string {
 	if err != nil {
 		utils.HandleError("Error finding username in GetUsernameFromUserID:", err)
 	}
-	log.Println("[GetUserIDFromSessionID] username is:", username)
+
 	return username
 }
 

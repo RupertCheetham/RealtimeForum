@@ -43,7 +43,7 @@ input {
 .contentContainer-user {
 	background-color: #282930;
 	flex: 1;
-	max-width: 33.333%;
+	width: 33.333%;
 	overflow: hidden;
     border: none;
     outline: none;
@@ -55,7 +55,7 @@ input {
 .contentContainer-post {
 	background-color: #263045;
 	flex: 1;
-	max-width: 33.333%;
+	width: 33.333%;
 	overflow: hidden;
     border: none;
     outline: none;
@@ -67,7 +67,7 @@ input {
 .contentContainer-chat {
 	background-color: #1b2e4e;
 	flex: 1;
-	max-width: 33.333%;
+	width: 33.333%;
 	overflow: hidden;
     border: none;
     outline: none;
