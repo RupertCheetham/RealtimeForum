@@ -3,16 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
-	"realtimeForum/db"
 	"strings"
-	"time"
 )
 
 const CookieName = "sessionID"
-
-var currentTime = time.Now()
 
 // The function sets up Cross-Origin Resource Sharing (CORS) headers for an HTTP response.
 func SetupCORS(w *http.ResponseWriter, r *http.Request) {
@@ -25,18 +20,6 @@ func SetupCORS(w *http.ResponseWriter, r *http.Request) {
 	if r.Method == "OPTIONS" {
 		(*w).WriteHeader(http.StatusOK)
 		return
-	}
-}
-
-func CookieCheck(successHandler, failureHandler http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		SetupCORS(&w, r)
-		cookieValue := GetCookie(w, r)
-		if len(cookieValue) == 0 {
-			failureHandler(w, r)
-		} else {
-			successHandler(w, r)
-		}
 	}
 }
 
@@ -87,55 +70,3 @@ func ActionFailedMessage(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusRequestTimeout)
 	w.Write(jsonResponse)
 }
-
-func CheckCookieExpiration(w http.ResponseWriter, r *http.Request, sessionToken *db.Session) {
-	if currentTime.Before(sessionToken.ExpirationTime) {
-		log.Println("Received post:")
-
-		// stuff should happen here
-		// err = db.AddPostToDatabase(post.UserId, post.Img, post.Body, post.Categories)
-		// if err != nil {
-		// 	utils.HandleError("Problem adding to POSTS in AddPostHandler", err)
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// 	return
-		// }
-
-		ActionSuccessMessage(w, r)
-	} else {
-
-		ActionFailedMessage(w, r)
-	}
-}
-
-// func CheckCookieTimeout(w http.ResponseWriter, r *http.Request, cookieValue string) {
-// 	if r.Method == "POST" {
-// 		CheckCookieExists(w, r, cookieValue)
-
-// 		var post db.PostEntry
-
-// 		err := json.NewDecoder(r.Body).Decode(&post)
-// 		if err != nil {
-// 			utils.HandleError("Problem decoding JSON in AddPostHandler", err)
-// 			http.Error(w, err.Error(), http.StatusBadRequest)
-// 			return
-// 		}
-
-// 		sessionToken, _ := db.GetSessionByToken(cookieValue)
-// 		if currentTime.Before(sessionToken.ExpirationTime) {
-// 			log.Println("Received post:", post.UserId, post.Img, post.Body, post.Categories)
-
-// 			err = db.AddPostToDatabase(post.UserId, post.Img, post.Body, post.Categories)
-// 			if err != nil {
-// 				utils.HandleError("Problem adding to POSTS in AddPostHandler", err)
-// 				http.Error(w, err.Error(), http.StatusInternalServerError)
-// 				return
-// 			}
-
-// 			ActionSuccessMessage(w, r)
-// 		} else {
-
-// 			ActionFailedMessage(w, r)
-// 		}
-// 		fmt.Println("chilling outside of 408 status response")
-// 	}
-// }
