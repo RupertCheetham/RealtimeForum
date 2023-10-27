@@ -40,22 +40,22 @@ func GetUsersFromDatabase() ([]UserEntry, error) {
 	return users, nil
 }
 
-// func GetUsernameFromSessionID(sessionID string) string {
-// 	// Initialize a database connection. Ensure you have a valid database connection setup.
+func GetUsernameFromSessionID(sessionID string) string {
+	// Initialize a database connection. Ensure you have a valid database connection setup.
 
-// 	// SQL query to retrieve the username associated with the provided SessionID
-// 	query := "SELECT u.Username FROM COOKIES AS c INNER JOIN USERS AS u ON c.UserID = u.Id WHERE c.SessionID = ?"
+	// SQL query to retrieve the username associated with the provided SessionID
+	query := "SELECT u.Username FROM COOKIES AS c INNER JOIN USERS AS u ON c.UserID = u.Id WHERE c.SessionID = ?"
 
-// 	// Execute the query and retrieve the username
-// 	var username string
-// 	err := Database.QueryRow(query, sessionID).Scan(&username)
-// 	if err != nil {
-// 		utils.HandleError("Error finding username in GetUsernameFromSessionID:", err)
-// 		log.Println("Error finding username in GetUsernameFromSessionID:", err)
-// 	}
+	// Execute the query and retrieve the username
+	var username string
+	err := Database.QueryRow(query, sessionID).Scan(&username)
+	if err != nil {
+		utils.HandleError("Error finding username in GetUsernameFromSessionID:", err)
+		log.Println("Error finding username in GetUsernameFromSessionID:", err)
+	}
 
-// 	return username
-// }
+	return username
+}
 
 func FindUserFromDatabase(username string) (UserEntry, error) {
 	rows, err := Database.Query("SELECT * FROM USERS WHERE Username = ?", username)

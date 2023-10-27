@@ -27,7 +27,6 @@ func ReactionHandler(w http.ResponseWriter, r *http.Request) {
 
 // This deals with posting decoding reaction data and sending it to the relevant functions
 func ReactionHandlerPostMethod(w http.ResponseWriter, r *http.Request) {
-
 	var reactionEntry db.ReactionEntry
 	err := json.NewDecoder(r.Body).Decode(&reactionEntry)
 	if err != nil {

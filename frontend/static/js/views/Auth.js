@@ -1,5 +1,4 @@
 import AbstractView from "./AbstractView.js"
-import { getCookie } from "../utils/utils.js"
 
 export default class Auth extends AbstractView {
 	constructor() {

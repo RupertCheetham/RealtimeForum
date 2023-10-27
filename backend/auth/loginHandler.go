@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-const timeout = 2 * time.Minute
+const timeout = 1 * time.Minute
 
 var sessionExpiration = time.Now().Add(timeout)
 
@@ -60,7 +60,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Set the session ID as a cookie
 		sessionCookie := http.Cookie{
-			Name:     "sessionID",
+			Name:     handlers.CookieName,
 			Value:    userSession.SessionID,
 			Expires:  sessionExpiration,
 			HttpOnly: true,
