@@ -71,7 +71,7 @@ ORDER BY Id ASC;
 			utils.HandleError("Error scanning row from database in GetRecentChatUsersFromDatabase:", err)
 			return sortedUsers, err
 		}
-		chatUserIds = append(chatUserIds, entry)
+		chatUserIds = prependToSlice(chatUserIds, entry)
 
 	}
 
@@ -104,8 +104,24 @@ ORDER BY Id ASC;
 	return sortedUsers, nil
 }
 
+func prependToSlice(slice []int, elements ...int) []int {
+	// Calculate the new length of the slice after adding elements
+	newLen := len(slice) + len(elements)
+
+	// Create a new slice with the new length
+	newSlice := make([]int, newLen)
+
+	// Copy the elements to be added to the front of the new slice
+	copy(newSlice[len(elements):], slice)
+
+	// Copy the existing elements to the back of the new slice
+	copy(newSlice, elements)
+
+	return newSlice
+}
+
 func GetUsersFromDatabase() ([]UserEntry, error) {
-	rows, err := Database.Query("SELECT Id, Username FROM USERS ORDER BY Username ASC")
+	rows, err := Database.Query("SELECT Id, Username FROM USERS ORDER BY Username COLLATE NOCASE ASC")
 	if err != nil {
 		utils.HandleError("Error querying USERS from database in GetUsernamesFromDatabase:", err)
 		log.Println("Error querying USERS from database in GetUsernamesFromDatabase:", err)
