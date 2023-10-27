@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"log"
 	"realtimeForum/utils"
 )
 
@@ -16,35 +15,10 @@ func AddUserToDatabase(username string, age int, gender string, firstName string
 	return err
 }
 
-// func GetUsersFromDatabase() ([]UserEntry, error) {
-// 	rows, err := Database.Query("SELECT Username, Age, Gender, First_name, Last_name, Email, Password FROM USERS ORDER BY Id ASC")
-// 	if err != nil {
-// 		utils.HandleError("Error querying USERS from database in GetUsersFromDatabase:", err)
-// 		log.Println("Error querying USERS from database in GetUsersFromDatabase:", err)
-// 		return nil, err
-// 	}
-// 	defer rows.Close()
-
-// 	var users []UserEntry
-// 	for rows.Next() {
-// 		var entry UserEntry
-// 		err := rows.Scan(&entry.Username, &entry.Age, &entry.Gender, &entry.FirstName, &entry.LastName, &entry.Email, &entry.Password)
-// 		if err != nil {
-// 			utils.HandleError("Error scanning row from database in GetUsersFromDatabase:", err)
-// 			log.Println("Error scanning row from database in GetUsersFromDatabase:", err)
-// 			return nil, err
-// 		}
-// 		users = append(users, entry)
-// 	}
-
-// 	return users, nil
-// }
-
 func GetUsersFromDatabase() ([]UserEntry, error) {
 	rows, err := Database.Query("SELECT Id, Username FROM USERS ORDER BY Username ASC")
 	if err != nil {
 		utils.HandleError("Error querying USERS from database in GetUsernamesFromDatabase:", err)
-		log.Println("Error querying USERS from database in GetUsernamesFromDatabase:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -55,7 +29,6 @@ func GetUsersFromDatabase() ([]UserEntry, error) {
 		err := rows.Scan(&entry.Id, &entry.Username)
 		if err != nil {
 			utils.HandleError("Error scanning row from database in GetUsersFromDatabase:", err)
-			log.Println("Error scanning row from database in GetUsersFromDatabase:", err)
 			return nil, err
 		}
 		users = append(users, entry)
@@ -74,7 +47,6 @@ func GetUsernameFromSessionID(sessionID string) string {
 	err := Database.QueryRow(query, sessionID).Scan(&username)
 	if err != nil {
 		utils.HandleError("Error finding username in GetUsernameFromSessionID:", err)
-		log.Println("Error finding username in GetUsernameFromSessionID:", err)
 	}
 
 	return username
@@ -90,7 +62,6 @@ func GetUserIDFromSessionID(sessionID string) int {
 	err := Database.QueryRow(query, sessionID).Scan(&userID)
 	if err != nil {
 		utils.HandleError("Error finding userID in GetUserIDFromSessionID:", err)
-		log.Println("Error finding username in GetUserIDFromSessionID:", err)
 	}
 	return userID
 }

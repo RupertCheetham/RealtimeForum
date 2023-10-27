@@ -15,8 +15,8 @@ export default class Chat extends AbstractView {
 	async userList() {
 		const currentUser = await userIDFromSessionID()
 		const userContainer = document.getElementById("userContainer");
-		userContainer.innerHTML = "";
 		const userBox = document.createElement("div");
+		userBox.classList.add("userBox");
 
 		const response = await fetch("https://localhost:8080/api/getusers", {
 			credentials: "include",
@@ -29,7 +29,8 @@ export default class Chat extends AbstractView {
 		for (const user of users) {
 			if (user.id != currentUser) {
 				let userEntry = document.createElement("div");
-				userEntry.id = "UserBox";
+				userEntry.id = `userID${user.id}`
+				userEntry.classList.add("userEntry");
 
 				userEntry.innerHTML = `
 				<a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
@@ -250,16 +251,16 @@ export default class Chat extends AbstractView {
 		// split up the time, ommiting seconds
 		const time = timePart.split(':'); // Split the time into hours, minutes, and seconds
 
-		const hours = parseInt(time[0], 10);
-		const minutes = parseInt(time[1], 10);
+		const hours = time[0]
+		const minutes = time[1]
 
 
 		// Split up the date
 		const dateParts = datePart.split('-');
 
-		const day = parseInt(dateParts[0], 10);
-		const month = parseInt(dateParts[1], 10) - 1; // Months are 0-based in JavaScript
-		const year = parseInt(dateParts[2], 10);
+		const day = dateParts[0];
+		const month = dateParts[1] 
+		const year = dateParts[2];
 
 		let currentTime = `${hours}:${minutes}`
 		let currentDate = `${day}/${month}/${year}`
