@@ -40,6 +40,70 @@ func AddUserToDatabase(username string, age int, gender string, firstName string
 // 	return users, nil
 // }
 
+func GetRecentChatUsersFromDatabase(userID string) (ChatInfo, error) {
+
+	var sortedUsers ChatInfo
+
+	query := `SELECT 
+CASE
+    WHEN SenderID = ? THEN RecipientID
+    WHEN RecipientID = ? THEN SenderID
+  END AS OtherUserID
+FROM CHAT
+WHERE SenderID = ? OR RecipientID = ?
+GROUP BY OtherUserID
+ORDER BY Id ASC;
+`
+
+	rows, err := Database.Query(query, userID, userID, userID, userID)
+	if err != nil {
+		utils.HandleError("Error querying CHAT from database in GetRecentChatUsersFromDatabase:", err)
+		return sortedUsers, err
+	}
+	defer rows.Close()
+
+	var chatUserIds []int
+
+	for rows.Next() {
+		var entry int
+		err := rows.Scan(&entry)
+		if err != nil {
+			utils.HandleError("Error scanning row from database in GetRecentChatUsersFromDatabase:", err)
+			return sortedUsers, err
+		}
+		chatUserIds = append(chatUserIds, entry)
+
+	}
+
+	alphabeticalUsers, err := GetUsersFromDatabase()
+	if err != nil {
+		utils.HandleError("Error creating list of allUsers in GetRecentChatUsersFromDatabase", err)
+		return sortedUsers, err
+	}
+
+	var recentChats []UserEntry
+
+	for i := 0; i < len(alphabeticalUsers); i++ {
+		for j := 0; j < len(chatUserIds); j++ {
+			if alphabeticalUsers[i].Id == chatUserIds[j] {
+				recentChats = append(recentChats, alphabeticalUsers[i])
+				// Remove the entry from allUsers
+				alphabeticalUsers = append(alphabeticalUsers[:i], alphabeticalUsers[i+1:]...)
+				i--   // Decrement i to account for the removed entry
+				break // Exit the inner loop, since a match was found
+			}
+		}
+	}
+
+	sortedUsers.RecentChat = recentChats
+	fmt.Println("This is sortedUsers.RecentChat:", sortedUsers.RecentChat)
+	sortedUsers.Alphabetical = alphabeticalUsers
+	fmt.Println("This is sortedUsers.Alphabetical:", sortedUsers.Alphabetical)
+
+	fmt.Println("This is sortedUsers:", sortedUsers)
+	return sortedUsers, nil
+}
+
 func GetUsersFromDatabase() ([]UserEntry, error) {
 	rows, err := Database.Query("SELECT Id, Username FROM USERS ORDER BY Username ASC")
 	if err != nil {

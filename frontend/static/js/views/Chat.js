@@ -15,18 +15,20 @@ export default class Chat extends AbstractView {
 	async userList() {
 		const currentUser = await userIDFromSessionID()
 		const userContainer = document.getElementById("userContainer");
-		userContainer.innerHTML = "";
+		// userContainer.innerHTML = "";
 		const userBox = document.createElement("div");
 
-		const response = await fetch("https://localhost:8080/api/getusers", {
+		const response = await fetch(`https://localhost:8080/api/getusers?userId=${currentUser}`, {
 			credentials: "include",
 		});
 
 		const users = await response.json();
 
+let recentChat = document.createElement("div");
+recentChat.Id = "recentChat";
 
-
-		for (const user of users) {
+if (users.recentChat != null) {
+		for (const user of users.recentChat) {
 			if (user.id != currentUser) {
 				let userEntry = document.createElement("div");
 				userEntry.id = "UserBox";
@@ -35,12 +37,38 @@ export default class Chat extends AbstractView {
 				<a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
 				`;
 
-				userBox.appendChild(userEntry);
+				recentChat.appendChild(userEntry);
+			}
+	
+		}
+        userBox.appendChild(recentChat);
+		userContainer.appendChild(userBox);
+	}
+
+
+	let alphabeticalChat = document.createElement("div");
+    alphabeticalChat.Id = "alphabeticalChat";
+
+	console.log("This is alphabeticalChat:", users.alphabetical)
+
+	if (users.alphabetical != null) {
+		for (const user of users.alphabetical) {
+			if (user.id != currentUser) {
+				let userEntry = document.createElement("div");
+				userEntry.id = "UserBox";
+
+				userEntry.innerHTML = `
+				<a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
+				`;
+
+				alphabeticalChat.appendChild(userEntry);
 			}
 
 		}
+		userBox.appendChild(alphabeticalChat);
 		userContainer.appendChild(userBox);
 
+	}
 	}
 
 	async renderHTML() {
