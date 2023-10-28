@@ -41,8 +41,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		jsonResponse, err := json.Marshal(msg)
 
-		fmt.Println("jsonResponse:", msg)
-
 		if err != nil {
 			utils.HandleError("Unable to decode json", err)
 			http.Error(w, "Internal sever error", http.StatusBadRequest)
@@ -73,7 +71,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &sessionCookie)
 
 		w.Header().Set("Content-Type", "application/json")
-
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonResponse)
 	}

@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"realtimeForum/utils"
@@ -67,14 +68,19 @@ func FindUserFromDatabase(username string) (UserEntry, error) {
 	defer rows.Close()
 
 	var user UserEntry
-	for rows.Next() {
-		err := rows.Scan(&user.Id, &user.Username, &user.Age, &user.Gender, &user.FirstName, &user.LastName, &user.Email, &user.Password)
-		if err != nil {
-			utils.HandleError("Error scanning row from database in FindUserFromDatabase:", err)
-			return UserEntry{}, err
-		}
+	if !rows.Next() {
+		return UserEntry{}, errors.New("user not found")
 	}
-	return user, nil
+
+	err = rows.Scan(&user.Id, &user.Username, &user.Age, &user.Gender, &user.FirstName, &user.LastName, &user.Email, &user.Password)
+	if err != nil {
+		utils.HandleError("Error scanning row from database in FindUserFromDatabase:", err)
+		return UserEntry{}, err
+	}
+
+	fmt.Println("user from finduserfromdb function:", user, "error:", err)
+
+	return user, err
 }
 
 func DeleteUserFromDatabase(username string) error {

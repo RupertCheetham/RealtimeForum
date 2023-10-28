@@ -54,7 +54,7 @@ func ActionSuccessMessage(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResponse)
 }
 
-func ActionFailedMessage(w http.ResponseWriter, r *http.Request) {
+func RequestTimeoutFailedMessage(w http.ResponseWriter, r *http.Request) {
 	SetupCORS(&w, r)
 	msg := map[string]string{
 		"message": "unsuccessful request",
