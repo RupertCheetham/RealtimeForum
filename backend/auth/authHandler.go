@@ -2,7 +2,6 @@ package auth
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"realtimeForum/db"
 	"realtimeForum/handlers"
@@ -16,15 +15,12 @@ const timeout = 1 * time.Minute
 
 var sessionExpiration = time.Now().Add(timeout)
 
-// Handler to login page
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	handlers.SetupCORS(&w, r)
 	var login db.UserEntry
 	if r.Method == "POST" {
 		err := json.NewDecoder(r.Body).Decode(&login)
-
-		fmt.Println("login data:", login)
 
 		if err != nil {
 			utils.HandleError("Unable to decode json", err)
@@ -84,6 +80,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	handlers.SetupCORS(&w, r)
 	cookie := http.Cookie{
 		Name:     handlers.CookieName,
 		Value:    "",
@@ -95,10 +92,6 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &cookie)
-
-	cookieCheck, _ := r.Cookie(handlers.CookieName)
-
-	fmt.Println("cookieCheck:", cookieCheck)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

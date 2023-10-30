@@ -7,6 +7,7 @@ import {
 	attachCommentsToPost,
 } from "./Comments.js"
 
+const nav = new Nav() // Create an instance of the Nav class
 // Contains what the Posts page can do, including rendering itself
 export default class Posts extends AbstractView {
 	constructor() {
@@ -15,7 +16,6 @@ export default class Posts extends AbstractView {
 	}
 
 	async renderHTML() {
-		const nav = new Nav() // Create an instance of the Nav class
 		const navHTML = await nav.renderHTML() // Get the HTML content for the navigation
 		const postForm = getPostFormHTML()
 		return `
@@ -31,9 +31,16 @@ export default class Posts extends AbstractView {
 
 	async clearCookie() {
 		let logoutBtn = document.getElementById("logout")
-		logoutBtn.addEventListener("click", () => {
-			document.cookie =
-				"sessionID=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;"
+		logoutBtn.addEventListener("click", (event) => {
+			console.log("clicked")
+			event.preventDefault()
+			fetch("https://localhost:8080/api/logout", {
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				credentials: "include", // Ensure cookies are included in the request
+			})
 		})
 	}
 
