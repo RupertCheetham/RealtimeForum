@@ -66,13 +66,13 @@ export default class Chat extends AbstractView {
           alphabeticalChat.appendChild(userEntry);
         }
       }
-     
+
     }
     userBox.appendChild(alphabeticalChat);
     userContainer.appendChild(userBox);
   }
 
-  
+
 
   async renderHTML() {
     const chatContainer = document.getElementById("chatContainer");
