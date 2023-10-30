@@ -44,18 +44,18 @@ func GetRecentChatUsersFromDatabase(userID string) (ChatInfo, error) {
 
 	var sortedUsers ChatInfo
 
-	query := `SELECT 
-CASE
-    WHEN SenderID = ? THEN RecipientID
-    WHEN RecipientID = ? THEN SenderID
-  END AS OtherUserID
-FROM CHAT
-WHERE SenderID = ? OR RecipientID = ?
-GROUP BY OtherUserID
-ORDER BY Id ASC;
+	query := `SELECT
+	CASE
+	  WHEN SenderID = ? THEN RecipientID
+	  WHEN RecipientID = ? THEN SenderID
+	END AS OtherUserID
+  FROM CHAT
+  WHERE (SenderID = ? OR RecipientID = ?) AND (SenderID = ? OR RecipientID = ?)
+  GROUP BY OtherUserID
+  ORDER BY MAX(Timestamp) DESC;
 `
 
-	rows, err := Database.Query(query, userID, userID, userID, userID)
+	rows, err := Database.Query(query, userID, userID, userID, userID, userID, userID)
 	if err != nil {
 		utils.HandleError("Error querying CHAT from database in GetRecentChatUsersFromDatabase:", err)
 		return sortedUsers, err
@@ -75,6 +75,7 @@ ORDER BY Id ASC;
 
 	}
 
+	log.Println("chatUserIDs is:", chatUserIds)
 	alphabeticalUsers, err := GetUsersFromDatabase()
 	if err != nil {
 		utils.HandleError("Error creating list of allUsers in GetRecentChatUsersFromDatabase", err)
@@ -83,8 +84,20 @@ ORDER BY Id ASC;
 
 	var recentChats []UserEntry
 
-	for i := 0; i < len(alphabeticalUsers); i++ {
-		for j := 0; j < len(chatUserIds); j++ {
+	// for i := 0; i < len(alphabeticalUsers); i++ {
+	// 	for j := 0; j < len(chatUserIds); j++ {
+	// 		if alphabeticalUsers[i].Id == chatUserIds[j] {
+	// 			recentChats = append(recentChats, alphabeticalUsers[i])
+	// 			// Remove the entry from allUsers
+	// 			alphabeticalUsers = append(alphabeticalUsers[:i], alphabeticalUsers[i+1:]...)
+	// 			i--   // Decrement i to account for the removed entry
+	// 			break // Exit the inner loop, since a match was found
+	// 		}
+	// 	}
+	// }
+
+	for j := len(chatUserIds) - 1; j > 0; j-- {
+		for i := 0; i < len(alphabeticalUsers); i++ {
 			if alphabeticalUsers[i].Id == chatUserIds[j] {
 				recentChats = append(recentChats, alphabeticalUsers[i])
 				// Remove the entry from allUsers
@@ -94,6 +107,18 @@ ORDER BY Id ASC;
 			}
 		}
 	}
+
+	// for i := 0; i < len(chatUserIds); i++ {
+	// 	for j := 0; j < len(alphabeticalUsers); j++ {
+	// 		if chatUserIds[i] == alphabeticalUsers[j].Id {
+	// 			recentChats = append(recentChats, alphabeticalUsers[i])
+	// 			// Remove the entry from allUsers
+	// 			chatUserIds = append(chatUserIds[:i], chatUserIds[i+1:]...)
+	// 			i--
+	// 			break
+	// 		}
+	// 	}
+	// }
 
 	sortedUsers.RecentChat = recentChats
 	fmt.Println("This is sortedUsers.RecentChat:", sortedUsers.RecentChat)
