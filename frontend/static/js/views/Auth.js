@@ -55,7 +55,6 @@ export default class Auth extends AbstractView {
 			</form>
                 <!-- Step 1: User Information -->
                 <form id="step1-form" action="#" class="sign-up-form">
-                    <h2 class="title">Step 1: User Information</h2>
                     <div class="input-field">
                         <i class="fas fa-user"></i>
                         <input type="text" placeholder="Username" required id="username" />
@@ -80,7 +79,6 @@ export default class Auth extends AbstractView {
 
                 <!-- Step 2: Account Information -->
                 <form id="step2-form" action="#" class="sign-up-form">
-                    <h2 class="title">Step 2: Account Information</h2>
                     
                     <div class="input-field">
                         <i class="fas fa-lock"></i>

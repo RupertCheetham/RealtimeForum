@@ -1,15 +1,54 @@
-.chat-font{
-    color: #ffffff;
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Raleway', sans-serif;
+    outline: none;
+    border: none;
 }
 
-.sent{
-    color: #ffffff;
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #4f5d73;
 }
 
-.received{
-    color: green;
+.chatContainer {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+    min-height: 20vh;
+    background-color: #4f5d73;
 }
 
-#recipient{
-    color: lightblue;
+/* chat box section */
+
+.chatBox {
+    width: 400px;
+    height: 450px;
+    background-color: #fff;
+    overflow: hidden;
+    border-radius: 10px;
+    position: relative;
+}
+
+chat {
+    display: flex;
+    align-items: center;
+    /* Add any styling for the input container here */
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    /* Add any styling for the input container here */
+}
+
+.bigDiv {
+    background-color: #cc1010;
 }

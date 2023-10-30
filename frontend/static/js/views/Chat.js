@@ -16,11 +16,23 @@ export default class Chat extends AbstractView {
 		const Recipient = await usernameFromUserID(RecipientID)
 		const chatTextBox = getChatTextBoxHTML();
 		return `
-		${navHTML}
-        <h1 id="chat-font" class = "chat-font"> cHaT iS hErE</h1>
-		<h1 id="recipient" class = "chat-font"> ${Recipient}</h1>
-		<div id="chatContainer"></div>
-		${chatTextBox}
+		<body>
+			${navHTML}
+			<!DOCTYPE html>
+        	<html>
+       	 	<h1 id="chat-font" class = "chat-font"> cHaT iS hErE</h1>
+			<div class="bigDiv">
+			<div id="chatContainer" class="chatContainer">
+				<div class="input-container" >${chatTextBox}</div>
+					<div class="user-info">
+					<h1 id="recipient" class = "chat-font"> ${Recipient}</h1>	
+					</div>
+				</div>
+			</div>
+			</div>
+		
+			</html>
+		</body>
         `
 	}
 
@@ -54,7 +66,9 @@ export default class Chat extends AbstractView {
 			let chat = JSON.parse(event.data)
 			console.log("hello", chat.message, chat.sender)
 			// Handle incoming messages
-			const chatBox = document.getElementById("chatBox");
+			const /* `chatB` is a variable that is used to store the HTML content for the chat box. It is a
+			function that returns a string of HTML code representing the chat box. */
+			chatBox = document.getElementById("chatBox");
 
 			let chatElement = document.createElement("div");
 			const senderClassName = chat.sender === Sender ? "sent" : "received";
@@ -94,7 +108,7 @@ export default class Chat extends AbstractView {
 
 	async displayChatContainer(user1, user2) {
 		const chatContainer = document.getElementById("chatContainer");
-		chatContainer.innerHTML = "";
+		//chatContainer.innerHTML = "";
 
 		const response = await fetch(`https://localhost:8080/getChatHistory?user1=${user1}&user2=${user2}`, {
 			credentials: "include", // Ensure cookies are included in the request
