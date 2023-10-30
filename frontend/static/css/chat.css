@@ -2,11 +2,13 @@
     color: #ffffff;
 }
 
+
 #recipient {
     color: lightblue;
 }
 
 #chatHistory {
+    background-color: lightblue;
     display: flex;
     flex-direction: column-reverse; 
     height: 235px;

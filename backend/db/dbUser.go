@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"realtimeForum/utils"
+	"strconv"
 )
 
 // Adds User to database
@@ -40,10 +41,9 @@ func AddUserToDatabase(username string, age int, gender string, firstName string
 // 	return users, nil
 // }
 
-func GetRecentChatUsersFromDatabase(userID string) (ChatInfo, error) {
+func GetRecentChatUsersFromDatabase(userID string) (*ChatInfo, error) {
 
-	var sortedUsers ChatInfo
-
+	// finds userIDs that the current user has chatted with, returns them with the newest being first
 	query := `SELECT
 	CASE
 	  WHEN SenderID = ? THEN RecipientID
@@ -52,55 +52,50 @@ func GetRecentChatUsersFromDatabase(userID string) (ChatInfo, error) {
   FROM CHAT
   WHERE (SenderID = ? OR RecipientID = ?) AND (SenderID = ? OR RecipientID = ?)
   GROUP BY OtherUserID
-  ORDER BY MAX(Timestamp) DESC;
+  ORDER BY MAX(Timestamp) ASC;
 `
 
 	rows, err := Database.Query(query, userID, userID, userID, userID, userID, userID)
 	if err != nil {
 		utils.HandleError("Error querying CHAT from database in GetRecentChatUsersFromDatabase:", err)
-		return sortedUsers, err
+		return nil, err
 	}
 	defer rows.Close()
 
-	var chatUserIds []int
+	var recentChatUserIds []int
 
 	for rows.Next() {
 		var entry int
 		err := rows.Scan(&entry)
 		if err != nil {
 			utils.HandleError("Error scanning row from database in GetRecentChatUsersFromDatabase:", err)
-			return sortedUsers, err
+			return nil, err
 		}
-		chatUserIds = prependToSlice(chatUserIds, entry)
+		// list of users that the current user has chatted to
+		recentChatUserIds = prependToSlice(recentChatUserIds, entry)
 
 	}
-
-	log.Println("chatUserIDs is:", chatUserIds)
-	alphabeticalUsers, err := GetUsersFromDatabase()
+	alphabeticalUsers, err := GetUsersFromDatabase(userID)
 	if err != nil {
 		utils.HandleError("Error creating list of allUsers in GetRecentChatUsersFromDatabase", err)
-		return sortedUsers, err
 	}
+	sortedUsers := chatsplitter(alphabeticalUsers, recentChatUserIds)
+	return sortedUsers, nil
+
+}
+
+// splits the array of users in to ones that you've chatted with (sorted by most recent)
+// and the rest (sorted alphabetically)
+func chatsplitter(alphabeticalUsers []UserEntry, recentChatUserIds []int) *ChatInfo {
+	var sortedUsers ChatInfo
 
 	var recentChats []UserEntry
 
-	// for i := 0; i < len(alphabeticalUsers); i++ {
-	// 	for j := 0; j < len(chatUserIds); j++ {
-	// 		if alphabeticalUsers[i].Id == chatUserIds[j] {
-	// 			recentChats = append(recentChats, alphabeticalUsers[i])
-	// 			// Remove the entry from allUsers
-	// 			alphabeticalUsers = append(alphabeticalUsers[:i], alphabeticalUsers[i+1:]...)
-	// 			i--   // Decrement i to account for the removed entry
-	// 			break // Exit the inner loop, since a match was found
-	// 		}
-	// 	}
-	// }
-
-	for j := len(chatUserIds) - 1; j > 0; j-- {
+	for j := 0; j < len(recentChatUserIds); j++ {
 		for i := 0; i < len(alphabeticalUsers); i++ {
-			if alphabeticalUsers[i].Id == chatUserIds[j] {
+			if alphabeticalUsers[i].Id == recentChatUserIds[j] {
 				recentChats = append(recentChats, alphabeticalUsers[i])
-				// Remove the entry from allUsers
+				// Remove the entry from alphabeticalUsers
 				alphabeticalUsers = append(alphabeticalUsers[:i], alphabeticalUsers[i+1:]...)
 				i--   // Decrement i to account for the removed entry
 				break // Exit the inner loop, since a match was found
@@ -108,25 +103,10 @@ func GetRecentChatUsersFromDatabase(userID string) (ChatInfo, error) {
 		}
 	}
 
-	// for i := 0; i < len(chatUserIds); i++ {
-	// 	for j := 0; j < len(alphabeticalUsers); j++ {
-	// 		if chatUserIds[i] == alphabeticalUsers[j].Id {
-	// 			recentChats = append(recentChats, alphabeticalUsers[i])
-	// 			// Remove the entry from allUsers
-	// 			chatUserIds = append(chatUserIds[:i], chatUserIds[i+1:]...)
-	// 			i--
-	// 			break
-	// 		}
-	// 	}
-	// }
-
 	sortedUsers.RecentChat = recentChats
-	fmt.Println("This is sortedUsers.RecentChat:", sortedUsers.RecentChat)
 	sortedUsers.Alphabetical = alphabeticalUsers
-	fmt.Println("This is sortedUsers.Alphabetical:", sortedUsers.Alphabetical)
+	return &sortedUsers
 
-	fmt.Println("This is sortedUsers:", sortedUsers)
-	return sortedUsers, nil
 }
 
 func prependToSlice(slice []int, elements ...int) []int {
@@ -145,25 +125,31 @@ func prependToSlice(slice []int, elements ...int) []int {
 	return newSlice
 }
 
-func GetUsersFromDatabase() ([]UserEntry, error) {
+// returns a list of users from the DB, excluding the current user
+func GetUsersFromDatabase(userIDString string) ([]UserEntry, error) {
 	rows, err := Database.Query("SELECT Id, Username FROM USERS ORDER BY Username COLLATE NOCASE ASC")
 	if err != nil {
-		utils.HandleError("Error querying USERS from database in GetUsernamesFromDatabase:", err)
-		log.Println("Error querying USERS from database in GetUsernamesFromDatabase:", err)
+		utils.HandleError("Error querying USERS from database in GetUsersFromDatabase:", err)
 		return nil, err
 	}
 	defer rows.Close()
 
 	var users []UserEntry
+	userID, err := strconv.Atoi(userIDString)
+	if err != nil {
+		utils.HandleError("Error AtoIing userID in GetUsersFromDatabase:", err)
+		return nil, err
+	}
 	for rows.Next() {
 		var entry UserEntry
 		err := rows.Scan(&entry.Id, &entry.Username)
 		if err != nil {
 			utils.HandleError("Error scanning row from database in GetUsersFromDatabase:", err)
-			log.Println("Error scanning row from database in GetUsersFromDatabase:", err)
 			return nil, err
 		}
-		users = append(users, entry)
+		if entry.Id != userID {
+			users = append(users, entry)
+		}
 	}
 
 	return users, nil

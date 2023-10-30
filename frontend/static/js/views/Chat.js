@@ -28,7 +28,7 @@ export default class Chat extends AbstractView {
 
     const users = await response.json();
 
-    let recentChat = document.createElement("div");
+    const recentChat = document.createElement("div");
     recentChat.id = "recentChat";
 
     if (users.recentChat != null) {
@@ -44,12 +44,12 @@ export default class Chat extends AbstractView {
           recentChat.appendChild(userEntry);
         }
       }
-      userBox.appendChild(recentChat);
-      userContainer.appendChild(userBox);
     }
+    userBox.appendChild(recentChat);
+    userContainer.appendChild(userBox);
 
     let alphabeticalChat = document.createElement("div");
-    alphabeticalChat.Id = "alphabeticalChat";
+    alphabeticalChat.id = "alphabeticalChat";
 
     console.log("This is alphabeticalChat:", users.alphabetical);
 
@@ -57,7 +57,7 @@ export default class Chat extends AbstractView {
       for (const user of users.alphabetical) {
         if (user.id != currentUser) {
           let userEntry = document.createElement("div");
-          userEntry.id = "UserBox";
+          userEntry.id = `UserID${user.id}`;
 
           userEntry.innerHTML = `
 				<a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
@@ -66,10 +66,13 @@ export default class Chat extends AbstractView {
           alphabeticalChat.appendChild(userEntry);
         }
       }
-      userBox.appendChild(alphabeticalChat);
-      userContainer.appendChild(userBox);
+     
     }
+    userBox.appendChild(alphabeticalChat);
+    userContainer.appendChild(userBox);
   }
+
+  
 
   async renderHTML() {
     const chatContainer = document.getElementById("chatContainer");
@@ -81,6 +84,7 @@ export default class Chat extends AbstractView {
       chatContainer.innerHTML = `
 			
 			<h1 id="recipient" class = "chat-font"> ${Recipient}</h1>
+
 			<div id="chatHistory"></div>
 			${chatTextBox}
 			`;
@@ -135,15 +139,33 @@ export default class Chat extends AbstractView {
       // and then scrolls to the bottom of chatBox
       chatHistory.scrollTop = chatHistory.scrollHeight;
 
-	  console.log("Look here:", `UserID${Recipient}`)
 
       const divToMove = document.getElementById(`UserID${Recipient}`);
       const recentChat = document.getElementById("recentChat");
+      const alphabeticalChat = document.getElementById("alphabeticalChat");
 
-	  console.log("This is divToMove:", divToMove)
+      console.log("This is divToMove:", divToMove);
 
-      recentChat.removeChild(divToMove);
-      recentChat.insertBefore(divToMove, recentChat.firstChild);
+      if (divToMove) {
+        if (recentChat != null) {
+          if (recentChat.contains(divToMove)) {
+            recentChat.removeChild(divToMove);
+          }
+        } else if (alphabeticalChat != null) {
+          if (alphabeticalChat.contains(divToMove)) {
+            alphabeticalChat.removeChild(divToMove);
+          }
+        }
+      }
+
+      if (recentChat != null) {
+        recentChat.insertBefore(divToMove, recentChat.firstChild);
+      } else {
+
+        recentChat.appendChild(divToMove)
+      }
+
+
     });
 
     //deals with sending new messages to the backend when sendButton is clicked
@@ -174,7 +196,7 @@ export default class Chat extends AbstractView {
 
   // displays chat history (if any) between two users
   async displayChatHistory(user1, user2) {
-    let messageOffset = 11;
+    let messageOffset = 10;
     let limit = 10;
     const chatHistory = document.getElementById("chatHistory");
 
@@ -182,14 +204,12 @@ export default class Chat extends AbstractView {
     const initialMessages = await this.fetchMessagesInChunks(
       user1,
       user2,
-      1,
-      11
+      0,
+      10
     );
     if (initialMessages != null) {
-      if (initialMessages.length > 0) {
-        for (const message of initialMessages) {
-          this.appendMessageToChatHistory(message, user1);
-        }
+      for (const message of initialMessages) {
+        this.appendMessageToChatHistory(message, user1);
       }
     } else {
       // If no messages then add an encouraging message
@@ -241,7 +261,7 @@ export default class Chat extends AbstractView {
     if (nextMessages != null) {
       if (nextMessages.length > 0) {
         for (const message of nextMessages) {
-          this.appendMessageToChatHistory(message);
+          this.appendMessageToChatHistory(message, user1);
         }
       }
     } else {

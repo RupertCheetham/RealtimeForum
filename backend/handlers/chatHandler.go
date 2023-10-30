@@ -252,8 +252,6 @@ func GetUsersForChatHandler(w http.ResponseWriter, r *http.Request) {
 		// Set the response content type to JSON
 		w.Header().Set("Content-Type", "application/json")
 
-		fmt.Println("This is the data from Users:", users)
-
 		// Encode and send the username as JSON in the response
 		json.NewEncoder(w).Encode(users)
 	}
