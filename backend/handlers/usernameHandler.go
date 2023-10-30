@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"realtimeForum/db"
 )
@@ -13,7 +12,6 @@ func GetUsernameHandler(w http.ResponseWriter, r *http.Request) {
 	SetupCORS(&w, r)
 	cookieValue := GetCookie(w, r)
 
-	fmt.Println("cookieValue from getusernamehandler:", cookieValue)
 	// This code block is handling the logic for retrieving posts from the database when the HTTP request
 	// method is GET.
 	if r.Method == http.MethodGet { // Use http.MethodGet constant for clarity

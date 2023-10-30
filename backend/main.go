@@ -18,8 +18,9 @@ func main() {
 	utils.WriteMessageToLogFile("Database initialized successfully")
 
 	http.HandleFunc("/", handlers.HomeHandler)
-	http.HandleFunc("/api/auth", auth.LoginHandler)
-	http.HandleFunc("/api/registrations", auth.AddUserHandler)
+	http.HandleFunc("/api/registrations", auth.RegistrationUserHandler)
+	http.HandleFunc("/api/login", auth.LoginHandler)
+	http.HandleFunc("/api/logout", auth.LogoutHandler)
 	http.HandleFunc("/api/getUsername", handlers.CookieCheck(handlers.GetUsernameHandler, handlers.RequestTimeoutFailedMessage))
 	http.HandleFunc("/api/getposts", handlers.CookieCheck(handlers.GetPostHandler, handlers.RequestTimeoutFailedMessage))
 	http.HandleFunc("/api/addposts", handlers.CookieCheck(handlers.AddPostHandler, handlers.RequestTimeoutFailedMessage))

@@ -186,7 +186,7 @@ export default class Auth extends AbstractView {
 
 			console.log(userNameOrEmail, password)
 			try {
-				const response = await fetch("https://localhost:8080/api/auth", {
+				const response = await fetch("https://localhost:8080/api/login", {
 					method: "POST",
 					headers: {
 						Accept: "application/json",
