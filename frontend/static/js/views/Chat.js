@@ -37,9 +37,6 @@ export default class Chat extends AbstractView {
 				userEntry.classList.add("userEntry");
 
 				userEntry.innerHTML = `
-=======
-          userEntry.innerHTML = `
->>>>>>> RupertFenton
 				<a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
 				`;
 
@@ -73,8 +70,8 @@ export default class Chat extends AbstractView {
     userBox.appendChild(alphabeticalChat);
     userContainer.appendChild(userBox);
   }
-
-
+    
+    }}
 
   async renderHTML() {
     const chatContainer = document.getElementById("chatContainer");
@@ -93,7 +90,7 @@ export default class Chat extends AbstractView {
       await this.webSocketChat();
     }
   }
-
+    
   // Function to extract a query parameter from the URL
   async getRecipientIDFromURL() {
     const queryString = window.location.search;
@@ -317,17 +314,6 @@ export default class Chat extends AbstractView {
     const hours = time[0]
 		const minutes = time[1]
 
-    // Split up the date
-    const dateParts = datePart.split("-");
-
-<<<<<<< HEAD
-		// split up the time, ommiting seconds
-		const time = timePart.split(':'); // Split the time into hours, minutes, and seconds
-
-		const hours = time[0]
-		const minutes = time[1]
-
-
 		// Split up the date
 		const dateParts = datePart.split('-');
     const day = dateParts[0];
@@ -351,29 +337,4 @@ export default class Chat extends AbstractView {
 		this.previousDate = currentDate
 		return formattedTimestamp;
 	}
-
-    const day = parseInt(dateParts[0], 10);
-    const month = parseInt(dateParts[1], 10) - 1; // Months are 0-based in JavaScript
-    const year = parseInt(dateParts[2], 10);
->>>>>>> RupertFenton
-
-    let currentTime = `${hours}:${minutes}`;
-    let currentDate = `${day}/${month}/${year}`;
-    let formattedTimestamp = `${hours}:${minutes} ${day}/${month}/${year}`;
-
-    if (this.previousTime == currentTime && this.previousDate == currentDate) {
-      formattedTimestamp = "";
-    } else if (
-      this.previousTime != currentTime &&
-      this.previousDate == currentDate
-    ) {
-      formattedTimestamp = `${hours}:${minutes}`;
-    } else {
-      formattedTimestamp = `${hours}:${minutes} ${day}/${month}/${year}`;
-    }
-
-    this.previousTime = currentTime;
-    this.previousDate = currentDate;
-    return formattedTimestamp;
-  }
 }
