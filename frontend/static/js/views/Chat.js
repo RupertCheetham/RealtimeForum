@@ -77,7 +77,7 @@ export default class Chat extends AbstractView {
   async renderHTML() {
     const chatContainer = document.getElementById("chatContainer");
     const RecipientID = await this.getRecipientIDFromURL();
-    console.log("in Chat, RecipientID", RecipientID);
+ 
     if (RecipientID != 0) {
       const Recipient = await usernameFromUserID(RecipientID);
       const chatTextBox = this.getChatTextBoxHTML();

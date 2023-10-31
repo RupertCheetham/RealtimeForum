@@ -1,8 +1,12 @@
 package handlers
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 func CookieCheck(successHandler, failureHandler http.HandlerFunc) http.HandlerFunc {
+	log.Println("Cookie Checker")
 	return func(w http.ResponseWriter, r *http.Request) {
 		SetupCORS(&w, r)
 		cookieValue := GetCookie(w, r)
