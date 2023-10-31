@@ -81,11 +81,11 @@ export default class Chat extends AbstractView {
       const Recipient = await usernameFromUserID(RecipientID);
       const chatTextBox = this.getChatTextBoxHTML();
       chatContainer.innerHTML = `
-			
-			<h1 id="recipient" class = "chat-font"> ${Recipient}</h1>
-
+      <div class = "allChat"
+      <h1 id="recipient" class = "chat-font"> ${Recipient}</h1>
 			<div id="chatHistory"></div>
 			${chatTextBox}
+      </div>
 			`;
       await this.webSocketChat();
     }
@@ -167,30 +167,31 @@ export default class Chat extends AbstractView {
 
     });
 
-    //deals with sending new messages to the backend when sendButton is clicked
-    document.getElementById("sendButton").addEventListener("click", () => {
-      const messageInput = document.getElementById("messageInput");
-      // Get the value of the input and trim leading/trailing spaces
-      const Message = messageInput.value.trim();
-
-      if (Message !== "") {
-        // Check if the message contains at least one non-space character
-        if (/\S/.test(Message)) {
-          console.log("Sending message:", Message);
-          // Send the message to the server via WebSocket
-          socket.send(
-            JSON.stringify({
-              type: "chat",
-              body: Message,
-              sender: Sender,
-              recipient: Recipient,
-            })
-          );
-          // Clear the input field
-          messageInput.value = "";
-        }
+    //deals with sending new messages to the backend when sendButton is clicked or enter is pressed
+    document.getElementById("sendButton").addEventListener("click", sendMessage);
+    document.getElementById("messageInput").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        sendMessage();
       }
     });
+
+    function sendMessage() {
+      const messageInput = document.getElementById("messageInput");
+      const Message = messageInput.value.trim();
+
+      if (Message !== "" && /\S/.test(Message)) {
+        console.log("Sending message:", Message);
+        socket.send(
+          JSON.stringify({
+            type: "chat",
+            body: Message,
+            sender: Sender,
+            recipient: Recipient,
+          })
+        );
+        messageInput.value = "";
+      }
+    }
   }
 
   // displays chat history (if any) between two users
@@ -312,29 +313,29 @@ export default class Chat extends AbstractView {
     const time = timePart.split(":"); // Split the time into hours, minutes, and seconds
 
     const hours = time[0]
-		const minutes = time[1]
+    const minutes = time[1]
 
-		// Split up the date
-		const dateParts = datePart.split('-');
+    // Split up the date
+    const dateParts = datePart.split('-');
     const day = dateParts[0];
-		const month = dateParts[1] 
-		const year = dateParts[2];
+    const month = dateParts[1]
+    const year = dateParts[2];
 
-		let currentTime = `${hours}:${minutes}`
-		let currentDate = `${day}/${month}/${year}`
-		let formattedTimestamp = `${hours}:${minutes} ${day}/${month}/${year}`;
+    let currentTime = `${hours}:${minutes}`
+    let currentDate = `${day}/${month}/${year}`
+    let formattedTimestamp = `${hours}:${minutes} ${day}/${month}/${year}`;
 
-		if (this.previousTime == currentTime && this.previousDate == currentDate) {
-			formattedTimestamp = ''
-		} else if ((this.previousTime != currentTime && this.previousDate == currentDate)) {
-			formattedTimestamp = `${hours}:${minutes}`;
-		} else {
-			formattedTimestamp = `${hours}:${minutes} ${day}/${month}/${year}`
-		}
+    if (this.previousTime == currentTime && this.previousDate == currentDate) {
+      formattedTimestamp = ''
+    } else if ((this.previousTime != currentTime && this.previousDate == currentDate)) {
+      formattedTimestamp = `${hours}:${minutes}`;
+    } else {
+      formattedTimestamp = `${hours}:${minutes} ${day}/${month}/${year}`
+    }
 
 
-		this.previousTime = currentTime
-		this.previousDate = currentDate
-		return formattedTimestamp;
-	}
+    this.previousTime = currentTime
+    this.previousDate = currentDate
+    return formattedTimestamp;
+  }
 }
