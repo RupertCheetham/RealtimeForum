@@ -16,7 +16,7 @@ type UserEntry struct {
 type Session struct {
 	SessionID      string
 	UserId         int
-	CreationDate   time.Time
+	CreationTime   time.Time
 	ExpirationTime time.Time
 }
 

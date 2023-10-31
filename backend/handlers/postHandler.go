@@ -18,8 +18,8 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
 		var post db.PostEntry
-		err := json.NewDecoder(r.Body).Decode(&post)
 
+		err := json.NewDecoder(r.Body).Decode(&post)
 		if err != nil {
 			utils.HandleError("Problem decoding JSON in AddPostHandler", err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -34,21 +34,6 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		msg := map[string]string{
-			"message": "post made successfully",
-		}
-
-		jsonResponse, err := json.Marshal(msg)
-
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
-		w.Write(jsonResponse)
 	}
 }
 

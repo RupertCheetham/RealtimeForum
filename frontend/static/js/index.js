@@ -1,6 +1,5 @@
 import Auth from "./views/Auth.js"
 import MainPage from "./views/MainPage.js"
-import Chat from "./views/Chat.js"
 import { getCookie } from "./utils/utils.js"
 
 const navigateTo = (url) => {
@@ -36,7 +35,7 @@ const router = async () => {
 	document.querySelector("#container").innerHTML = await view.renderHTML()
 
 	if (match.route.view === Auth) {
-		document.querySelector("#container").innerHTML = await view.renderHTML()
+		// document.querySelector("#container").innerHTML = await view.renderHTML()
 		const authView = new Auth()
 		authView.submitForm()
 	}

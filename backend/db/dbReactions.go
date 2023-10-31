@@ -11,8 +11,6 @@ import (
 // Adds a reaction to the database, if post/comment doesn't have any.
 // Updates the parent post/comment's ReactionID to relevant reactiontable's ID
 func AddReactionToDatabase(reactionParentClass string, parentID int, userID int, reaction string) {
-
-	fmt.Println(reactionParentClass, parentID, reaction)
 	// Fills in the table details, depending upon if the reaction's parent class is "post" or "comment"
 	tableName := ""
 	postOrCommentTable := ""
@@ -64,7 +62,6 @@ func AddReactionToDatabase(reactionParentClass string, parentID int, userID int,
 
 // Updates values already in the reaction table
 func UpdateReactionInDatabase(reactionParentClass string, rowID int, userID int, reaction string) {
-
 	tableName := ""
 	if reactionParentClass == "post" {
 		tableName = "POSTREACTIONS"
@@ -108,21 +105,17 @@ func UpdateReactionInDatabase(reactionParentClass string, rowID int, userID int,
 
 // Tweaks the values of likes/dislikes as needed
 func ReactionAdjuster(userID int, actionToIncrement int, oppositeAction int, actionUsers string, oppositeActionUsers string) (int, int, string, string) {
-
 	userIDstring := strconv.Itoa(userID)
-
 	// If the reaction is a repeat of a previous reaction then nothing changes
 	if actionAlreadyPerformed(userIDstring, actionToIncrement, oppositeAction, actionUsers, oppositeActionUsers) {
 		return actionToIncrement, oppositeAction, actionUsers, oppositeActionUsers
 	}
-
 	oppositeActionAlreadyPerformed, user := oppositeActionChecker(userIDstring, oppositeActionUsers)
 	// If the User has already performed the opposite reaction then undoes the opposite reaction
 	if oppositeActionAlreadyPerformed {
 		oppositeAction = oppositeAction - 1
 		oppositeActionUsers = removeUserIDFromOppositeActionUsers(oppositeActionUsers, user)
 	}
-
 	// Finally, performs the action (like/dislike)
 	actionUsers = addUsertoActionUsers(actionUsers, userIDstring)
 	actionToIncrement = actionToIncrement + 1
@@ -168,4 +161,33 @@ func addUsertoActionUsers(actionUsers string, userIDstring string) string {
 	actionUsers = actionUsers + "," + userIDstring
 	actionUsers = strings.TrimPrefix(actionUsers, ",")
 	return actionUsers
+}
+
+func ObtainNewRowID(tableName string) int {
+	var rowID int
+
+	query := fmt.Sprintf("SELECT Id FROM %s ORDER BY Id DESC LIMIT 1", tableName)
+	err := Database.QueryRow(query).Scan(&rowID)
+
+	if err != nil {
+		log.Println("Error querying latest ReactionID in ReactionHandlerGetMethod:", err)
+		utils.HandleError("Error querying latest ReactionID in ReactionHandlerGetMethod:", err)
+	}
+	return rowID
+}
+
+// Returns the likes and dislikes for a given post/comment, from the relevant table
+func GetLikesAndDislikes(tableName string, rowID int) (int, int, error) {
+
+	query := fmt.Sprintf("SELECT Likes, Dislikes FROM %s WHERE Id = ?", tableName)
+
+	var likes, dislikes int
+	err := Database.QueryRow(query, rowID).Scan(&likes, &dislikes)
+	if err != nil {
+		log.Println("there was a problem in GetLikesAndDislikes", err)
+		utils.HandleError("there was a problem in GetLikesAndDislikes", err)
+		return 0, 0, err
+	}
+
+	return likes, dislikes, nil
 }

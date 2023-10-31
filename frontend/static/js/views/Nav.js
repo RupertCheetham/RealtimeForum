@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js"
-import { userNameFromSessionID } from "../utils/utils.js";
+import { getUserName } from "../utils/utils.js"
 
 export default class Nav extends AbstractView {
 	constructor() {
@@ -8,23 +8,26 @@ export default class Nav extends AbstractView {
 	}
 
 	async renderHTML() {
-		
-		const username = await userNameFromSessionID()
+		const username = await getUserName()
 
 		return `
-		<nav id="nav" class="nav">
-			<a href="/" class="nav-link" data-link id="logout">Logout</a>
-			<span id="username">${username}</span>
-		</nav>
-    `
+			<nav id="nav" class="nav">
+				<a href="/" class="nav-link" data-link id="logout">Logout</a>
+				<span id="cookie-value">${username}</span>
+			</nav>
+		  `
+	}
+	async logout() {
+		logoutbtn = document.getElementById("logout")
+		logoutbtn.addEventListener("click", (event) => {
+			event.preventDefault()
+			fetch("https://localhost:8080/api/logout", {
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				credentials: "include", // Ensure cookies are included in the request
+			})
+		})
 	}
 }
-
-// Nav with home button still there
-// `
-// <nav id="nav" class="nav">
-// 	<a href="/" class="nav-link" data-link id="logout">Logout</a>
-// 	<a href="/main" class="nav-link" data-link>Home</a>
-// 	<span id="username">${username}</span>
-// </nav>
-// `

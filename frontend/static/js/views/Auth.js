@@ -1,5 +1,4 @@
 import AbstractView from "./AbstractView.js"
-import { getCookie } from "../utils/utils.js"
 
 export default class Auth extends AbstractView {
 	constructor() {
@@ -24,6 +23,7 @@ export default class Auth extends AbstractView {
 								id="usernameOrEmail"
 							/>
 						</div>
+						<div class="login-error">incorrect username or password</div>
 						<div class="input-field">
 							<i class="fas fa-lock"></i>
 							<input
@@ -55,10 +55,7 @@ export default class Auth extends AbstractView {
 
 					<form class="sign-up-form">
 						<h2 class="title">Sign up</h2>
-						<div =class"progress green">
-							<div =class"indeterminate"></div>
-						</div>
-						
+						<div class="username-error">username is already taken</div>
 						<div class="input-field">
 							<i class="fas fa-user"></i>
 							<input
@@ -189,7 +186,7 @@ export default class Auth extends AbstractView {
 
 			console.log(userNameOrEmail, password)
 			try {
-				const response = await fetch("https://localhost:8080/api/auth", {
+				const response = await fetch("https://localhost:8080/api/login", {
 					method: "POST",
 					headers: {
 						Accept: "application/json",
@@ -205,13 +202,22 @@ export default class Auth extends AbstractView {
 				if (response.ok) {
 					// Authentication successful, redirect to protected page
 					console.log("cookie in auth is:", document.cookie)
-					let cookie = getCookie("sessionID")
-					if (!cookie) {
-						window.location.href = "/"
-					} else {
-						window.location.href = "main" // Update the URL
-					}
-				} else {
+					// let cookie = getCookie("sessionID")
+					// if (!cookie) {
+					// 	window.location.href = "/"
+					// } else {
+					// 	window.location.href = "posts" // Update the URL
+					// }
+					window.location.href = "main" // Update the URL
+				}
+
+				if (response.status === 400) {
+					const userError = document.querySelector(".login-error")
+					userError.style.display = "block"
+
+					setTimeout(() => {
+						userError.style.display = "none"
+					}, 4000)
 					throw new Error("Authentication failed!")
 				}
 			} catch (error) {
@@ -247,8 +253,9 @@ export default class Auth extends AbstractView {
 					email: email,
 					password: password,
 				}),
-			},)
+			})
 				.then((response) => {
+					console.log("response:", response)
 					if (response.ok) {
 						const userError = document.querySelector(".username-error")
 						userError.style.display = "none"
@@ -260,7 +267,6 @@ export default class Auth extends AbstractView {
 						setTimeout(() => {
 							userError.style.display = "none"
 						}, 4000)
-
 						throw new Error("Unable to create user")
 					}
 				})
