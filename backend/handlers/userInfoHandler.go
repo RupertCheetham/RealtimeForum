@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"realtimeForum/db"
 )
@@ -33,11 +32,10 @@ func GetUserIDHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
 
-	log.Println("I'm here")
 	// This code block is handling the logic for retrieving posts from the database when the HTTP request
 	// method is GET.
 	if r.Method == http.MethodGet { // Use http.MethodGet constant for clarity
-		sessionID := r.URL.Query().Get("sessionID")
+		sessionID := GetCookie(w, r)
 		userID := db.GetUserIDFromSessionID(sessionID) //
 
 		// Set the response content type to JSON
