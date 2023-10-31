@@ -7,8 +7,13 @@
     color: lightblue;
 }
 
+.allChat{
+    background-color: black;
+
+}
+
 #chatHistory {
-    background-color: lightblue;
+    background-color: black;
     display: flex;
     flex-direction: column-reverse; 
     height: 235px;
