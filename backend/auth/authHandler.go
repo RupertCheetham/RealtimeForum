@@ -80,6 +80,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+
 	handlers.SetupCORS(&w, r)
 	cookie := http.Cookie{
 		Name:     handlers.CookieName,
