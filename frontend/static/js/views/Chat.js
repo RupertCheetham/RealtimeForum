@@ -301,6 +301,7 @@ export default class Chat extends AbstractView {
   </div>
 `;
   }
+
   previousTime = null;
   previousDate = null;
 
@@ -333,7 +334,6 @@ export default class Chat extends AbstractView {
     } else {
       formattedTimestamp = `${hours}:${minutes} ${day}/${month}/${year}`
     }
-
 
     this.previousTime = currentTime
     this.previousDate = currentDate
