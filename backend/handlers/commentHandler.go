@@ -6,9 +6,10 @@ import (
 	"net/http"
 	"realtimeForum/db"
 	"realtimeForum/utils"
+	"strconv"
 )
 
-// Handler for comments
+// Handler for posting comments
 func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
@@ -17,8 +18,8 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		var comment db.CommentEntry
 		err := json.NewDecoder(r.Body).Decode(&comment)
-		log.Println(comment)
-		log.Println(comment.ParentPostID)
+		log.Println("comment:", comment)
+		log.Println("comment.ParentPostID:", comment.ParentPostID)
 		if err != nil {
 			log.Println("Error in AddCommentHandler")
 			utils.HandleError("Error in AddCommentHandler", err)
@@ -26,9 +27,9 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("Received comment:", comment.Body)
+		log.Println("Received comment:", comment.ParentPostID, comment.UserId, comment.Body)
 
-		err = db.AddCommentToDatabase(comment.Id, comment.ParentPostID, comment.Body)
+		err = db.AddCommentToDatabase(comment.ParentPostID, comment.UserId, comment.Body)
 		if err != nil {
 			utils.HandleError("Problem adding comment to db in AddCommentHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -36,21 +37,31 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		w.WriteHeader(http.StatusCreated)
 	}
+}
 
-	// This code block is handling the GET request for retrieving comments from the database.
+// Deals with Get requests for Comments
+func GetCommentHandler(w http.ResponseWriter, r *http.Request) {
+
+	SetupCORS(&w, r)
+
 	if r.Method == "GET" {
-		comments, err := db.GetCommentsFromDatabase()
+		parentPostID, err := strconv.Atoi(r.URL.Query().Get("postID"))
 		if err != nil {
+			log.Println("There was a problem converting parentPostID to int in AddCommentHandler.", err)
+			utils.HandleError("There was a problem converting parentPostID to int in AddCommentHandler.", err)
+		}
+
+		comments, err := db.GetCommentsFromDatabase(parentPostID)
+		if err != nil {
+			log.Println("Problem getting comment from db in AddCommentHandler", err)
 			utils.HandleError("Problem getting comment from db in AddCommentHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		if len(comments) > 0 {
-			json.NewEncoder(w).Encode(comments)
-		} else {
-			w.Write([]byte("No posts available"))
-		}
+		// returns the comments, if any
+		json.NewEncoder(w).Encode(comments)
+
 	}
 
 }

@@ -6,15 +6,17 @@ import (
 	"net/http"
 	"realtimeForum/db"
 	"realtimeForum/utils"
+	"strings"
 )
 
-// Handler for posts page
+// Handler for adding post to DB
 func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
 
 	// This code block is handling the logic for adding a new post to the database.
 	if r.Method == "POST" {
+
 		var post db.PostEntry
 		err := json.NewDecoder(r.Body).Decode(&post)
 
@@ -25,8 +27,8 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		log.Println("Received post:", post.UserId, post.Img, post.Body, post.Categories)
-
-		err = db.AddPostToDatabase(post.UserId, post.Img, post.Body, post.Categories)
+		categoriesStringed := strings.Join(post.Categories, ",")
+		err = db.AddPostToDatabase(post.UserId, post.Img, post.Body, categoriesStringed)
 		if err != nil {
 			utils.HandleError("Problem adding to POSTS in AddPostHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -48,6 +50,12 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		w.Write(jsonResponse)
 	}
+}
+
+// Handler for getting post from DB
+func GetPostHandler(w http.ResponseWriter, r *http.Request) {
+	// Enable CORS headers for this handler
+	SetupCORS(&w, r)
 
 	// This code block is handling the logic for retrieving posts from the database when the HTTP request
 	// method is GET.
@@ -65,5 +73,4 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("No posts available"))
 		}
 	}
-
 }

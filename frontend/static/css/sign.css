@@ -36,47 +36,6 @@ input {
 	left: 0;
 }
 
-.contentContainer {
-    display: flex;
-    justify-content: space-between;
-}
-
-.contentContainer-user {
-	background-color: #282930;
-	flex: 1;
-	max-width: 33.333%;
-	overflow: hidden;
-    border: none;
-    outline: none;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.contentContainer-post {
-	background-color: #263045;
-	flex: 1;
-	max-width: 33.333%;
-	overflow: hidden;
-    border: none;
-    outline: none;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.contentContainer-right {
-	background-color: #1b2e4e;
-	flex: 1;
-	max-width: 33.333%;
-	overflow: hidden;
-    border: none;
-    outline: none;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
 .signin-signup {
 	position: absolute;
 	top: 50%;
@@ -108,9 +67,7 @@ form.sign-up-form {
 
 form.sign-in-form {
 	z-index: 2;
-} */
-
-
+}
 
 .title {
 	font-size: 2.2rem;
@@ -135,10 +92,6 @@ form.sign-in-form {
 	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
 	/*transition-property: width;*/
 }
-#step2-form {
-	top: 12px;
-	left: 900px
-}
 
 .sign-in-form {
 	position: absolute;
@@ -150,6 +103,8 @@ form.sign-in-form {
 	height: auto;
 	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
 }
+
+
 
 .input-field {
 	max-width: 380px;
@@ -245,32 +200,6 @@ form.sign-in-form {
 	grid-template-columns: repeat(2, 1fr);
 }
 
-/* Step two Style for your "Back" and "Next" buttons */
-.button-container {
-    display: flex;
-    align-items: center;
-    margin-top: 0px; /* Adjust this margin as needed */
-}
-
-#next-step2-btn {
-	width: 120px;
-}
-
-#back-step1-btn {
-    width: 120px; /* Adjust the width as needed */
-	margin-right: 0px; /* Add margin to separate the buttons */
-}
-
-#submit-btn {
-    margin-left: 50px; /* Add margin to separate the buttons */
-	width: 120px;
-}
-
-#step-1 {
-    /* Initially show only the first step */
-    display: block;
-}
-
 .auth-container:before {
 	content: "";
 	position: absolute;
@@ -340,7 +269,15 @@ form.sign-in-form {
 	padding: 0.7rem 0;
 }
 
-
+.btn.transparent {
+	margin: 0;
+	background: none;
+	border: 2px solid #fff;
+	width: 130px;
+	height: 41px;
+	font-weight: 600;
+	font-size: 0.8rem;
+}
 
 .right-panel .image,
 .right-panel .content {
@@ -446,13 +383,9 @@ form.sign-in-form {
 	}
 
 	.btn.transparent {
-		margin: 0;
-		background: none;
-		border: 2px solid #fff;
-		width: 130px;
-		height: 41px;
-		font-weight: 600;
-		font-size: 0.8rem;
+		width: 110px;
+		height: 35px;
+		font-size: 0.7rem;
 	}
 
 	.container:before {

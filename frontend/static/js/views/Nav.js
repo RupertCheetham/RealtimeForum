@@ -1,18 +1,25 @@
 import AbstractView from "./AbstractView.js"
+import { userNameFromSessionID } from "../utils/utils.js";
 
-export default class extends AbstractView {
+export default class Nav extends AbstractView {
 	constructor() {
 		super()
 		this.setTitle("Posts")
 	}
 
-	async getHTML() {
+	async renderHTML() {
+		
+		const username = await userNameFromSessionID()
+
 		return `
-		<div>Welcome to forum</div>
 		<nav id="nav" class="nav">
-			<a href="/" class="nav-link" data-link>Logout</a>
-			<a href="/posts" class="nav-link" data-link>Posts</a>
+			<a href="/" class="nav-link" data-link id="logout">Logout</a>
+			<a href="/main" class="nav-link" data-link>Home</a>
+			<a href="/chat" class="nav-link" data-link>Chat</a>
+			<span id="username">${username}</span>
 		</nav>
     `
 	}
+
+	
 }

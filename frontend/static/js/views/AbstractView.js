@@ -1,11 +1,11 @@
-export default class {
+export default class AbstractView {
 	constructor() {}
 
 	setTitle(title) {
 		document.title = title
 	}
 
-	async getHTML() {
+	async renderHTML() {
 		return ""
 	}
 }

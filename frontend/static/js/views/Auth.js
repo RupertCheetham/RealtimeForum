@@ -1,148 +1,110 @@
 import AbstractView from "./AbstractView.js"
-import Posts from "./Posts.js"
-import { setSessionCookie } from "../utils/cookie.js"
+import { getCookie } from "../utils/utils.js"
 
-async function switchToPostsView() {
-	const container = document.getElementById("container")
-
-	// Create an instance of the Posts view and render it
-	const postsView = new Posts()
-	container.innerHTML = await postsView.getHTML()
-}
-
-export default class extends AbstractView {
+export default class Auth extends AbstractView {
 	constructor() {
 		super()
-		this.setTitle("Sign in  or sign up")
+		this.setTitle("Sign in or sign up")
 	}
 
-	async getHTML() {
+	async renderHTML() {
 		return `
+
 		<div id="auth-container" class="auth-container">
-		<div class="forms-container">
-			<div class="signin-signup">
-				<div class="input-field-container">
-					<form id="sign-up-form" action="#" class="sign-in-form">
-						<h2 class="title">Sign in</h2>
-						<div class="input-field">
-							<i class="fas fa-user"></i>
-							<input
-								type="text"
-								placeholder="Username or Email"
-								required
-								id="usernameOrEmail"
-							/>
-						</div>
-						<div class="input-field">
-							<i class="fas fa-lock"></i>
-							<input
-								type="password"
-								placeholder="Password"
-								required
-								id="password"
-							/>
-						</div>
-
-						<input type="submit" value="Login" class="btn solid" />
-
-						<p class="social-text">Or Sign in with social platforms</p>
-						<div class="social-media">
-							<a href="#" class="social-icon">
-								<i class="fab fa-facebook-f"></i>
-							</a>
-							<a href="#" class="social-icon">
-								<i class="fab fa-twitter"></i>
-							</a>
-							<a href="#" class="social-icon">
-								<i class="fab fa-google"></i>
-							</a>
-							<a href="#" class="social-icon">
-								<i class="fab fa-linkedin-in"></i>
-							</a>
-						</div>
-					</form>
-
-					<form class="sign-up-form">
-						<h2 class="title">Sign up</h2>
-						<div class="input-field">
-							<i class="fas fa-user"></i>
-							<input
-								type="text"
-								placeholder="Username"
-								required
-								id="username"
-							/>
-						</div>
-						<div class="input-field">
-							<i class="fas fa-user"></i>
-							<input type="text" placeholder="User Age" required id="age" />
-						</div>
-						<div class="input-field">
-							<i class="fas fa-user"></i>
-							<input type="text" placeholder="Gender" required id="gender" />
-						</div>
-						<div class="input-field">
-							<i class="fas fa-user"></i>
-							<input
-								type="text"
-								placeholder="First Name"
-								required
-								id="first_name"
-							/>
-						</div>
-						<div class="input-field">
-							<i class="fas fa-user"></i>
-							<input
-								type="text"
-								placeholder="Last Name"
-								required
-								id="last_name"
-							/>
-						</div>
-						<div class="input-field">
-							<i class="fas fa-envelope"></i>
-							<input type="email" placeholder="Email" required id="email" />
-						</div>
-						<div class="input-field">
-							<i class="fas fa-lock"></i>
-							<input
-								type="password"
-								placeholder="Password"
-								required
-								id="new_password"
-							/>
-						</div>
-						<div class="input-field">
-							<i class="fas fa-lock"></i>
-							<input
-								type="password"
-								placeholder="Repeat Password"
-								required
-								id="password-repeat"
-							/>
-						</div>
-
-						<input type="submit" value="Sign up" class="btn" />
-
-						<p class="social-text">Or Sign up with social platforms</p>
-						<div class="social-media">
-							<a href="#" class="social-icon">
-								<i class="fab fa-facebook-f"></i>
-							</a>
-							<a href="#" class="social-icon">
-								<i class="fab fa-twitter"></i>
-							</a>
-							<a href="#" class="social-icon">
-								<i class="fab fa-google"></i>
-							</a>
-							<a href="#" class="social-icon">
-								<i class="fab fa-linkedin-in"></i>
-							</a>
-						</div>
-					</form>
-				</div>
+    <div class="forms-container">
+        <div class="signin-signup">
+            <div class="input-field-container">
+			<form id="sign-up-form" action="#" class="sign-in-form">
+			<h2 class="title">Sign in</h2>
+			<div class="input-field">
+				<i class="fas fa-user"></i>
+				<input
+					type="text"
+					placeholder="Username or Email"
+					required
+					id="usernameOrEmail"
+				/>
 			</div>
-		</div>
+			<div class="input-field">
+				<i class="fas fa-lock"></i>
+				<input
+					type="password"
+					placeholder="Password"
+					required
+					id="password"
+				/>
+			</div>
+
+			<input type="submit" value="Login" class="btn solid" />
+
+			<p class="social-text">Or Sign in with social platforms</p>
+			<div class="social-media">
+				<a href="#" class="social-icon">
+					<i class="fab fa-facebook-f"></i>
+				</a>
+				<a href="#" class="social-icon">
+					<i class="fab fa-twitter"></i>
+				</a>
+				<a href="#" class="social-icon">
+					<i class="fab fa-google"></i>
+				</a>
+				<a href="#" class="social-icon">
+					<i class="fab fa-linkedin-in"></i>
+				</a>
+			</div>
+			</form>
+                <!-- Step 1: User Information -->
+                <form id="step1-form" action="#" class="sign-up-form">
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Username" required id="username" />
+                    </div>
+                   
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="First Name" required id="first_name" />
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Last Name" required id="last_name" />
+                    </div>
+					<div class="input-field">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" placeholder="Email" required id="email" />
+                    </div>
+
+                    <button class="btn transparent" id="next-step2-btn">Next</button>
+					
+                </form>
+
+                <!-- Step 2: Account Information -->
+                <form id="step2-form" action="#" class="sign-up-form">
+                    
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" required id="new_password" />
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Repeat Password" required id="password-repeat" />
+                    </div>
+					<div class="input-field">
+						<i class="fas fa-calendar"></i> <!-- Use a calendar icon for D.o.B -->
+						<input type="dete" placeholder="Date of Birth" required id="date_of_birth" />
+					</div>
+					<div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Gender" required id="gender" />
+                    </div>
+					<div class="button-container">
+					<button class="btn transparent" id="back-step1-btn">Back</button>
+                    <input class="btn" type="submit" value="Sign up" id="submit-btn" />
+
+                </form>
+                </form>
+            </div>
+        </div>
+    </div>
 
 		<div class="panels-container">
 			<div class="panel left-panel">
@@ -151,6 +113,7 @@ export default class extends AbstractView {
 					<p>
 						Become a member and let's get you started!
 					</p>
+
 					<button class="btn transparent" id="sign-up-btn">Sign up</button>
 				</div>
 				<img src="img/log.svg" class="image" alt="" />
@@ -167,6 +130,11 @@ export default class extends AbstractView {
 			</div>
 		</div>
 		</div>
+</div>
+
+<script>
+
+</script>
  `
 	}
 
@@ -174,6 +142,7 @@ export default class extends AbstractView {
 		const authcontainer = document.getElementById("auth-container")
 		const sign_in_btn = document.querySelector("#sign-in-btn")
 		const sign_up_btn = document.querySelector("#sign-up-btn")
+		const signupForm = document.querySelector(".sign-up-form")
 
 		sign_up_btn.addEventListener("click", () => {
 			authcontainer.classList.add("sign-up-mode")
@@ -184,46 +153,43 @@ export default class extends AbstractView {
 		})
 
 		const signinForm = document.querySelector(".sign-in-form")
-		signinForm.addEventListener("submit", function (event) {
+		signinForm.addEventListener("submit", async function (event) {
 			event.preventDefault()
 
 			const userNameOrEmail = document.getElementById("usernameOrEmail").value
 			const password = document.getElementById("password").value
 
 			console.log(userNameOrEmail, password)
+			try {
+				const response = await fetch("https://localhost:8080/api/auth", {
+					method: "POST",
+					headers: {
+						Accept: "application/json",
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						username: userNameOrEmail,
+						password: password,
+					}),
+					credentials: "include", // Ensure cookies are included in the request
+				})
 
-			fetch("http://localhost:8080/login", {
-				method: "POST",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					username: userNameOrEmail,
-					password: password,
-				}),
-			})
-				.then((response) => {
-					if (response.ok) {
-						return response.json()
+				if (response.ok) {
+					// Authentication successful, redirect to protected page
+					console.log("cookie in auth is:", document.cookie)
+					let cookie = getCookie("sessionID")
+					if (!cookie) {
+						window.location.href = "/"
 					} else {
-						throw new Error("POST request failed!")
+						window.location.href = "main" // Update the URL
 					}
-				})
-				.then(async (data) => {
-					console.log("this is data", data)
-					if (data.message === "Login successful") {
-						setSessionCookie()
-						switchToPostsView()
-						window.location.pathname = "/posts"
-					}
-				})
-				.catch((error) => {
-					console.log(error)
-				})
+				} else {
+					throw new Error("Authentication failed!")
+				}
+			} catch (error) {
+				console.error(error)
+			}
 		})
-
-		const signupForm = document.querySelector(".sign-up-form")
 
 		signupForm.addEventListener("submit", function (event) {
 			event.preventDefault()
@@ -236,17 +202,26 @@ export default class extends AbstractView {
 			const email = document.getElementById("email").value
 			const password = document.getElementById("new_password").value
 
-			console.log(
-				userName,
-				userAge,
-				userGender,
-				firstName,
-				lastName,
-				email,
-				password
-			)
+			const stepOne = document.getElementById("step1-form")
+			const stepTwo = document.getElementById("step2-form")
 
-			fetch("http://localhost:8080/registrations", {
+			const next1 = document.getElementById("next-step2-btn")
+			const back1 = document.getElementById("back-step1-btn")
+
+			next1.onclick = function(){
+				stepOne.style.left = "-900px"
+				stepTwo.style.left = "900px"	
+			}
+
+			back1.onclick = function(){
+				stepOne.style.right = "900px"
+				stepTwo.style.right = "900px"	
+			}
+
+
+			console.log(userName, userAge)
+
+			fetch("https://localhost:8080/api/registrations", {
 				method: "POST",
 				headers: {
 					Accept: "application/json",
@@ -261,10 +236,34 @@ export default class extends AbstractView {
 					email: email,
 					password: password,
 				}),
-			}).catch((error) => {
-				console.log(error)
-			})
-			console.log("registration complete")
+			},)
+				.then((response) => {
+					if (response.ok) {
+						const userError = document.querySelector(".username-error")
+						userError.style.display = "none"
+					}
+					if (response.status === 400) {
+						const userError = document.querySelector(".username-error")
+						userError.style.display = "block"
+
+						setTimeout(() => {
+							userError.style.display = "none"
+						}, 4000)
+
+						throw new Error("Unable to create user")
+					}
+				})
+				.catch((error) => {
+					console.log(error)
+				})
 		})
 	}
 }
+
+export async function clearCookie() {
+    let logoutBtn = document.getElementById("logout");
+    logoutBtn.addEventListener("click", () => {
+      document.cookie =
+        "sessionID=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+    });
+  }

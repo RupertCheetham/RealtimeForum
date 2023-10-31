@@ -2,11 +2,14 @@ package utils
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // The function "PrintErrOnCommandLine" prints an error message to the command line if an error is not
@@ -40,6 +43,7 @@ func HandleError(message string, err error) {
 		errorMessage := fmt.Sprintf("***** %s: %v on line %s in %s at file %s *****", message, err, strconv.Itoa(line), functionName, filename[len(filename)-1])
 		errorMessageWithFormatTime := formatTime + ": " + errorMessage + "\n"
 		WriteToLogFile(errorMessageWithFormatTime)
+		log.Println(errorMessageWithFormatTime)
 	}
 }
 
@@ -82,4 +86,14 @@ func trace() (string, int, string) {
 func AssertString(val interface{}) string {
 	v := val.(string)
 	return v
+}
+
+// generates a new UUID
+func GenerateNewUUID() string {
+	newUUID := uuid.New()
+
+	// Convert the UUID to a string for display
+	uuidString := newUUID.String()
+
+	return uuidString
 }

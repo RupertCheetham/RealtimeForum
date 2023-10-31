@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // files, err := os.ReadDir("./db/migrations")
@@ -31,12 +33,35 @@ func AddExampleEntries() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "test" {
 			// Adds example users to USERS
-			err := AddUserToDatabase("Ardek", int(35), "male", "Rupert", "Cheetham", "cheethamthing@gmail.com", "password12345")
+			hashPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+			if err != nil {
+				log.Fatalf("Error bcrypting in AddExampleEntries: %v", err)
+			}
+			err = AddUserToDatabase("Ardek", int(35), "male", "Rupert", "Cheetham", "cheethamthing@gmail.com", string(hashPassword))
 			if err != nil {
 				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
 			}
 
-			err = AddUserToDatabase("john_doe", 30, "Male", "John", "Doe", "john.doe@example.com", "password123")
+			//hashPassword, _ = bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+			err = AddUserToDatabase("Knikoi", 40, "Male", "Kwashie", "Nikoi", "john.doe@example.com", string(hashPassword))
+			if err != nil {
+				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
+			}
+
+			//hashPassword, _ = bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+			err = AddUserToDatabase("Mfenton", 35, "Male", "Martin", "Fenton", "john.doe@example.com", string(hashPassword))
+			if err != nil {
+				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
+			}
+
+			//hashPassword, _ = bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+			err = AddUserToDatabase("Madeleke", 20, "Male", "Mike", "A", "john.doe@example.com", string(hashPassword))
+			if err != nil {
+				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
+			}
+
+			//hashPassword, _ = bcrypt.GenerateFromPassword([]byte("t"), bcrypt.DefaultCost)
+			err = AddUserToDatabase("t", 255, "Male", "Mr", "E", "john.doe@example.com", string(hashPassword))
 			if err != nil {
 				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
 			}
@@ -76,15 +101,36 @@ func AddExampleEntries() {
 			if err != nil {
 				log.Fatalf("Error adding entry to COMMENT table in AddExampleEntries: %v", err)
 			}
-			// AddReactionToDatabase("POSTREACTIONS", 1, "dislike")
-			// AddReactionToDatabase("POSTREACTIONS", 3, "like")
-			// AddReactionToDatabase("COMMENTREACTIONS", 1, "dislike")
-			// AddReactionToDatabase("COMMENTREACTIONS", 2, "like")
-			// UpdateReactionInDatabase("POSTREACTIONS", 1, 3, "dislike")
-			UpdateReactionInDatabase("POSTREACTIONS", 1, 3, "like")
-			// UpdateReactionInDatabase("POSTREACTIONS", 7, 1, "dislike")
+			AddReactionToDatabase("post", 1, 1, "dislike")
+			AddReactionToDatabase("post", 2, 3, "like")
+			AddReactionToDatabase("comment", 1, 1, "dislike")
+			AddReactionToDatabase("comment", 2, 2, "like")
 		}
 		log.Println("Example Database entries added successfully")
 
+	}
+}
+
+func DeleteUserTest() {
+	if len(os.Args) == 3 {
+		if os.Args[1] == "delete" && os.Args[2] == "user" {
+			// delete user
+			err := DeleteUserFromDatabase("b")
+			if err != nil {
+				log.Fatalf("Error adding entry to USERS table in DeleteUserFromDatabase: %v", err)
+			}
+		}
+	}
+}
+
+func DeleteAllUsersTest() {
+	if len(os.Args) == 4 {
+		if os.Args[1] == "delete" && os.Args[2] == "all" && os.Args[3] == "users" {
+			// delete user
+			err := DeleteAllUsersFromDatabase()
+			if err != nil {
+				log.Fatalf("Error adding entry to USERS table in DeleteAllUsersFromDatabase: %v", err)
+			}
+		}
 	}
 }

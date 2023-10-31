@@ -1,0 +1,152 @@
+.main-page {
+    height: 100%; /* 100% Full-height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    background-color: #111; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
+/* The navigation menu links */
+.sidenav a {
+	padding: 8px 8px 8px 32px;
+	text-decoration: none;
+	font-size: 25px;
+	color: #818181;
+	display: block;
+	transition: 0.3s;
+}
+  
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+	color: #f1f1f1;
+}
+  
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+	position: absolute;
+	top: 0;
+	right: 25px;
+	font-size: 36px;
+	margin-left: 50px;
+}
+  
+/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+#main {
+	transition: margin-left .5s;
+	padding: 20px;
+}
+  
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+	.sidenav {padding-top: 15px;}
+	.sidenav a {font-size: 18px;}
+}
+
+/* 
+.post-form {
+	width: 100%;
+	background-color: #5995fd;
+	border: none;
+	outline: none;
+	border-radius: 49px;
+	color: #fff;
+	text-transform: uppercase;
+	font-weight: 600;
+	margin: 10px 0;
+	transition: 0.5s;
+}
+
+.post-form-input-field {
+	max-width: 380px;
+	width: 100%;
+	background-color: #f0f0f0;
+	margin: 10px 0;
+	height: 55px;
+	border-radius: 55px;
+	display: grid;
+	grid-template-columns: 15% 85%;
+	padding: 0 0.4rem;
+	position: relative;
+}
+
+.post-form-input-field i {
+	text-align: center;
+	line-height: 55px;
+	color: #acacac;
+	transition: 0.5s;
+	font-size: 1.1rem;
+}
+
+.post-form-input-field input {
+	background: none;
+	outline: none;
+	border: none;
+	line-height: 1;
+	font-weight: 600;
+	font-size: 1.1rem;
+	color: #333;
+}
+
+.post-form-input-field input::placeholder {
+	color: #aaa;
+	font-weight: 500;
+}
+
+.postSubmitButton {
+	width: 150px;
+	background-color: #8bb3f8;
+	border: none;
+	outline: none;
+	height: 49px;
+	border-radius: 49px;
+	color: #fff;
+	text-transform: uppercase;
+	font-weight: 600;
+	margin: 10px 0;
+	cursor: pointer;
+	transition: 0.5s;
+}
+
+.postSubmitButton:hover {
+	background-color: #4d84e2;
+}
+
+.postBox {
+	width: 100%;
+	background-color: #8bb3f8;
+	border: none;
+	outline: none;
+	border-radius: 49px;
+	text-transform: uppercase;
+	font-weight: 600;
+	margin: 10px;
+	transition: 0.5s;
+}
+
+.commentContainer {
+	width: 100%;
+	background-color: #b5ccf3;
+	border: none;
+	outline: none;
+	border-radius: 49px;
+	text-transform: uppercase;
+	font-weight: 600;
+	margin: 10px;
+}
+
+.postContent {
+	width: 100%;
+	background-color: #b5ccf3;
+	border: none;
+	outline: none;
+	border-radius: 49px;
+	text-transform: uppercase;
+	font-weight: 600;
+	margin: auto;
+}
+ */
