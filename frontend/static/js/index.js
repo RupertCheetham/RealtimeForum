@@ -42,12 +42,7 @@ const router = async () => {
 
 	// Call the submitForm and displayPosts method here
 	if (match.route.view === MainPage) {
-		let cookie = getCookie("sessionID")
-		if (!cookie) {
-			window.location.href = "/"
-		} else {
-			document.querySelector("#container").innerHTML = await view.renderHTML()
-		}
+
 		const mainView = new MainPage()
 		mainView.attachPostSubmitForm()
 		mainView.displayUserContainer()
