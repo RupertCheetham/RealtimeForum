@@ -68,3 +68,8 @@ type ChatMessage struct {
 	Recipient int    `json:"recipient"`
 	Time      string `json:"time"`
 }
+
+type ChatInfo struct {
+	RecentChat   []UserEntry `json:"recentChat"`
+	Alphabetical []UserEntry `json:"alphabetical"`
+}

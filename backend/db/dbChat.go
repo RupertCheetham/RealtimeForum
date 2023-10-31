@@ -17,6 +17,7 @@ func AddChatToDatabase(UUID string, Message string, Sender int, Recipient int) e
 
 // retrieves chat messages for a particular chatUUID from db
 func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, error) {
+
 	var chatStruct []ChatMessage
 	// Query to retrieve chat entries starting from the most recent entries working backward
 	query := `
@@ -42,6 +43,7 @@ func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, err
 			utils.HandleError("Error scanning row from database in GetChatFromDatabase:", err)
 			return nil, err
 		}
+
 		if message.Body != "" {
 			// Parse the timestamp string
 			timeObj, parseErr := time.Parse(time.RFC3339, timestamp)
@@ -62,5 +64,6 @@ func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, err
 			chatStruct = append(chatStruct, message)
 		}
 	}
+
 	return chatStruct, nil
 }
