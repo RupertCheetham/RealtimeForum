@@ -6,20 +6,28 @@ import {
 } from "../utils/utils.js";
 
 export default class Chat extends AbstractView {
-	constructor() {
-		super()
-		this.setTitle("Chat")
-	}
+  constructor() {
+    super();
+    this.setTitle("Chat");
+  }
 
+  // List of users to click on to initialise chat
+  async userList() {
+    const currentUser = await userIDFromSessionID();
+    const userContainer = document.getElementById("userContainer");
+    // userContainer.innerHTML = "";
+    const userBox = document.createElement("div");
+    userBox.id = "userBox";
 
+    const response = await fetch(
+      `https://localhost:8080/api/getusers?userId=${currentUser}`,
+      {
+        credentials: "include",
+      }
+    );
 
-	// List of users to click on to initialise chat
-	async userList() {
-		const currentUser = await userIDFromSessionID()
-		const userContainer = document.getElementById("userContainer");
-		const userBox = document.createElement("div");
-		userBox.classList.add("userBox");
     const users = await response.json();
+
     const recentChat = document.createElement("div");
     recentChat.id = "recentChat";
 
@@ -29,14 +37,7 @@ export default class Chat extends AbstractView {
           let userEntry = document.createElement("div");
           userEntry.id = `UserID${user.id}`;
 
-
-		for (const user of users) {
-			if (user.id != currentUser) {
-				let userEntry = document.createElement("div");
-				userEntry.id = `userID${user.id}`
-				userEntry.classList.add("userEntry");
-
-				userEntry.innerHTML = `
+          userEntry.innerHTML = `
 				<a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
 				`;
 
@@ -70,8 +71,8 @@ export default class Chat extends AbstractView {
     userBox.appendChild(alphabeticalChat);
     userContainer.appendChild(userBox);
   }
-    
-    }}
+
+
 
   async renderHTML() {
     const chatContainer = document.getElementById("chatContainer");
@@ -90,7 +91,7 @@ export default class Chat extends AbstractView {
       await this.webSocketChat();
     }
   }
-    
+
   // Function to extract a query parameter from the URL
   async getRecipientIDFromURL() {
     const queryString = window.location.search;
