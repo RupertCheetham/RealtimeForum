@@ -21,12 +21,16 @@ export default class Chat extends AbstractView {
 			<!DOCTYPE html>
         	<html>
        	 	<h1 id="chat-font" class = "chat-font"> cHaT iS hErE</h1>
-			<div class="bigDiv">
 			<div id="chatContainer" class="chatContainer">
-				<div class="input-container" >${chatTextBox}</div>
-					<div class="user-info">
-					<h1 id="recipient" class = "chat-font"> ${Recipient}</h1>	
-					</div>
+				<div class="user-info">
+				<img src="frontend/static/js/views/icons8-user-94.png" />
+					<h1 id="recipient" class = "chat-font"> ${Recipient}</h1>
+				</div>
+				<div class="chat-box">
+				<!-- Chat messages go here -->
+				</div>
+				<div class="inputContainer">
+				${chatTextBox}
 				</div>
 			</div>
 			</div>

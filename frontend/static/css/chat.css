@@ -17,13 +17,19 @@ body {
     background-color: #4f5d73;
 }
 
-.chatContainer {
+#chatContainer {
+    width: 400px;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     justify-content: center;
-    align-items: center;
-    min-height: 20vh;
+    border-radius: 10px;
+    align-items: normal;
     background-color: #4f5d73;
+}
+
+.user-info {
+    font-size: larger;
+    color: bisque;
 }
 
 /* chat box section */
@@ -31,10 +37,16 @@ body {
 .chatBox {
     width: 400px;
     height: 450px;
-    background-color: #fff;
     overflow: hidden;
     border-radius: 10px;
     position: relative;
+    background-color: #4f5d73;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    /* Add any styling for the input container here */
 }
 
 chat {
@@ -47,8 +59,4 @@ chat {
     display: flex;
     align-items: center;
     /* Add any styling for the input container here */
-}
-
-.bigDiv {
-    background-color: #cc1010;
 }
