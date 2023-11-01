@@ -1,5 +1,4 @@
 import AbstractView from "./AbstractView.js"
-import { getUserName } from "../utils/utils.js"
 
 export default class Nav extends AbstractView {
 	constructor() {
@@ -8,7 +7,7 @@ export default class Nav extends AbstractView {
 	}
 
 	async renderHTML() {
-		const username = await getUserName()
+		const username = localStorage.getItem("username")
 
 		return `
 			<nav id="nav" class="nav">
@@ -22,6 +21,7 @@ export default class Nav extends AbstractView {
 		let logoutbtn = document.getElementById("logout")
 		logoutbtn.addEventListener("click", (event) => {
 			event.preventDefault()
+			localStorage.clear()
 			fetch("https://localhost:8080/api/logout", {
 				headers: {
 					Accept: "application/json",

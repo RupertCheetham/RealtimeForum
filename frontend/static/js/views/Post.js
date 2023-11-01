@@ -11,10 +11,17 @@ export default class Posts extends AbstractView {
 		postContainer.innerHTML = ""
 
 		const response = await fetch("https://localhost:8080/api/getposts", {
+			// checkSessionTimeout(response)
 			credentials: "include", // Ensure cookies are included in the request
 		})
 
+		if (response.status == 408) {
+			window.location.href = "/"
+		}
+		// checkSessionTimeout(response)
+
 		const posts = await response.json()
+		const username = localStorage.getItem("username")
 
 		for (const post of posts) {
 			let postBox = document.createElement("div")
@@ -27,7 +34,7 @@ export default class Posts extends AbstractView {
 
 			postElement.innerHTML = `
 			<ul>
-			  <li><b>Username:</b> ${post.username}</li>
+			  <li><b>Username:</b> ${username}</li>
 			  <li><b>Img:</b> ${post.img}</li>
 			  <li><b>Body:</b> ${post.body}</li>
 			  <li><b>Categories:</b> ${post.categories}</li>

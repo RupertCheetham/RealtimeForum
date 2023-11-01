@@ -184,7 +184,6 @@ export default class Auth extends AbstractView {
 			const userNameOrEmail = document.getElementById("usernameOrEmail").value
 			const password = document.getElementById("password").value
 
-			console.log(userNameOrEmail, password)
 			try {
 				const response = await fetch("https://localhost:8080/api/login", {
 					method: "POST",
@@ -200,14 +199,9 @@ export default class Auth extends AbstractView {
 				})
 
 				if (response.ok) {
-					// Authentication successful, redirect to protected page
-					console.log("cookie in auth is:", document.cookie)
-					// let cookie = getCookie("sessionID")
-					// if (!cookie) {
-					// 	window.location.href = "/"
-					// } else {
-					// 	window.location.href = "posts" // Update the URL
-					// }
+					let message = await response.json()
+					localStorage.setItem("id", message.id)
+					localStorage.setItem("username", message.username)
 					window.location.href = "main" // Update the URL
 				}
 

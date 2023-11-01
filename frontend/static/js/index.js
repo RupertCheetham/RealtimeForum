@@ -32,28 +32,54 @@ const router = async () => {
 
 	const view = new match.route.view()
 
-	document.querySelector("#container").innerHTML = await view.renderHTML()
+	// document.querySelector("#container").innerHTML = await view.renderHTML()
+	const mainView = new MainPage()
 
 	if (match.route.view === Auth) {
-		// document.querySelector("#container").innerHTML = await view.renderHTML()
-		const authView = new Auth()
-		authView.submitForm()
+		let userInfo = localStorage.getItem("id")
+
+		console.log("userInfo:", userInfo)
+		if (userInfo) {
+			window.location.pathname = "/main"
+			// viewMain(mainView)
+		} else {
+			const authView = new Auth()
+			document.querySelector("#container").innerHTML =
+				await authView.renderHTML()
+			authView.submitForm()
+		}
 	}
 
 	// Call the submitForm and displayPosts method here
 	if (match.route.view === MainPage) {
+		let userInfo = localStorage.getItem("id")
 
-		const mainView = new MainPage()
+		console.log("userInfo:", userInfo)
+
+		if (!userInfo) {
+			window.location.href = "/"
+			return
+		}
+		document.querySelector("#container").innerHTML = await mainView.renderHTML()
 		mainView.attachPostSubmitForm()
 		mainView.displayUserContainer()
 		mainView.displayPostContainer()
 		mainView.displayChatContainer()
-
 		mainView.Logout()
 		mainView.reactions()
 	}
 
 	console.log("match:", view)
+}
+
+async function viewMain(mainView) {
+	document.querySelector("#container").innerHTML = await mainView.renderHTML()
+	mainView.attachPostSubmitForm()
+	mainView.displayUserContainer()
+	mainView.displayPostContainer()
+	mainView.displayChatContainer()
+	mainView.Logout()
+	mainView.reactions()
 }
 
 window.addEventListener("popstate", router)
