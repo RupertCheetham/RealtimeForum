@@ -1,6 +1,5 @@
 import AbstractView from "./AbstractView.js"
 import Nav from "./Nav.js"
-import { clearCookie } from "./Auth.js"
 import PostSubmitForm from "./PostSubmitForm.js"
 import Posts from "./Post.js"
 import Chat from "./Chat.js"
