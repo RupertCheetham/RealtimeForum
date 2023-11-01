@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"realtimeForum/db"
@@ -32,7 +31,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	// if chat is new then generates new UUID for chat
 	if !previousChatEntryFound {
 		chatUUID = utils.GenerateNewUUID()
-		fmt.Println("Generated UUID:", chatUUID)
+		// fmt.Println("Generated UUID:", chatUUID)
 		err = db.AddChatToDatabase(chatUUID, "", sender, recipient)
 
 		if err != nil {
@@ -46,7 +45,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	for {
 		messageType, payload, err := connection.ReadMessage()
 		if err != nil {
-			log.Println("WebSocket read error:", err)
+			// log.Println("WebSocket read error:", err)
 			removeConnection(chatUUID, connection)
 			return
 		}
@@ -55,9 +54,9 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 		// var chatUUID string
 
 		if messageType == websocket.TextMessage {
-			log.Println("Message type is: ", chatMsg.Type)
+			// log.Println("Message type is: ", chatMsg.Type)
 			// Process the incoming message
-			fmt.Println("Received a WebSocket message:", string(payload))
+			// fmt.Println("Received a WebSocket message:", string(payload))
 			// Handle the message and broadcast it to other clients if needed
 			if chatMsg.Type == "chat" {
 				err = db.AddChatToDatabase(chatUUID, chatMsg.Body, chatMsg.Sender, chatMsg.Recipient)
@@ -66,7 +65,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 				utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
 			}
 
-			fmt.Println("Type:", chatMsg.Type, "Message:", chatMsg.Body, "Sender:", chatMsg.Sender, "Recipient:", chatMsg.Recipient, "Time:", chatMsg.Time)
+			// fmt.Println("Type:", chatMsg.Type, "Message:", chatMsg.Body, "Sender:", chatMsg.Sender, "Recipient:", chatMsg.Recipient, "Time:", chatMsg.Time)
 
 		}
 		if chatMsg.Type == "chat" {

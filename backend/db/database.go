@@ -25,13 +25,13 @@ func InitDatabase() {
 	utils.WriteMessageToLogFile("Connected to SQLite database")
 
 	// Apply "up" migrations from SQL files
-	err = RunMigrations(Database, "./db/migrations", "up")
+	RunMigrations(Database, "./db/migrations", "up")
 	if err != nil {
 		utils.HandleError("Error applying 'up' migrations: ", err)
 		log.Println("Error applying 'up' migrations: ", err)
 	}
 
-	fmt.Println("Migrations applied successfully")
+	// fmt.Println("Migrations applied successfully")
 
 	AddExampleEntries()
 	DeleteUserTest()
@@ -40,10 +40,11 @@ func InitDatabase() {
 }
 
 // Applies "up" migrations from SQL files
-func RunMigrations(Database *sql.DB, migrationDir, direction string) error {
+func RunMigrations(Database *sql.DB, migrationDir, direction string) {
 	files, err := os.ReadDir(migrationDir)
 	if err != nil {
-		return err
+		utils.HandleError("Error reading migration directory", err)
+		return
 	}
 
 	for _, file := range files {
@@ -60,21 +61,20 @@ func RunMigrations(Database *sql.DB, migrationDir, direction string) error {
 		}
 
 		migrationPath := migrationDir + "/" + fileName
-		fmt.Println("migrationPath:", migrationPath)
 
 		sqlBytes, err := os.ReadFile(migrationPath)
 		if err != nil {
-			return fmt.Errorf("error reading migration file %s: %v", migrationPath, err)
+			message := fmt.Sprintf("error reading migration file %s", migrationPath)
+			utils.HandleError(message, err)
 		}
 
 		_, err = Database.Exec(string(sqlBytes))
 		if err != nil {
-			return fmt.Errorf("error executing migration %s: %v", migrationPath, err)
+			message := fmt.Sprintf("error executing migration %s:", migrationPath)
+			utils.HandleError(message, err)
 		}
 
 	}
-
-	return nil
 }
 
 func isUpMigration(fileName string) bool {

@@ -2,7 +2,6 @@ package db
 
 import (
 	"errors"
-	"fmt"
 	"realtimeForum/utils"
 	"strconv"
 )
@@ -109,7 +108,7 @@ func FindUserFromDatabase(username string) (UserEntry, error) {
 		return UserEntry{}, err
 	}
 
-	fmt.Println("user from finduserfromdb function:", user, "error:", err)
+	// fmt.Println("user from finduserfromdb function:", user, "error:", err)
 
 	return user, err
 }
@@ -120,7 +119,7 @@ func DeleteUserFromDatabase(username string) error {
 		utils.HandleError("Error querying USERS from database in DeleteUserFromDatabase:", err)
 	} else {
 		utils.WriteMessageToLogFile("User " + username + " delete")
-		fmt.Println("User deleted")
+		// fmt.Println("User deleted")
 	}
 	return err
 }
@@ -131,7 +130,7 @@ func DeleteAllUsersFromDatabase() error {
 		utils.HandleError("Error querying USERS from database in DeleteUserFromDatabase:", err)
 	} else {
 		utils.WriteMessageToLogFile("All users delete from user table")
-		fmt.Println("All users deleted")
+		// fmt.Println("All users deleted")
 	}
 	return err
 }

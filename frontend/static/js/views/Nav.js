@@ -17,8 +17,9 @@ export default class Nav extends AbstractView {
 			</nav>
 		  `
 	}
+
 	async logout() {
-		logoutbtn = document.getElementById("logout")
+		let logoutbtn = document.getElementById("logout")
 		logoutbtn.addEventListener("click", (event) => {
 			event.preventDefault()
 			fetch("https://localhost:8080/api/logout", {

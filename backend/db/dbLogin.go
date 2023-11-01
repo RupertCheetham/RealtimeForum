@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
@@ -15,7 +14,7 @@ func GetLoginEntry(loginCheck UserEntry) (message map[string]string, id int, err
 
 	dbLoginCheck, err := FindUserFromDatabase(loginCheck.Username)
 
-	fmt.Println("dbLoginCheck:", dbLoginCheck)
+	// fmt.Println("dbLoginCheck:", dbLoginCheck)
 
 	if err != nil {
 		return message, id, err

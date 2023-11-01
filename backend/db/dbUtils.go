@@ -19,10 +19,7 @@ func WipeDatabaseOnCommand() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "new" {
 			// Rollback the last migration (uncomment if needed)
-			err := RunMigrations(Database, "./db/migrations", "down")
-			if err != nil {
-				log.Fatalf("Error applying 'down' migrations: %v", err)
-			}
+			RunMigrations(Database, "./db/migrations", "down")
 			fmt.Println("Dropped all tables")
 		}
 	}

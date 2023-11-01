@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -26,7 +25,7 @@ func SetupCORS(w *http.ResponseWriter, r *http.Request) {
 func GetCookie(w http.ResponseWriter, r *http.Request) string {
 	SetupCORS(&w, r)
 	sessionCookie, _ := r.Cookie(CookieName)
-	fmt.Println("sessioncookie in getCookie", sessionCookie)
+	// fmt.Println("sessioncookie in getCookie", sessionCookie)
 	splitCookieValue := strings.Split(sessionCookie.String(), "=")
 	var cookieValue string
 
