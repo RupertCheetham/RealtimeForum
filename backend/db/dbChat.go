@@ -67,3 +67,87 @@ func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, err
 
 	return chatStruct, nil
 }
+
+func GetRecentChatUsersFromDatabase(userID string) (*ChatInfo, error) {
+
+	// finds userIDs that the current user has chatted with, returns them with the newest being first
+	query := `SELECT
+	CASE
+	  WHEN SenderID = ? THEN RecipientID
+	  WHEN RecipientID = ? THEN SenderID
+	END AS OtherUserID
+  FROM CHAT
+  WHERE (SenderID = ? OR RecipientID = ?) AND (SenderID = ? OR RecipientID = ?)
+  GROUP BY OtherUserID
+  ORDER BY MAX(Timestamp) ASC;
+`
+
+	rows, err := Database.Query(query, userID, userID, userID, userID, userID, userID)
+	if err != nil {
+		utils.HandleError("Error querying CHAT from database in GetRecentChatUsersFromDatabase:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var recentChatUserIds []int
+
+	for rows.Next() {
+		var entry int
+		err := rows.Scan(&entry)
+		if err != nil {
+			utils.HandleError("Error scanning row from database in GetRecentChatUsersFromDatabase:", err)
+			return nil, err
+		}
+		// list of users that the current user has chatted to
+		recentChatUserIds = prependToSlice(recentChatUserIds, entry)
+
+	}
+	alphabeticalUsers, err := GetUsersFromDatabase(userID)
+	if err != nil {
+		utils.HandleError("Error creating list of allUsers in GetRecentChatUsersFromDatabase", err)
+	}
+	sortedUsers := chatsplitter(alphabeticalUsers, recentChatUserIds)
+	return sortedUsers, nil
+
+}
+
+// splits the array of users in to ones that you've chatted with (sorted by most recent)
+// and the rest (sorted alphabetically)
+func chatsplitter(alphabeticalUsers []UserEntry, recentChatUserIds []int) *ChatInfo {
+	var sortedUsers ChatInfo
+
+	var recentChats []UserEntry
+
+	for j := 0; j < len(recentChatUserIds); j++ {
+		for i := 0; i < len(alphabeticalUsers); i++ {
+			if alphabeticalUsers[i].Id == recentChatUserIds[j] {
+				recentChats = append(recentChats, alphabeticalUsers[i])
+				// Remove the entry from alphabeticalUsers
+				alphabeticalUsers = append(alphabeticalUsers[:i], alphabeticalUsers[i+1:]...)
+				i--   // Decrement i to account for the removed entry
+				break // Exit the inner loop, since a match was found
+			}
+		}
+	}
+
+	sortedUsers.RecentChat = recentChats
+	sortedUsers.Alphabetical = alphabeticalUsers
+	return &sortedUsers
+
+}
+
+func prependToSlice(slice []int, elements ...int) []int {
+	// Calculate the new length of the slice after adding elements
+	newLen := len(slice) + len(elements)
+
+	// Create a new slice with the new length
+	newSlice := make([]int, newLen)
+
+	// Copy the elements to be added to the front of the new slice
+	copy(newSlice[len(elements):], slice)
+
+	// Copy the existing elements to the back of the new slice
+	copy(newSlice, elements)
+
+	return newSlice
+}
