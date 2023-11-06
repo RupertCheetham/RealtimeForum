@@ -70,7 +70,10 @@ export default class Posts extends AbstractView {
 			postElement.addEventListener("click", () => {
 				if (commentsContainer.style.display === "none") {
 					commentsContainer.style.display = "block"
-					closeCommentButton.style.display = "block"
+					// if (commentsContainer.querySelectorAll("div").length != 0) {
+						closeCommentButton.style.display = "block"
+					// }
+					
 				}
 			})
 
