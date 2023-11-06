@@ -27,7 +27,7 @@ export function attachCommentForm(post, postElement) {
 
 		// Extract data from the submitted form
 		const form = event.target
-		const currentUserID = localStorage.getItem("id")
+		const currentUserID = Number(localStorage.getItem("id"))
 		const commentText = form.querySelector("#commentText").value
 		const postID = form.querySelector("#postID").value
 

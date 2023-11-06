@@ -48,7 +48,7 @@ export default class PostSubmitForm extends AbstractView {
 			"submit",
 			async function (event) {
 				event.preventDefault()
-				const currentUserID = localStorage.getItem("id")
+				const currentUserID = Number(localStorage.getItem("id"))
 				const postText = document.getElementById("postText").value
 				const categoriesCheckboxes = document.querySelectorAll(
 					'input[name="Category"]:checked'
