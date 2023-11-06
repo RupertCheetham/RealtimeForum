@@ -49,7 +49,6 @@ export default class Chat extends AbstractView {
 		let alphabeticalChat = document.createElement("div")
 		alphabeticalChat.id = "alphabeticalChat"
 
-		console.log("This is alphabeticalChat:", users.alphabetical)
 
 		if (users.alphabetical != null) {
 			for (const user of users.alphabetical) {

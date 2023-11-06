@@ -1,16 +1,3 @@
-// Comments need to be reworked, currently very inefficient.  Probably foreign keys will be involved
-export async function fetchComments(parentPostID) {
-	const response = await fetch(
-		`https://localhost:8080/api/getcomments?postID=${parentPostID}`,
-		{
-			credentials: "include", // Ensure cookies are included in the request
-		}
-	)
-	// checkSessionTimeout(response)
-	const comments = await response.json()
-	return comments
-}
-
 // attaches the comment form to the bottom of each post, if you've placed it in the right place
 export function attachCommentForm(post, postElement) {
 	const commentFormElement = document.createElement("form")
@@ -50,56 +37,62 @@ export function attachCommentForm(post, postElement) {
 		if (response.ok) {
 			document.getElementById("commentText").value = ""
 			// temporary measure
-			window.location.reload() // Refresh the page
+		//	window.location.reload() // Refresh the page
 			// temporary measure
+			const commentsContainer = document.getElementById("commentsContainer" + postID)
+			const currentDate = new Date().toISOString();
+
+			const comment = {
+				id: "new",
+				parentPostId: Number(postID),
+				userID: localStorage.getItem("id"),
+				username: localStorage.getItem("username"),
+				body: commentText,
+				creationDate: currentDate,
+				reactionID: 0,
+				commentLikes: 0,
+				commentDislikes: 0,
+			};
+
+			processComment(commentsContainer, comment)
 		}
 		console.log(`Comment for post ID ${postID}: ${commentText}`)
 	})
 }
 
-// adds the com
-export function attachCommentsToPost(comments) {
-	const commentsContainer = document.createElement("div")
-	commentsContainer.id = "commentContainer"
-	commentsContainer.className = "commentContainer"
+// adds the comments (if any) to the bottom of each post
+export function attachCommentsToPost(commentsContainer, comments) {
+	
 	comments.forEach((comment) => {
-		const commentElement = document.createElement("div")
-		commentElement.id = "comment" + comment.id
-		commentElement.className = "comment"
-		commentElement.setAttribute("reactionID", comment.reactionID)
-		commentElement.innerHTML = `
+		processComment(commentsContainer, comment)
+	})
+
+	//commentsContainer.appendChild(closeCommentsButton)
+	//return commentsContainer
+}
+
+function processComment(commentsContainer, comment) {
+
+	const commentElement = document.createElement("div")
+	commentElement.id = "comment" + comment.id
+	commentElement.className = "comment"
+	commentElement.setAttribute("reactionID", comment.reactionID)
+	commentElement.innerHTML = `
 		
 		<li>Username: ${comment.username}</li>
 		<li>Comment: ${comment.body}</li>
 					<ul>
-					<button class="reaction-button" reaction-action="like" reaction-parent-class="comment" reaction-parent-id="${
-						comment.id
-					}"  reaction-id = "${commentElement.getAttribute("reactionID")}">👍 ${
-			comment.commentLikes
+					<button class="reaction-button" reaction-action="like" reaction-parent-class="comment" reaction-parent-id="${comment.id
+		}"  reaction-id = "${commentElement.getAttribute("reactionID")}">👍 ${comment.commentLikes
 		}</button>
-					<button class="reaction-button" reaction-action="dislike" reaction-parent-class="comment" reaction-parent-id="${
-						comment.id
-					}"  reaction-id = "${commentElement.getAttribute("reactionID")}">👎 ${
-			comment.commentDislikes
+					<button class="reaction-button" reaction-action="dislike" reaction-parent-class="comment" reaction-parent-id="${comment.id
+		}"  reaction-id = "${commentElement.getAttribute("reactionID")}">👎 ${comment.commentDislikes
 		}</button>
 					</ul>
 		`
-		commentsContainer.appendChild(commentElement)
-	})
-	const closeCommentsButton = document.createElement("button")
-	closeCommentsButton.id = "closeCommentsButton"
-	closeCommentsButton.innerText = "Close Comments"
-
-	// Add an event listener to the "Close" button to hide the comments container
-	closeCommentsButton.addEventListener("click", () => {
-		commentsContainer.style.display = "none"
-		console.log("made")
-	})
-
-	// Append the "Close" button to the comments container
-	commentsContainer.appendChild(closeCommentsButton)
-	return commentsContainer
+	commentsContainer.appendChild(commentElement)
 }
+
 
 // The comment submission form
 function getCommentFormHTML(postID) {
@@ -109,4 +102,25 @@ function getCommentFormHTML(postID) {
 	<input type="submit" value="REPLY" class="btn">
 	<input type="hidden" id="postID" name="postID" value="${postID}"></input>
 	`
+}
+
+
+export function createCloseCommentButton(commentsContainer){
+	// add a buttons to reclose comments after opened
+	const closeCommentsButton = document.createElement("button")
+	closeCommentsButton.id = "closeCommentsButton"
+	closeCommentsButton.innerText = "Close Comments"
+	// Add an event listener to the "Close" button to hide the comments container
+	closeCommentsButton.addEventListener("click", () => {
+		commentsContainer.style.display = "none"
+		closeCommentsButton.style.display = "none"
+	})
+
+	// Append the "Close" button to the comments container
+	// const postContainer = document.getElementById("Post" + commentsContainer.id.)
+	// console.log("PostBox" + comments[0].parentPostId)
+	// const postContainer = document.getElementById("PostBox" + comments[0].parentPostId)
+	// console.log("the container:", postContainer)
+	// commentsContainer.appendChild(closeCommentsButton)
+	return closeCommentsButton
 }

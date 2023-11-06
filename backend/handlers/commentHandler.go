@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"realtimeForum/db"
 	"realtimeForum/utils"
-	"strconv"
 )
 
 // Handler for posting comments
@@ -39,29 +38,29 @@ func AddCommentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Deals with Get requests for Comments
-func GetCommentHandler(w http.ResponseWriter, r *http.Request) {
+// // Deals with Get requests for Comments
+// func GetCommentHandler(w http.ResponseWriter, r *http.Request) {
 
-	SetupCORS(&w, r)
+// 	SetupCORS(&w, r)
 
-	if r.Method == "GET" {
-		parentPostID, err := strconv.Atoi(r.URL.Query().Get("postID"))
-		if err != nil {
-			log.Println("There was a problem converting parentPostID to int in AddCommentHandler.", err)
-			utils.HandleError("There was a problem converting parentPostID to int in AddCommentHandler.", err)
-		}
+// 	if r.Method == "GET" {
+// 		parentPostID, err := strconv.Atoi(r.URL.Query().Get("postID"))
+// 		if err != nil {
+// 			log.Println("There was a problem converting parentPostID to int in AddCommentHandler.", err)
+// 			utils.HandleError("There was a problem converting parentPostID to int in AddCommentHandler.", err)
+// 		}
 
-		comments, err := db.GetCommentsFromDatabase(parentPostID)
-		if err != nil {
-			log.Println("Problem getting comment from db in AddCommentHandler", err)
-			utils.HandleError("Problem getting comment from db in AddCommentHandler", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+// 		comments, err := db.GetCommentsFromDatabase(parentPostID)
+// 		if err != nil {
+// 			log.Println("Problem getting comment from db in AddCommentHandler", err)
+// 			utils.HandleError("Problem getting comment from db in AddCommentHandler", err)
+// 			http.Error(w, err.Error(), http.StatusInternalServerError)
+// 			return
+// 		}
 
-		// returns the comments, if any
-		json.NewEncoder(w).Encode(comments)
+// 		// returns the comments, if any
+// 		json.NewEncoder(w).Encode(comments)
 
-	}
+// 	}
 
-}
+// }

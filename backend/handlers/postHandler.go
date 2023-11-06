@@ -45,9 +45,10 @@ func GetPostHandler(w http.ResponseWriter, r *http.Request) {
 	// This code block is handling the logic for retrieving posts from the database when the HTTP request
 	// method is GET.
 	if r.Method == "GET" {
-		posts, err := db.GetPostFromDatabase()
+		posts, err := db.GetAllPostsAndCommentsFromDatabase()
+		//posts, err := db.GetPostFromDatabase()
 		if err != nil {
-			utils.HandleError("Problem getting posts from db in AddPostHandler", err)
+			utils.HandleError("Problem getting posts from db in GetPostHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

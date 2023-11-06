@@ -1,6 +1,6 @@
 export function handleReactions() {
-	const postContainer = document.getElementById("postContainer")
-	postContainer.addEventListener("click", async (event) => {
+	const postsContainer = document.getElementById("postsContainer")
+	postsContainer.addEventListener("click", async (event) => {
 		const target = event.target
 
 		// Check if the clicked element has the class 'reaction-button'

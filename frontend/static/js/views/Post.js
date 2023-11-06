@@ -1,32 +1,32 @@
 import AbstractView from "./AbstractView.js"
 import {
-	fetchComments,
 	attachCommentForm,
 	attachCommentsToPost,
+	createCloseCommentButton
 } from "./Comments.js"
 
 export default class Posts extends AbstractView {
 	async renderHTML() {
-		const postContainer = document.getElementById("postContainer")
-		postContainer.innerHTML = ""
 
+		// gets slice of posts from backend
 		const response = await fetch("https://localhost:8080/api/getposts", {
 			// checkSessionTimeout(response)
 			credentials: "include", // Ensure cookies are included in the request
 		})
-
 		if (response.status == 408) {
 			window.location.href = "/"
 		}
-		// checkSessionTimeout(response)
 
 		const posts = await response.json()
 		const username = localStorage.getItem("username")
+		const postsContainer = document.getElementById("postsContainer")
+		postsContainer.innerHTML = ""
 
 		for (const post of posts) {
-			let postBox = document.createElement("div")
-			postBox.id = "PostBox" + post.id
-			postBox.classList.add("postBox")
+			//makes the container for the individual posts and all its contents
+			let postContainer = document.createElement("div")
+			postContainer.id = "postContainer" + post.id
+			postContainer.classList.add("postContainer")
 			let postElement = document.createElement("div")
 			postElement.id = "Post" + post.id
 			postElement.classList.add("post")
@@ -38,16 +38,14 @@ export default class Posts extends AbstractView {
 			  <li><b>Img:</b> ${post.img}</li>
 			  <li><b>Body:</b> ${post.body}</li>
 			  <li><b>Categories:</b> ${post.categories}</li>
-			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${
-					post.id
+			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id
 				}" reaction-action="like" reaction-id = "${postElement.getAttribute(
-				"reactionID"
-			)}">👍 ${post.postLikes}</button>
-			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${
-					post.id
+					"reactionID"
+				)}">👍 ${post.postLikes}</button>
+			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id
 				}" reaction-action="dislike" reaction-id = "${postElement.getAttribute(
-				"reactionID"
-			)}">👎 ${post.postDislikes}</button>
+					"reactionID"
+				)}">👎 ${post.postDislikes}</button>
 			  </li>
 			</ul>
 		  `
@@ -55,21 +53,35 @@ export default class Posts extends AbstractView {
 			// attaches the comment form to the bottom of each post
 			attachCommentForm(post, postElement)
 
-			// fetch comments, if any, for this post
-			postBox.appendChild(postElement)
-			let comments = await fetchComments(post.id) // Wait for the comments to be fetched
+			// appends the post(element) to the post Box
+			postContainer.appendChild(postElement)
+
+			// makes the commentsContainer, that comments (if any) will be appended to
+			const commentsContainer = document.createElement("div")
+			commentsContainer.id = "commentsContainer" + post.id
+			commentsContainer.className = "commentsContainer"
+			postContainer.appendChild(commentsContainer)
+			commentsContainer.style.display = "none"
+			const closeCommentButton = createCloseCommentButton(commentsContainer)
+			// attaches closeComment Button to bottom of commentscontainer
+			postContainer.appendChild(closeCommentButton)
+			closeCommentButton.style.display = "none"
+
+			postElement.addEventListener("click", () => {
+				if (commentsContainer.style.display === "none") {
+					commentsContainer.style.display = "block"
+					closeCommentButton.style.display = "block"
+				}
+			})
+
+			let comments = post.comments // Wait for the comments to be fetched
 
 			if (comments !== null) {
-				let postComments = attachCommentsToPost(comments)
-				postBox.appendChild(postComments)
-				postComments.style.display = "none"
-				postElement.addEventListener("click", () => {
-					if (postComments.style.display === "none") {
-						postComments.style.display = "block"
-					}
-				})
+				attachCommentsToPost(commentsContainer, comments)
 			}
-			postContainer.appendChild(postBox)
+
+
+			postsContainer.appendChild(postContainer)
 		}
 	}
 }

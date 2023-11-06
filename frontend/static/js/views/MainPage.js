@@ -25,7 +25,7 @@ export default class Mainpage extends AbstractView {
 	  ${postForm}
       <div class="contentContainer">
         <div id="userContainer" class="contentContainer-user">Users</div>
-        <div id="postContainer" class="contentContainer-post"></div>
+        <div id="postsContainer" class="contentContainer-post"></div>
         <div id="chatContainer" class="contentContainer-chat">Chat (click on Username)</div>
       </div>
     `

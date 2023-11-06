@@ -18,7 +18,7 @@ func AddPostToDatabase(userID int, img string, body string, categories string) e
 }
 
 // retrieves all posts from database and returns them
-func GetPostFromDatabase() ([]PostEntry, error) {
+func GetAllPostsFromDatabase() ([]PostEntry, error) {
 	query := `
 	SELECT p.Id, u.Username, p.Img, p.Body, p.Categories, p.CreationDate, p.ReactionID,
 	COALESCE(pr.Likes, 0) AS Likes, COALESCE(pr.Dislikes, 0) AS Dislikes
@@ -51,4 +51,36 @@ ORDER BY p.Id DESC;
 	}
 
 	return posts, nil
+}
+
+// combines posts and comments into one submission
+func GetAllPostsAndCommentsFromDatabase() ([]PostEntry, error) {
+
+	posts, err := GetAllPostsFromDatabase()
+	if err != nil {
+		utils.HandleError("Error getting posts from database in GetAllPostsAndCommentsFromDatabase:", err)
+		return nil, err
+	}
+
+	comments, err := GetAllCommentsFromDatabase()
+	if err != nil {
+		utils.HandleError("Error getting comments from database in GetAllPostsAndCommentsFromDatabase:", err)
+		return nil, err
+	}
+
+	// Create a map to group comments by their parent post ID
+	commentMap := make(map[int][]CommentEntry)
+	for _, comment := range comments {
+		commentMap[comment.ParentPostID] = append(commentMap[comment.ParentPostID], comment)
+	}
+
+	// Combine posts and comments
+	completePosts := make([]PostEntry, 0, len(posts))
+	for _, post := range posts {
+		post.Comments = commentMap[post.Id]
+		completePosts = append(completePosts, post)
+	}
+
+	return completePosts, nil
+
 }

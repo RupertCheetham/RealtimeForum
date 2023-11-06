@@ -61,7 +61,7 @@ func ReactionHandlerGetMethod(w http.ResponseWriter, r *http.Request) {
 
 	// chooses the correct table name, based on the submitted class
 	tableName := ""
-	if reactionParentClass == http.MethodPost {
+	if reactionParentClass == "post" {
 		tableName = "POSTREACTIONS"
 	} else {
 		tableName = "COMMENTREACTIONS"
@@ -77,7 +77,6 @@ func ReactionHandlerGetMethod(w http.ResponseWriter, r *http.Request) {
 	likes, dislikes, err := db.GetLikesAndDislikes(tableName, rowID)
 
 	if err != nil {
-		log.Println("There was a problem with GetLikesAndDislikes in ReactionHandler")
 		utils.HandleError("There was a problem with GetLikesAndDislikes in ReactionHandler", err)
 	}
 
