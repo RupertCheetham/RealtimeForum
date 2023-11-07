@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"realtimeForum/db"
 )
@@ -59,6 +60,7 @@ func GetUsernameFromIDHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
 		// Encode and send the username as JSON in the response
+		log.Println("[GetUsernameFromIDHandler] Username being requested is", username)
 		json.NewEncoder(w).Encode(username)
 	}
 }

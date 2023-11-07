@@ -25,20 +25,6 @@ export default class Chat extends AbstractView {
 		// checkSessionTimeout(response)
 
 		const users = await response.json()
-		localStorage.setItem("userList", JSON.stringify(users));
-		const userListJSON = localStorage.getItem("userList");
-
-		if (userListJSON) {
-			// Parse the JSON string back into an array;
-			const userList = JSON.parse(userListJSON);
-
-			// Now you have your user list as an array
-			console.log(userList);
-		  } else {
-			console.log("[Chat.js]  User list not found in localStorage.");
-		  }
-		  
-
 
 		const recentChat = document.createElement("div")
 		recentChat.id = "recentChat"
@@ -87,7 +73,16 @@ export default class Chat extends AbstractView {
 		const RecipientID = await this.getRecipientIDFromURL()
 
 		if (RecipientID != 0) {
-			const RecipientName = localStorage.getItem("id")
+			
+			const response = await fetch(
+				`https://localhost:8080//api/getUsernameFromUserID=${RecipientID}`,
+				{
+					credentials: "include",
+				}
+			)
+			const RecipientName = await response.json()
+
+			console.log("RecipientName", RecipientName)
 			const chatTextBox = this.getChatTextBoxHTML()
 			chatContainer.innerHTML = `
       <div class = "allChat"
@@ -252,7 +247,7 @@ export default class Chat extends AbstractView {
 		if (!this.canScroll) {
 			return
 		}
-	
+
 		const nextMessages = await this.fetchMessagesInChunks(
 			user1,
 			user2,
@@ -267,7 +262,7 @@ export default class Chat extends AbstractView {
 			}
 		} else {
 			this.canScroll = false
-	
+
 		}
 	}
 
