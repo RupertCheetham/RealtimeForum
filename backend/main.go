@@ -27,7 +27,7 @@ func main() {
 	http.HandleFunc("/reaction", handlers.ReactionHandler)
 	http.HandleFunc("/chat", handlers.ChatHandler)
 	http.HandleFunc("/getChatHistory", handlers.GetChatHistoryHandler)
-	http.HandleFunc("/api/getUserID", handlers.GetUserIDHandler)
+	//http.HandleFunc("/api/getUserID", handlers.GetUserIDHandler)
 	http.HandleFunc("/api/getUsernameFromUserID", handlers.GetUsernameFromIDHandler)
 	http.HandleFunc("/api/getusers", handlers.GetUsersForChatHandler)
 
