@@ -68,9 +68,10 @@ const router = async () => {
 		}
 		document.querySelector("#container").innerHTML = await mainView.renderHTML()
 		mainView.attachPostSubmitForm()
+		mainView.runStartWebsocket()
 		mainView.displayUserContainer()
 		mainView.displayPostContainer()
-		mainView.displayChatContainer()
+		// mainView.displayChatContainer()
 		mainView.Logout()
 		mainView.reactions()
 	}

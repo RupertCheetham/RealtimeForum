@@ -25,7 +25,7 @@ func main() {
 	http.HandleFunc("/api/addposts", handlers.CookieCheck(handlers.AddPostHandler, handlers.RequestTimeoutFailedMessage))
 	http.HandleFunc("/api/addcomments", handlers.CookieCheck(handlers.AddCommentHandler, handlers.RequestTimeoutFailedMessage))
 	http.HandleFunc("/reaction", handlers.ReactionHandler)
-	http.HandleFunc("/chat", handlers.ChatHandler)
+	http.HandleFunc("/api/websocketChat", handlers.WebsocketChatHandler)
 	http.HandleFunc("/getChatHistory", handlers.GetChatHistoryHandler)
 	//http.HandleFunc("/api/getUserID", handlers.GetUserIDHandler)
 	http.HandleFunc("/api/getUsernameFromUserID", handlers.GetUsernameFromIDHandler)

@@ -1,7 +1,11 @@
+.chatUserButton {
+    font-weight: bold;
+    cursor: pointer;
+  }
+
 .chat-font {
     color: #ffffff;
 }
-
 
 #recipient {
     color: lightblue;

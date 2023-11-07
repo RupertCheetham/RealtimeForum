@@ -11,9 +11,7 @@ export function handleReactions() {
 			const ParentID = target.getAttribute("reaction-parent-id")
 			const postElement = target.closest("." + Type)
 			const ReactionID = postElement.getAttribute("reactionID")
-			// Placeholder UserID
-			const UserID = 1
-			// Placeholder UserID
+			const UserID = Number(localStorage.getItem("id"))
 
 			console.log(
 				`Reacted to ${Type} ${ParentID} with action: ${Action}, whilst reactionID is ${ReactionID}`

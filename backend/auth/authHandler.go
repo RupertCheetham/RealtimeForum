@@ -30,13 +30,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		// use the login data to find the user in the database
 		msg, err := db.GetLoginEntry(login)
-		id := msg["id"]
-
 		if err != nil {
 			utils.HandleError("Unable to get user's id", err)
 			http.Error(w, "Internal sever error", http.StatusBadRequest)
 			return
 		}
+		id := msg["id"]
 
 		// after getting username from login check, use the user's id to create a session for the user
 		userSession, err := db.CreateSession(id.(int), SessionExpiration)

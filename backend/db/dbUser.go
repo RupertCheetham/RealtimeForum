@@ -89,8 +89,8 @@ func GetUsernameFromUserID(userID string) string {
 	return username
 }
 
-func FindUserFromDatabase(username string) (UserEntry, error) {
-	rows, err := Database.Query("SELECT * FROM USERS WHERE Username = ?", username)
+func FindUserFromDatabase(usernameOrEmail string) (UserEntry, error) {
+	rows, err := Database.Query("SELECT * FROM USERS WHERE Username = ? OR Email = ?", usernameOrEmail, usernameOrEmail)
 	if err != nil {
 		utils.HandleError("Error querying USERS from database in FindUserFromDatabase:", err)
 		return UserEntry{}, err

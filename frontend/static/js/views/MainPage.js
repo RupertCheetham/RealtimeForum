@@ -24,7 +24,7 @@ export default class Mainpage extends AbstractView {
     ${navHTML}
 	  ${postForm}
       <div class="contentContainer">
-        <div id="userContainer" class="contentContainer-user">Users</div>
+        <div id="userContainer" class="contentContainer-user"><u>Users</u></div>
         <div id="postsContainer" class="contentContainer-post"></div>
         <div id="chatContainer" class="contentContainer-chat">Chat (click on Username)</div>
       </div>
@@ -38,6 +38,10 @@ export default class Mainpage extends AbstractView {
 	// The event listener for the post form
 	async attachPostSubmitForm() {
 		await postSubmitForm.handlePostSubmission()
+	}
+
+	async runStartWebsocket(){
+		await chat.startWebsocket()
 	}
 
 	async displayUserContainer() {

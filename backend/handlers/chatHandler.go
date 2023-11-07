@@ -16,41 +16,46 @@ import (
 var chatConnections = make(map[string][]*websocket.Conn)
 
 // deals with the websocket side of chat
-func ChatHandler(w http.ResponseWriter, r *http.Request) {
+func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Upgrade the HTTP connection to a WebSocket connection
 	connection := upgradeConnection(w, r)
 	defer connection.Close()
 
-	sender, recipient := obtainSenderAndRecipient(r)
+	// sender, recipient := obtainSenderAndRecipient(r)
 
-	previousChatEntryFound, chatUUID, err := previousChatChecker(sender, recipient)
-	if err != nil {
-		utils.HandleError("Error with previousChatChecker in ChatHandler", err)
-	}
 	// if chat is new then generates new UUID for chat
-	if !previousChatEntryFound {
-		chatUUID = utils.GenerateNewUUID()
-		// fmt.Println("Generated UUID:", chatUUID)
-		err = db.AddChatToDatabase(chatUUID, "", sender, recipient)
-
-		if err != nil {
-			utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
-		}
-	}
 
 	// add current connection to list of connections that use this chatUUID
-	chatConnections[chatUUID] = append(chatConnections[chatUUID], connection)
 
 	for {
 		messageType, payload, err := connection.ReadMessage()
 		if err != nil {
-			removeConnection(chatUUID, connection)
+			utils.HandleError("Problem with the connections in WebsocketHandler.  Probably need to figure out a different way to remove them", err)
+			// removeConnection(chatUUID, connection)
 			return
 		}
 
 		chatMsg := payloadUnmarshaller(payload)
 		// var chatUUID string
+
+		previousChatEntryFound, chatUUID, err := previousChatChecker(chatMsg.Sender, chatMsg.Recipient)
+		if err != nil {
+			utils.HandleError("Error with previousChatChecker in ChatHandler", err)
+		}
+
+		if !previousChatEntryFound {
+			chatUUID = utils.GenerateNewUUID()
+
+			if err != nil {
+				utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
+			}
+		}
+
+		// Check if the connection already exists in the chat
+		if !connectionExists(chatUUID, connection) {
+			chatConnections[chatUUID] = append(chatConnections[chatUUID], connection)
+		}
 
 		if messageType == websocket.TextMessage {
 			// log.Println("Message type is: ", chatMsg.Type)
@@ -58,6 +63,7 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 			// fmt.Println("Received a WebSocket message:", string(payload))
 			// Handle the message and broadcast it to other clients if needed
 			if chatMsg.Type == "chat" {
+
 				err = db.AddChatToDatabase(chatUUID, chatMsg.Body, chatMsg.Sender, chatMsg.Recipient)
 			}
 			if err != nil {
@@ -99,19 +105,19 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func obtainSenderAndRecipient(r *http.Request) (int, int) {
-	senderString := r.URL.Query().Get("sender")
-	recipientString := r.URL.Query().Get("recipient")
-	sender, err := strconv.Atoi(senderString)
-	if err != nil {
-		utils.HandleError("There has been an issue with Atoi sender in obtainSenderAndRecipient", err)
-	}
-	recipient, err := strconv.Atoi(recipientString)
-	if err != nil {
-		utils.HandleError("There has been an issue with Atoi recipient in obtainSenderAndRecipient", err)
-	}
-	return sender, recipient
-}
+// func obtainSenderAndRecipient(r *http.Request) (int, int) {
+// 	senderString := r.URL.Query().Get("sender")
+// 	recipientString := r.URL.Query().Get("recipient")
+// 	sender, err := strconv.Atoi(senderString)
+// 	if err != nil {
+// 		utils.HandleError("There has been an issue with Atoi sender in obtainSenderAndRecipient", err)
+// 	}
+// 	recipient, err := strconv.Atoi(recipientString)
+// 	if err != nil {
+// 		utils.HandleError("There has been an issue with Atoi recipient in obtainSenderAndRecipient", err)
+// 	}
+// 	return sender, recipient
+// }
 
 // Checks to see if chat between two users has taken place before, if so then returns chat UUID
 func previousChatChecker(firstID int, secondID int) (bool, string, error) {
@@ -135,6 +141,22 @@ func previousChatChecker(firstID int, secondID int) (bool, string, error) {
 
 	// Entry exists, return true and the ChatUUID
 	return true, chatUUID, nil
+}
+
+func connectionExists(chatUUID string, conn *websocket.Conn) bool {
+	connections, ok := chatConnections[chatUUID]
+	if !ok {
+		return false
+	}
+
+	// Check if the connection already exists in the list
+	for _, existingConn := range connections {
+		if existingConn == conn {
+			return true
+		}
+	}
+
+	return false
 }
 
 func broadcastToChat(chatUUID string, messageType int, payload []byte) {

@@ -1,22 +1,28 @@
 import AbstractView from "./AbstractView.js"
 import { throttle, usernameFromUserID } from "../utils/utils.js"
 
+
+
+
 export default class Chat extends AbstractView {
 	constructor() {
 		super()
 		this.setTitle("Chat")
+		this.socket = null;
+		this.currentUserID = Number(localStorage.getItem("id"))
 	}
+
+
 
 	// List of users to click on to initialise chat
 	async userList() {
-		const currentUser = localStorage.getItem("id")
 		const userContainer = document.getElementById("userContainer")
 		// userContainer.innerHTML = "";
 		const userBox = document.createElement("div")
 		userBox.id = "userBox"
 
 		const response = await fetch(
-			`https://localhost:8080/api/getusers?userId=${currentUser}`,
+			`https://localhost:8080/api/getusers?userId=${this.currentUserID}`,
 			{
 				credentials: "include",
 			}
@@ -31,14 +37,22 @@ export default class Chat extends AbstractView {
 
 		if (users.recentChat != null) {
 			for (const user of users.recentChat) {
-				if (user.id != currentUser) {
+				if (user.id != this.currentUserID) {
 					let userEntry = document.createElement("div")
 					userEntry.id = `UserID${user.id}`
+					const usernameLink = document.createElement("a");
+					usernameLink.classList.add("chatUserButton");
+					usernameLink.textContent = user.username;
+					usernameLink.addEventListener("click", (e) => {
+						e.preventDefault();
+						console.log(user.username)
+						this.renderHTML(user.id)
+					})
 
-					userEntry.innerHTML = `
-				<a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
-				`
-
+					// 	userEntry.innerHTML = `
+					// <a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
+					// `
+					userEntry.appendChild(usernameLink);
 					recentChat.appendChild(userEntry)
 				}
 			}
@@ -51,14 +65,34 @@ export default class Chat extends AbstractView {
 
 		if (users.alphabetical != null) {
 			for (const user of users.alphabetical) {
-				if (user.id != currentUser) {
+				if (user.id != this.currentUserID) {
 					let userEntry = document.createElement("div")
 					userEntry.id = `UserID${user.id}`
 
-					userEntry.innerHTML = `
-				<a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
-				`
 
+					// Create a clickable username link without reloading the page
+					const usernameLink = document.createElement("a");
+					usernameLink.classList.add("chatUserButton");
+					usernameLink.textContent = user.username;
+					usernameLink.addEventListener("click", (e) => {
+						e.preventDefault();
+						console.log(user.username)
+						this.renderHTML(user.id)
+
+
+						//   this.loadUserChat(user.id);
+					});
+
+
+
+
+
+
+
+					// 	userEntry.innerHTML = `
+					// <a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
+					// `
+					userEntry.appendChild(usernameLink);
 					alphabeticalChat.appendChild(userEntry)
 				}
 			}
@@ -67,13 +101,23 @@ export default class Chat extends AbstractView {
 		userContainer.appendChild(userBox)
 	}
 
-	async renderHTML() {
+	async startWebsocket() {
+		this.socket = new WebSocket(`wss://localhost:8080/api/websocketChat`);
+		this.socket.addEventListener("open", (event) => {
+			event.preventDefault();
+			console.log("WebSocket connection is open.");
+		});
+	}
+
+	async renderHTML(RecipientID) {
+
+
+
 		const chatContainer = document.getElementById("chatContainer")
-		const RecipientID = await this.getRecipientIDFromURL()
 
 		if (RecipientID != 0) {
-			
-			const RecipientName	= await usernameFromUserID(RecipientID)
+
+			const RecipientName = await usernameFromUserID(RecipientID)
 			const chatTextBox = this.getChatTextBoxHTML()
 			chatContainer.innerHTML = `
       <div class = "allChat"
@@ -82,41 +126,40 @@ export default class Chat extends AbstractView {
 			${chatTextBox}
       </div>
 			`
-			await this.webSocketChat()
+			await this.displayChatHistory(this.currentUserID, RecipientID)
+
 		}
+		this.connectionInitialiser(RecipientID)
+		this.webSocketChat(RecipientID)
 	}
 
-	// Function to extract a query parameter from the URL
-	async getRecipientIDFromURL() {
-		const queryString = window.location.search
-		const urlParams = new URLSearchParams(queryString)
-		return Number(urlParams.get("userId"))
-	}
+	// // Function to extract a query parameter from the URL
+	// async getRecipientIDFromURL() {
+	// 	const queryString = window.location.search
+	// 	const urlParams = new URLSearchParams(queryString)
+	// 	return Number(urlParams.get("userId"))
+	// }
 
-	async webSocketChat() {
-		const Sender = Number(localStorage.getItem("id"))
-		const Recipient = await this.getRecipientIDFromURL()
-		const socket = new WebSocket(
-			`wss://localhost:8080/chat?sender=${Sender}&recipient=${Recipient}`
-		)
+	async webSocketChat(RecipientID) {
 
-		// obtains chat history
-		this.displayChatHistory(Sender, Recipient)
+		if (!this.socket) {
+			// Check if the socket is available
+			console.error("[webSocketChat] WebSocket connection is not open.");
+			return;
+		}
 
-		socket.addEventListener("open", (event) => {
-			event.preventDefault()
-			console.log("WebSocket connection is open.")
-		})
+
+
 
 		// when chat receives a message...
-		socket.addEventListener("message", (event) => {
+		this.socket.addEventListener("message", (event) => {
 			console.log("Received a WebSocket message:", event.data)
 
 			let message = JSON.parse(event.data)
 
 			// Handle incoming messages
 			let chatElement = document.createElement("div")
-			const senderClassName = message.sender === Sender ? "sent" : "received"
+			const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
 			chatElement.classList.add(senderClassName)
 			const time = this.formatTimestamp(message.time)
 			chatElement.innerHTML = `
@@ -132,7 +175,7 @@ export default class Chat extends AbstractView {
 			// and then scrolls to the bottom of chatBox
 			chatHistory.scrollTop = chatHistory.scrollHeight
 
-			const divToMove = document.getElementById(`UserID${Recipient}`)
+			const divToMove = document.getElementById(`UserID${RecipientID}`)
 			const recentChat = document.getElementById("recentChat")
 			const alphabeticalChat = document.getElementById("alphabeticalChat")
 
@@ -156,34 +199,53 @@ export default class Chat extends AbstractView {
 		})
 
 		//deals with sending new messages to the backend when sendButton is clicked or enter is pressed
-		document.getElementById("sendButton").addEventListener("click", sendMessage)
-		document
-			.getElementById("messageInput")
-			.addEventListener("keydown", function (event) {
-				if (event.key === "Enter") {
-					sendMessage()
-				}
-			})
-
-		function sendMessage() {
-			const messageInput = document.getElementById("messageInput")
-			const Message = messageInput.value.trim()
-
-			if (Message !== "" && /\S/.test(Message)) {
-				console.log("Sending message:", Message)
-				socket.send(
-					JSON.stringify({
-						type: "chat",
-						body: Message,
-						sender: Sender,
-						recipient: Recipient,
-					})
-				)
-				messageInput.value = ""
+		document.getElementById("sendButton").addEventListener("click", () => {
+			console.log("her3")
+			const messageInput = document.getElementById("messageInput");
+			const message = messageInput.value.trim();
+			this.sendMessage(RecipientID); // Call the sendMessage method of the Chat class
+		});
+		document.getElementById("messageInput").addEventListener("keydown", function (event) {
+			if (event.key === "Enter") {
+				this.sendMessage(RecipientID)
 			}
-		}
+		})
+
 	}
 
+
+	connectionInitialiser(RecipientID) {
+
+		console.log("Priming Chat")
+		this.socket.send(
+			JSON.stringify({
+				type: "connection_init",
+				body: "Connection initiated",
+				sender: this.currentUserID,
+				recipient: RecipientID,
+			})
+		)
+		messageInput.value = ""
+	}
+
+
+	sendMessage(RecipientID) {
+		const messageInput = document.getElementById("messageInput")
+		const Message = messageInput.value.trim()
+
+		if (Message !== "" && /\S/.test(Message)) {
+			console.log("Sending message:", Message)
+			this.socket.send(
+				JSON.stringify({
+					type: "chat",
+					body: Message,
+					sender: this.currentUserID,
+					recipient: RecipientID,
+				})
+			)
+			messageInput.value = ""
+		}
+	}
 	// displays chat history (if any) between two users
 	async displayChatHistory(user1, user2) {
 		let messageOffset = 10
