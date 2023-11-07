@@ -1,11 +1,12 @@
 import Auth from "./views/Auth.js"
 import MainPage from "./views/MainPage.js"
-import { getCookie } from "./utils/utils.js"
 
 const navigateTo = (url) => {
 	history.pushState(null, null, url)
 	router()
 }
+
+const timeout = 5
 
 const router = async () => {
 	const routes = [
@@ -30,19 +31,24 @@ const router = async () => {
 		}
 	}
 
-	const view = new match.route.view()
-
+	// const view = new match.route.view()
 	// document.querySelector("#container").innerHTML = await view.renderHTML()
+
 	const mainView = new MainPage()
 
 	if (match.route.view === Auth) {
 		let userInfo = localStorage.getItem("id")
 
-		console.log("userInfo:", userInfo)
+		let currentTime = new Date()
+		let expiration = new Date(currentTime)
+		expiration.setMinutes(currentTime.getMinutes() + timeout)
+
 		if (userInfo) {
 			window.location.pathname = "/main"
-			// viewMain(mainView)
 		} else {
+			if (currentTime > expiration) {
+				localStorage.clear()
+			}
 			const authView = new Auth()
 			document.querySelector("#container").innerHTML =
 				await authView.renderHTML()
@@ -68,18 +74,6 @@ const router = async () => {
 		mainView.Logout()
 		mainView.reactions()
 	}
-
-	console.log("match:", view)
-}
-
-async function viewMain(mainView) {
-	document.querySelector("#container").innerHTML = await mainView.renderHTML()
-	mainView.attachPostSubmitForm()
-	mainView.displayUserContainer()
-	mainView.displayPostContainer()
-	mainView.displayChatContainer()
-	mainView.Logout()
-	mainView.reactions()
 }
 
 window.addEventListener("popstate", router)
