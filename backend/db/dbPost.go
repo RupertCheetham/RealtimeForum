@@ -25,7 +25,7 @@ func GetAllPostsFromDatabase() ([]PostEntry, error) {
 FROM POSTS p
 LEFT JOIN POSTREACTIONS pr ON p.ReactionID = pr.Id
 LEFT JOIN USERS u ON p.UserId = u.Id
-ORDER BY p.Id DESC;
+ORDER BY p.Id ASC;
 
 `
 

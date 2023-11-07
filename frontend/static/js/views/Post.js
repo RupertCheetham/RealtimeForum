@@ -38,21 +38,17 @@ export default class Posts extends AbstractView {
 		postElement.setAttribute("reactionID", post.reactionID)
 
 		postElement.innerHTML = `
-				<ul>
+		<ul>
   			<li><b>Username:</b> ${post.username}</li>
   			<li><b>Img:</b> ${post.img}</li>
   			<li><b>Body:</b> ${post.body}</li>
   			<li><b>Categories:</b> ${post.categories}</li>
- 			<button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id
-			}" reaction-action="like" reaction-id = "${postElement.getAttribute(
-				"reactionID"
-			)}">👍 ${post.postLikes}</button>
-  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id
-			}" reaction-action="dislike" reaction-id = "${postElement.getAttribute(
-				"reactionID"
-			)}">👎 ${post.postDislikes}</button>
-  </li>
-</ul>
+ 				<button class="reaction-button" reaction-parent-class="post"
+					reaction-parent-id="${post.id}" reaction-action="like" reaction-id = "${postElement.getAttribute("reactionID")}">👍 ${post.postLikes}</button>
+  				<button class="reaction-button" reaction-parent-class="post"
+					reaction-parent-id="${post.id}" reaction-action="dislike" reaction-id = "${postElement.getAttribute("reactionID")}">👎 ${post.postDislikes}</button>
+ 			</li>
+		</ul>
 `
 
 		// attaches the comment form to the bottom of each post
@@ -88,7 +84,7 @@ export default class Posts extends AbstractView {
 		}
 
 
-		postsContainer.appendChild(postContainer)
+		postsContainer.insertBefore(postContainer, postsContainer.firstChild);
 
 	}
 

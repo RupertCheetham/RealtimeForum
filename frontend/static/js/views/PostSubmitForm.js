@@ -69,9 +69,10 @@ export default class PostSubmitForm extends AbstractView {
 						},
 						body: JSON.stringify({
 							userID: currentUserID,
+							img: image,
 							body: postText,
 							categories: categories,
-							img: image,
+							
 						}),
 						credentials: "include",
 					})
@@ -85,9 +86,27 @@ export default class PostSubmitForm extends AbstractView {
 							checkbox.checked = false
 						})
 						document.getElementById("image").value = ""
-						const post = new Posts()
+						const postsContainer = document.getElementById("postsContainer")
+						const posts = new Posts()
+						const highestNumber = await this.newHighestPostContainerNumber();
+						const newPost = {
+							id: highestNumber,
+							userID: currentUserID, 
+							username: localStorage.getItem("username"),
+							img: image,
+							body: postText,
+							categories: categories,
+							reactionID: 0, // Reaction ID
+							postLikes: 0, // Number of likes
+							postDislikes: 0, // Number of dislikes
+							comments: [],
+						  };
+						  
+					
+
 						// Call displayPostContainer to refresh the post container
-						await post.renderHTML()
+						await posts.processPost(postsContainer, newPost)
+						// await posts.renderHTML()
 					}
 					if (response.status == 408) {
 						window.location.href = "/"
@@ -98,4 +117,33 @@ export default class PostSubmitForm extends AbstractView {
 			}.bind(this)
 		)
 	}
+
+	async newHighestPostContainerNumber() {
+		// Select all the post containers
+		const postContainers = document.querySelectorAll(".postContainer");
+	  
+		// Initialize the highest number to 0
+		let highestNumber = 0;
+	  
+		// Loop through the post containers
+		postContainers.forEach((container) => {
+		  // Extract the post number from the container's ID
+		  const containerId = container.id;
+		  const matches = containerId.match(/(\d+)$/);
+		  if (matches && matches.length > 1) {
+			const number = parseInt(matches[1], 10);
+			if (number > highestNumber) {
+			  highestNumber = number;
+			}
+		  }
+		});
+	  
+		return highestNumber + 1;
+	  }
+	  
+	  
+	  // Example usage
+	  
+	  
+	  
 }
