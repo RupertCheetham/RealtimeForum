@@ -45,7 +45,6 @@ func ChatHandler(w http.ResponseWriter, r *http.Request) {
 	for {
 		messageType, payload, err := connection.ReadMessage()
 		if err != nil {
-			// log.Println("WebSocket read error:", err)
 			removeConnection(chatUUID, connection)
 			return
 		}

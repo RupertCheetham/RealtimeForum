@@ -45,15 +45,45 @@ func GetUsersFromDatabase(userIDString string) ([]UserEntry, error) {
 	return users, nil
 }
 
-func GetUsernameFromSessionID(sessionID string) string {
-	// SQL query to retrieve the username associated with the provided SessionID
-	query := "SELECT u.Username FROM COOKIES AS c INNER JOIN USERS AS u ON c.UserID = u.Id WHERE c.SessionID = ?"
+// func GetUsernameFromSessionID(sessionID string) string {
+// 	// SQL query to retrieve the username associated with the provided SessionID
+// 	query := "SELECT u.Username FROM COOKIES AS c INNER JOIN USERS AS u ON c.UserID = u.Id WHERE c.SessionID = ?"
+
+// 	// Execute the query and retrieve the username
+// 	var username string
+// 	err := Database.QueryRow(query, sessionID).Scan(&username)
+// 	if err != nil {
+// 		utils.HandleError("Error finding username in GetUsernameFromSessionID:", err)
+// 	}
+
+// 	return username
+// }
+
+// func GetUserIDFromSessionID(sessionID string) int {
+
+// 	// SQL query to retrieve the username associated with the provided SessionID
+// 	query := "SELECT UserID FROM COOKIES WHERE SessionID = ?"
+
+// 	// Execute the query and retrieve the username
+// 	var userID int
+// 	err := Database.QueryRow(query, sessionID).Scan(&userID)
+// 	if err != nil {
+// 		utils.HandleError("Error finding userID in GetUserIDFromSessionID:", err)
+// 	}
+// 	return userID
+// }
+
+// returns username when given userID
+func GetUsernameFromUserID(userID string) string {
+
+	// SQL query to retrieve the username associated with the provided userID
+	query := "SELECT Username FROM USERS WHERE Id = ?"
 
 	// Execute the query and retrieve the username
 	var username string
-	err := Database.QueryRow(query, sessionID).Scan(&username)
+	err := Database.QueryRow(query, userID).Scan(&username)
 	if err != nil {
-		utils.HandleError("Error finding username in GetUsernameFromSessionID:", err)
+		utils.HandleError("Error finding username in GetUsernameFromUserID:", err)
 	}
 
 	return username
@@ -77,6 +107,8 @@ func FindUserFromDatabase(username string) (UserEntry, error) {
 		utils.HandleError("Error scanning row from database in FindUserFromDatabase:", err)
 		return UserEntry{}, err
 	}
+
+	// fmt.Println("user from finduserfromdb function:", user, "error:", err)
 
 	return user, err
 }
