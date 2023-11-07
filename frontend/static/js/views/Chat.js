@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js"
-import { throttle } from "../utils/utils.js"
+import { throttle, usernameFromUserID } from "../utils/utils.js"
 
 export default class Chat extends AbstractView {
 	constructor() {
@@ -74,15 +74,7 @@ export default class Chat extends AbstractView {
 
 		if (RecipientID != 0) {
 			
-			const response = await fetch(
-				`https://localhost:8080//api/getUsernameFromUserID=${RecipientID}`,
-				{
-					credentials: "include",
-				}
-			)
-			const RecipientName = await response.json()
-
-			console.log("RecipientName", RecipientName)
+			const RecipientName	= await usernameFromUserID(RecipientID)
 			const chatTextBox = this.getChatTextBoxHTML()
 			chatContainer.innerHTML = `
       <div class = "allChat"

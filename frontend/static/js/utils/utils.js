@@ -29,3 +29,25 @@ export function throttle(func, delay) {
 		}
 	}
 }
+
+export async function usernameFromUserID(userID) {
+
+	try {
+		const response = await fetch(`https://localhost:8080/api/getUsernameFromUserID?userID=${userID}`, { //
+			credentials: "include",
+		});
+
+		if (response.ok) {
+			const username = await response.json();
+
+			return username;
+		} else {
+			// Handle the error or return a default value in case of an error
+			console.error("Failed to fetch username:", response.status, response.statusText);
+			return null; // or return a default value, or throw an error
+		}
+	} catch (error) {
+		console.error("An error occurred while fetching username:", error);
+		throw error;
+	}
+}
