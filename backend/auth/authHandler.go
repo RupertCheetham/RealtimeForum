@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const timeout = 1 * time.Minute
+const timeout = 10 * time.Minute
 
 var sessionExpiration = time.Now().Add(timeout)
 

@@ -270,6 +270,7 @@ func upgradeConnection(w http.ResponseWriter, r *http.Request) *websocket.Conn {
 // unpacks websocket's Payload and adds time for return
 func payloadUnmarshaller(payload []byte) db.ChatMessage {
 	var chatMsg db.ChatMessage
+
 	err := json.Unmarshal([]byte(payload), &chatMsg)
 	if err != nil {
 		utils.HandleError("Error unmarshaling JSON in payloadUnmarshaller:", err)

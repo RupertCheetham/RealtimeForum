@@ -9,22 +9,38 @@ export default class Chat extends AbstractView {
 
 	// List of users to click on to initialise chat
 	async userList() {
+
 		const currentUser = localStorage.getItem("id")
+		let userListJSON = localStorage.getItem("userList");
+
+		if (!userListJSON) {
+			const response = await fetch(
+				`https://localhost:8080/api/getusers?userId=${currentUser}`,
+				{
+					credentials: "include",
+				}
+			)
+			const users = await response.json()
+			localStorage.setItem("userList", JSON.stringify(users));
+			userListJSON = localStorage.getItem("userList");
+		}
+
+
+		let users = null
+		if (userListJSON) {
+			// Parse the JSON string back into an array;
+			users = JSON.parse(userListJSON);
+
+			// Now you have your user list as an array
+			console.log(users);
+		} else {
+			console.log("[Chat.js]  User list not found in localStorage.");
+		}
+
+
 		const userContainer = document.getElementById("userContainer")
-		// userContainer.innerHTML = "";
 		const userBox = document.createElement("div")
 		userBox.id = "userBox"
-
-		const response = await fetch(
-			`https://localhost:8080/api/getusers?userId=${currentUser}`,
-			{
-				credentials: "include",
-			}
-		)
-
-		// checkSessionTimeout(response)
-
-		const users = await response.json()
 
 		const recentChat = document.createElement("div")
 		recentChat.id = "recentChat"
@@ -71,13 +87,17 @@ export default class Chat extends AbstractView {
 	async renderHTML() {
 		const chatContainer = document.getElementById("chatContainer")
 		const RecipientID = await this.getRecipientIDFromURL()
+		const userListJSON = localStorage.getItem("userList");
+		const userList = JSON.parse(userListJSON);
+
+
 
 		if (RecipientID != 0) {
-			const Recipient = localStorage.getItem("id")
+			const RecipientName = await this.findUsernameById(RecipientID, userList)
 			const chatTextBox = this.getChatTextBoxHTML()
 			chatContainer.innerHTML = `
       <div class = "allChat"
-      <h1 id="recipient" class = "chat-font"> ${Recipient}</h1>
+      <h1 id="recipient" class = "chat-font"> ${RecipientName}</h1>
 			<div id="chatHistory"></div>
 			${chatTextBox}
       </div>
@@ -93,8 +113,32 @@ export default class Chat extends AbstractView {
 		return Number(urlParams.get("userId"))
 	}
 
+	async findUsernameById(id, array) {
+
+		const array1 = array.alphabetical
+		const array2 = array.recentChat
+		// Search the first array
+		for (const entry of array1) {
+			if (entry.id === id) {
+				return entry.username;
+			}
+		}
+
+		// Search the second array
+		for (const entry of array2) {
+			if (entry.id === id) {
+				return entry.username;
+			}
+		}
+
+		// If the id is not found in either array, return null or an appropriate default value.
+		return null;
+	}
+
+
 	async webSocketChat() {
-		const Sender = localStorage.getItem("id")
+		const Sender = Number(localStorage.getItem("id"))
+		console.log("Sender WSS:", Sender)
 		const Recipient = await this.getRecipientIDFromURL()
 		const socket = new WebSocket(
 			`wss://localhost:8080/chat?sender=${Sender}&recipient=${Recipient}`
@@ -136,8 +180,6 @@ export default class Chat extends AbstractView {
 			const recentChat = document.getElementById("recentChat")
 			const alphabeticalChat = document.getElementById("alphabeticalChat")
 
-			console.log("This is divToMove:", divToMove)
-
 			if (divToMove) {
 				if (recentChat != null) {
 					if (recentChat.contains(divToMove)) {
@@ -172,7 +214,8 @@ export default class Chat extends AbstractView {
 			const Message = messageInput.value.trim()
 
 			if (Message !== "" && /\S/.test(Message)) {
-				console.log("Sending message:", Message)
+
+				console.log("Sending message:", Message, "sender:", Sender, "recipient: Recipient")
 				socket.send(
 					JSON.stringify({
 						type: "chat",
@@ -210,13 +253,10 @@ export default class Chat extends AbstractView {
 			chatHistory.appendChild(chatElement)
 		}
 
-		console.log("[displayChatHistory] canScroll: ", this.canScroll)
-
 		// Add a scroll event listener to the chat history container
 		const throttleScroll = throttle(() => {
 			const scrollThreshold = chatHistory.scrollHeight * 0.3
-			console.log("chatHistory.scrollTop", chatHistory.scrollTop)
-			console.log("scrollThreshold", scrollThreshold)
+
 			if (chatHistory.scrollTop <= scrollThreshold) {
 				// Load and append more messages
 				this.loadMoreMessages(user1, user2, messageOffset, limit)
@@ -243,7 +283,7 @@ export default class Chat extends AbstractView {
 		if (!this.canScroll) {
 			return
 		}
-		console.log("[loadMoreMessages] messageOffset:", messageOffset)
+
 		const nextMessages = await this.fetchMessagesInChunks(
 			user1,
 			user2,
@@ -258,7 +298,7 @@ export default class Chat extends AbstractView {
 			}
 		} else {
 			this.canScroll = false
-			console.log("[loadMoreMessages] canScroll: ", this.canScroll)
+
 		}
 	}
 
