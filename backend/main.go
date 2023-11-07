@@ -21,17 +21,12 @@ func main() {
 	http.HandleFunc("/api/registrations", auth.RegistrationUserHandler)
 	http.HandleFunc("/api/login", auth.LoginHandler)
 	http.HandleFunc("/api/logout", auth.LogoutHandler)
-	http.HandleFunc("/api/getUsername", handlers.CookieCheck(handlers.GetUsernameHandler, handlers.RequestTimeoutFailedMessage))
 	http.HandleFunc("/api/getposts", handlers.CookieCheck(handlers.GetPostHandler, handlers.RequestTimeoutFailedMessage))
 	http.HandleFunc("/api/addposts", handlers.CookieCheck(handlers.AddPostHandler, handlers.RequestTimeoutFailedMessage))
 	http.HandleFunc("/api/addcomments", handlers.CookieCheck(handlers.AddCommentHandler, handlers.RequestTimeoutFailedMessage))
-	// http.HandleFunc("/api/getcomments", handlers.CookieCheck(handlers.GetCommentHandler, handlers.RequestTimeoutFailedMessage))
-	// http.HandleFunc("/api/getcomments", handlers.GetCommentHandler)
 	http.HandleFunc("/reaction", handlers.ReactionHandler)
 	http.HandleFunc("/chat", handlers.ChatHandler)
 	http.HandleFunc("/getChatHistory", handlers.GetChatHistoryHandler)
-	http.HandleFunc("/api/getUserID", handlers.GetUserIDHandler)
-	// http.HandleFunc("/api/getUsernameFromUserID", handlers.GetUsernameFromIDHandler)
 	http.HandleFunc("/api/getusers", handlers.GetUsersForChatHandler)
 
 	// Specify the paths to your TLS certificate and private key files

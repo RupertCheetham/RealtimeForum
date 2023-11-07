@@ -11,9 +11,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const timeout = 1 * time.Minute
+const timeout = 5 * time.Minute
 
-var sessionExpiration = time.Now().Add(timeout)
+var SessionExpiration = time.Now().Add(timeout)
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
@@ -38,17 +38,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		jsonResponse, err := json.Marshal(msg)
-
-		if err != nil {
-			utils.HandleError("Unable to decode json", err)
-			http.Error(w, "Internal sever error", http.StatusBadRequest)
-			return
-		}
-
 		// after getting username from login check, use the user's id to create a session for the user
-		userSession, err := db.CreateSession(id.(int), sessionExpiration)
-
+		userSession, err := db.CreateSession(id.(int), SessionExpiration)
 		if err != nil {
 			utils.HandleError("unable to create user session:", err)
 			http.Error(w, "Internal sever error", http.StatusBadRequest)
@@ -59,7 +50,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		sessionCookie := http.Cookie{
 			Name:     handlers.CookieName,
 			Value:    userSession.SessionID,
-			Expires:  sessionExpiration,
+			Expires:  SessionExpiration,
 			HttpOnly: true,
 			Secure:   true,
 			Path:     "/",
@@ -71,6 +62,15 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
+
+		jsonResponse, err := json.Marshal(msg)
+
+		if err != nil {
+			utils.HandleError("Unable to decode json", err)
+			http.Error(w, "Internal sever error", http.StatusBadRequest)
+			return
+		}
+
 		w.Write(jsonResponse)
 	}
 

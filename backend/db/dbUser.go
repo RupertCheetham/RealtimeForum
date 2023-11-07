@@ -59,36 +59,6 @@ func GetUsernameFromSessionID(sessionID string) string {
 	return username
 }
 
-func GetUserIDFromSessionID(sessionID string) int {
-
-	// SQL query to retrieve the username associated with the provided SessionID
-	query := "SELECT UserID FROM COOKIES WHERE SessionID = ?"
-
-	// Execute the query and retrieve the username
-	var userID int
-	err := Database.QueryRow(query, sessionID).Scan(&userID)
-	if err != nil {
-		utils.HandleError("Error finding userID in GetUserIDFromSessionID:", err)
-	}
-	return userID
-}
-
-// returns username when given userID
-func GetUsernameFromUserID(userID string) string {
-
-	// SQL query to retrieve the username associated with the provided userID
-	query := "SELECT Username FROM USERS WHERE Id = ?"
-
-	// Execute the query and retrieve the username
-	var username string
-	err := Database.QueryRow(query, userID).Scan(&username)
-	if err != nil {
-		utils.HandleError("Error finding username in GetUsernameFromUserID:", err)
-	}
-
-	return username
-}
-
 func FindUserFromDatabase(username string) (UserEntry, error) {
 	rows, err := Database.Query("SELECT * FROM USERS WHERE Username = ?", username)
 	if err != nil {
@@ -107,8 +77,6 @@ func FindUserFromDatabase(username string) (UserEntry, error) {
 		utils.HandleError("Error scanning row from database in FindUserFromDatabase:", err)
 		return UserEntry{}, err
 	}
-
-	// fmt.Println("user from finduserfromdb function:", user, "error:", err)
 
 	return user, err
 }

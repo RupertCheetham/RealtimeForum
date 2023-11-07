@@ -200,6 +200,7 @@ export default class Auth extends AbstractView {
 
 				if (response.ok) {
 					let message = await response.json()
+					console.log(message)
 					localStorage.setItem("id", message.id)
 					localStorage.setItem("username", message.username)
 					window.location.href = "main" // Update the URL

@@ -14,8 +14,9 @@ func GetLoginEntry(loginCheck UserEntry) (message map[string]any, err error) {
 	}
 
 	dbLoginCheck, err := FindUserFromDatabase(loginCheck.Username)
-
-	// fmt.Println("dbLoginCheck:", dbLoginCheck)
+	if err != nil {
+		return message, err
+	}
 
 	if err != nil {
 		return message, err
@@ -28,6 +29,7 @@ func GetLoginEntry(loginCheck UserEntry) (message map[string]any, err error) {
 		err := bcrypt.CompareHashAndPassword([]byte(dbLoginCheck.Password), []byte(loginCheck.Password))
 		if err != nil {
 			message["message"] = "Incorrect username or password"
+			return message, err
 		} else {
 			message["message"] = "Login successfully"
 			message["id"] = dbLoginCheck.Id
