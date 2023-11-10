@@ -1,3 +1,4 @@
+import { getCookie } from "./utils/utils.js"
 import Auth from "./views/Auth.js"
 import MainPage from "./views/MainPage.js"
 
@@ -33,34 +34,41 @@ const router = async () => {
 
 	// const view = new match.route.view()
 	// document.querySelector("#container").innerHTML = await view.renderHTML()
-
 	const mainView = new MainPage()
 
 	if (match.route.view === Auth) {
-		let userInfo = localStorage.getItem("id")
-
+		let userId = localStorage.getItem("id")
+		let cookie = getCookie("browserCookie")
+		let expirationTime = new Date(cookie)
 		let currentTime = new Date()
-		let expiration = new Date(currentTime)
-		expiration.setMinutes(currentTime.getMinutes() + timeout)
 
-		if (userInfo) {
-			window.location.pathname = "/main"
-		} else {
-			if (currentTime > expiration) {
-				localStorage.clear()
-			}
+		console.log("cookie:", cookie)
+		console.log("userId:", userId)
+
+		if (!cookie && !userId) {
 			const authView = new Auth()
 			document.querySelector("#container").innerHTML =
 				await authView.renderHTML()
 			authView.submitForm()
+			return
+		}
+
+		if (currentTime > expirationTime || !userId) {
+			localStorage.clear()
+			document.cookie =
+				"expiration=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
+			const authView = new Auth()
+			document.querySelector("#container").innerHTML =
+				await authView.renderHTML()
+			authView.submitForm()
+		} else {
+			window.location.pathname = "/main"
 		}
 	}
 
 	// Call the submitForm and displayPosts method here
 	if (match.route.view === MainPage) {
 		let userInfo = localStorage.getItem("id")
-
-		console.log("userInfo:", userInfo)
 
 		if (!userInfo) {
 			window.location.href = "/"

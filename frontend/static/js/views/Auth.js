@@ -1,5 +1,7 @@
 import AbstractView from "./AbstractView.js"
 
+const timeout = 5
+
 export default class Auth extends AbstractView {
 	constructor() {
 		super()
@@ -199,8 +201,12 @@ export default class Auth extends AbstractView {
 				})
 
 				if (response.ok) {
+					let currentTime = new Date()
+					let expiration = new Date(currentTime)
+					expiration.setMinutes(currentTime.getMinutes() + timeout)
+					document.cookie = "browserCookie=" + expiration
 					let message = await response.json()
-					console.log(message)
+					localStorage.clear()
 					localStorage.setItem("id", message.id)
 					localStorage.setItem("username", message.username)
 					window.location.href = "main" // Update the URL

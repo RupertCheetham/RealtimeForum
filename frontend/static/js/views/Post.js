@@ -2,18 +2,18 @@ import AbstractView from "./AbstractView.js"
 import {
 	attachCommentForm,
 	attachCommentsToPost,
-	createCloseCommentButton
+	createCloseCommentButton,
 } from "./Comments.js"
 
 export default class Posts extends AbstractView {
 	async renderHTML() {
-
 		// gets slice of posts from backend
 		const response = await fetch("https://localhost:8080/api/getposts", {
 			// checkSessionTimeout(response)
 			credentials: "include", // Ensure cookies are included in the request
 		})
 		if (response.status == 408) {
+			localStorage.clear()
 			window.location.href = "/"
 		}
 
@@ -38,14 +38,16 @@ export default class Posts extends AbstractView {
 			  <li><b>Img:</b> ${post.img}</li>
 			  <li><b>Body:</b> ${post.body}</li>
 			  <li><b>Categories:</b> ${post.categories}</li>
-			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id
+			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${
+					post.id
 				}" reaction-action="like" reaction-id = "${postElement.getAttribute(
-					"reactionID"
-				)}">👍 ${post.postLikes}</button>
-			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${post.id
+				"reactionID"
+			)}">👍 ${post.postLikes}</button>
+			  <button class="reaction-button" reaction-parent-class="post" reaction-parent-id="${
+					post.id
 				}" reaction-action="dislike" reaction-id = "${postElement.getAttribute(
-					"reactionID"
-				)}">👎 ${post.postDislikes}</button>
+				"reactionID"
+			)}">👎 ${post.postDislikes}</button>
 			  </li>
 			</ul>
 		  `
@@ -71,9 +73,8 @@ export default class Posts extends AbstractView {
 				if (commentsContainer.style.display === "none") {
 					commentsContainer.style.display = "block"
 					// if (commentsContainer.querySelectorAll("div").length != 0) {
-						closeCommentButton.style.display = "block"
+					closeCommentButton.style.display = "block"
 					// }
-					
 				}
 			})
 
@@ -82,7 +83,6 @@ export default class Posts extends AbstractView {
 			if (comments !== null) {
 				attachCommentsToPost(commentsContainer, comments)
 			}
-
 
 			postsContainer.appendChild(postContainer)
 		}

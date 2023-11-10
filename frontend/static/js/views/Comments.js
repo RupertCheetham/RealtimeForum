@@ -31,16 +31,18 @@ export function attachCommentForm(post, postElement) {
 			}),
 			credentials: "include",
 		}).catch((error) => {
+			localStorage.clear()
+			window.location.href = "/"
 			console.log(error)
 		})
 		// checkSessionTimeout(response)
 		if (response.ok) {
 			document.getElementById("commentText").value = ""
 			// temporary measure
-		//	window.location.reload() // Refresh the page
-			// temporary measure
-			const commentsContainer = document.getElementById("commentsContainer" + postID)
-			const currentDate = new Date().toISOString();
+			const commentsContainer = document.getElementById(
+				"commentsContainer" + postID
+			)
+			const currentDate = new Date().toISOString()
 
 			const comment = {
 				id: "new",
@@ -52,7 +54,7 @@ export function attachCommentForm(post, postElement) {
 				reactionID: 0,
 				commentLikes: 0,
 				commentDislikes: 0,
-			};
+			}
 
 			processComment(commentsContainer, comment)
 		}
@@ -62,17 +64,12 @@ export function attachCommentForm(post, postElement) {
 
 // adds the comments (if any) to the bottom of each post
 export function attachCommentsToPost(commentsContainer, comments) {
-	
 	comments.forEach((comment) => {
 		processComment(commentsContainer, comment)
 	})
-
-	//commentsContainer.appendChild(closeCommentsButton)
-	//return commentsContainer
 }
 
 function processComment(commentsContainer, comment) {
-
 	const commentElement = document.createElement("div")
 	commentElement.id = "comment" + comment.id
 	commentElement.className = "comment"
@@ -82,17 +79,20 @@ function processComment(commentsContainer, comment) {
 		<li>Username: ${comment.username}</li>
 		<li>Comment: ${comment.body}</li>
 					<ul>
-					<button class="reaction-button" reaction-action="like" reaction-parent-class="comment" reaction-parent-id="${comment.id
-		}"  reaction-id = "${commentElement.getAttribute("reactionID")}">👍 ${comment.commentLikes
-		}</button>
-					<button class="reaction-button" reaction-action="dislike" reaction-parent-class="comment" reaction-parent-id="${comment.id
-		}"  reaction-id = "${commentElement.getAttribute("reactionID")}">👎 ${comment.commentDislikes
-		}</button>
+					<button class="reaction-button" reaction-action="like" reaction-parent-class="comment" reaction-parent-id="${
+						comment.id
+					}"  reaction-id = "${commentElement.getAttribute("reactionID")}">👍 ${
+		comment.commentLikes
+	}</button>
+					<button class="reaction-button" reaction-action="dislike" reaction-parent-class="comment" reaction-parent-id="${
+						comment.id
+					}"  reaction-id = "${commentElement.getAttribute("reactionID")}">👎 ${
+		comment.commentDislikes
+	}</button>
 					</ul>
 		`
 	commentsContainer.appendChild(commentElement)
 }
-
 
 // The comment submission form
 function getCommentFormHTML(postID) {
@@ -104,8 +104,7 @@ function getCommentFormHTML(postID) {
 	`
 }
 
-
-export function createCloseCommentButton(commentsContainer){
+export function createCloseCommentButton(commentsContainer) {
 	// add a buttons to reclose comments after opened
 	const closeCommentsButton = document.createElement("button")
 	closeCommentsButton.id = "closeCommentsButton"
@@ -116,11 +115,5 @@ export function createCloseCommentButton(commentsContainer){
 		closeCommentsButton.style.display = "none"
 	})
 
-	// Append the "Close" button to the comments container
-	// const postContainer = document.getElementById("Post" + commentsContainer.id.)
-	// console.log("PostBox" + comments[0].parentPostId)
-	// const postContainer = document.getElementById("PostBox" + comments[0].parentPostId)
-	// console.log("the container:", postContainer)
-	// commentsContainer.appendChild(closeCommentsButton)
 	return closeCommentsButton
 }

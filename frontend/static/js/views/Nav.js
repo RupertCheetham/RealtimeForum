@@ -18,6 +18,8 @@ export default class Nav extends AbstractView {
 	}
 
 	async logout() {
+		document.cookie =
+			"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
 		let logoutbtn = document.getElementById("logout")
 		logoutbtn.addEventListener("click", (event) => {
 			event.preventDefault()
