@@ -60,8 +60,6 @@ const router = async () => {
 	if (match.route.view === MainPage) {
 		let userInfo = localStorage.getItem("id")
 
-		console.log("userInfo:", userInfo)
-
 		if (!userInfo) {
 			window.location.href = "/"
 			return

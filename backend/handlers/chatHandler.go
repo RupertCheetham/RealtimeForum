@@ -13,10 +13,12 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var chatConnections = make(map[string][]*websocket.Conn)
+var userConnections = make(map[int]*websocket.Conn)
 
 // deals with the websocket side of chat
 func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
+
+	//Need to redesign connections to use users, not chatrooms
 
 	log.Println("[WebsocketChatHandler, chatHandler]  I'm here again; is that a problem?")
 	// Upgrade the HTTP connection to a WebSocket connection
@@ -32,7 +34,6 @@ func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		chatMsg := payloadUnmarshaller(payload)
-		// var chatUUID string
 
 		previousChatEntryFound, chatUUID, err := previousChatChecker(chatMsg.Sender, chatMsg.Recipient)
 		if err != nil {
@@ -48,9 +49,7 @@ func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Check if the connection already exists in the chat
-		if !connectionExists(chatUUID, connection) {
-			chatConnections[chatUUID] = append(chatConnections[chatUUID], connection)
-		}
+		userConnections[chatMsg.Sender] = connection
 
 		if messageType == websocket.TextMessage {
 
@@ -62,17 +61,11 @@ func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
 			}
-
-			// fmt.Println("Type:", chatMsg.Type, "Message:", chatMsg.Body, "Sender:", chatMsg.Sender, "Recipient:", chatMsg.Recipient, "Time:", chatMsg.Time)
-
 		}
 		if chatMsg.Type == "chat" {
-			payload, err = json.Marshal(chatMsg)
-			if err != nil {
-				utils.HandleError("There has been an issue with marshalling in ChatHandler", err)
-			}
+
 			// Write message back to each client
-			broadcastToChat(chatUUID, messageType, payload)
+			broadcastToUsers(messageType, chatMsg)
 		}
 
 	}
@@ -98,20 +91,6 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-// func obtainSenderAndRecipient(r *http.Request) (int, int) {
-// 	senderString := r.URL.Query().Get("sender")
-// 	recipientString := r.URL.Query().Get("recipient")
-// 	sender, err := strconv.Atoi(senderString)
-// 	if err != nil {
-// 		utils.HandleError("There has been an issue with Atoi sender in obtainSenderAndRecipient", err)
-// 	}
-// 	recipient, err := strconv.Atoi(recipientString)
-// 	if err != nil {
-// 		utils.HandleError("There has been an issue with Atoi recipient in obtainSenderAndRecipient", err)
-// 	}
-// 	return sender, recipient
-// }
-
 // Checks to see if chat between two users has taken place before, if so then returns chat UUID
 func previousChatChecker(firstID int, secondID int) (bool, string, error) {
 	query := `
@@ -136,37 +115,43 @@ func previousChatChecker(firstID int, secondID int) (bool, string, error) {
 	return true, chatUUID, nil
 }
 
-func connectionExists(chatUUID string, conn *websocket.Conn) bool {
-	connections, ok := chatConnections[chatUUID]
-	if !ok {
-		return false
+// func connectionExists(SenderID int, conn *websocket.Conn) bool {
+// 	// Check if the connection exists for the given SenderID
+// 	existingConn, ok := userConnections[SenderID]
+// 	if !ok {
+// 		return false
+// 	}
+
+// 	// Check if the existing connection matches the provided conn
+// 	return existingConn == conn
+// }
+
+func broadcastToUsers(messageType int, message db.ChatMessage) {
+
+	// changes the message to a JSON, for sending to frontend
+	payload, err := json.Marshal(message)
+	if err != nil {
+		utils.HandleError("There has been an issue with marshalling in broadcastToUsers", err)
 	}
 
-	// Check if the connection already exists in the list
-	for _, existingConn := range connections {
-		if existingConn == conn {
-			return true
-		}
+	// Obtains the connections for each user involved in the chat
+	// Should be simple enough to turn it  into an array of connections later, to enable group chats
+	// Currently needs to only send messages if the user is online
+	senderConnection := userConnections[message.Sender]
+	err = senderConnection.WriteMessage(messageType, payload)
+	if err != nil {
+		utils.HandleError("Error sending message to a client in broadcastToChat:", err)
 	}
 
-	return false
-}
-
-func broadcastToChat(chatUUID string, messageType int, payload []byte) {
-	// Retrieve the list of connections for the specified chatUUID
-	connections, ok := chatConnections[chatUUID]
-	if !ok {
-		utils.HandleError("There were no connections that use this chatUUID in broadcastToChat", nil)
-		// Chat UUID not found in the map, handle this error if needed
-		return
-	}
-	log.Println("broadcastToChat, length of connections:", len(connections))
-	for _, conn := range connections {
-		if err := conn.WriteMessage(messageType, payload); err != nil {
-			// Handle the error if needed
+	recipientConnection := userConnections[message.Recipient]
+	// if recipientConnection exists (if they're online) then send a message to them too
+	if recipientConnection != nil {
+		err = recipientConnection.WriteMessage(messageType, payload)
+		if err != nil {
 			utils.HandleError("Error sending message to a client in broadcastToChat:", err)
 		}
 	}
+
 }
 
 // Retrieves chat history between two users based on the UserIDs in the URL
@@ -222,30 +207,30 @@ func GetChatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// remove an unused connection from chatConnections
-func removeConnection(chatUUID string, connectionToRemove *websocket.Conn) {
-	connections, ok := chatConnections[chatUUID]
-	if !ok {
-		utils.HandleError("Chat UUID not found in map in removeConnection, in chatHandler", nil)
-		return
-	}
+// // remove an unused connection from userConnections
+// func removeConnection(senderID int, connectionToRemove *websocket.Conn) {
+// 	connections, ok := userConnections[senderID]
+// 	if !ok {
+// 		utils.HandleError("Chat UUID not found in map in removeConnection, in chatHandler", nil)
+// 		return
+// 	}
 
-	// Find the index of the connection to remove
-	index := -1
-	for i, conn := range connections {
-		if conn == connectionToRemove {
-			index = i
-			break
-		}
-	}
+// 	// Find the index of the connection to remove
+// 	index := -1
+// 	for i, conn := range connections {
+// 		if conn == connectionToRemove {
+// 			index = i
+// 			break
+// 		}
+// 	}
 
-	// If the connection was found, remove it
-	if index != -1 {
-		chatConnections[chatUUID] = append(connections[:index], connections[index+1:]...)
-		log.Println("Removed closed connection from chatConnections")
-	}
+// 	// If the connection was found, remove it
+// 	if index != -1 {
+// 		userConnections[senderID] = append(connections[:index], connections[index+1:]...)
+// 		log.Println("Removed closed connection from userConnections")
+// 	}
 
-}
+// }
 
 // Returns a list of registered users; we'll use this in the frontend to start a chat with one of them
 func GetUsersForChatHandler(w http.ResponseWriter, r *http.Request) {

@@ -138,10 +138,13 @@ export default class Chat extends AbstractView {
 
 
 		// when chat receives a message...
-		this.socket.addEventListener("message", (event) => {
-			console.log("Received a WebSocket message:", event.data)
-
-			let message = JSON.parse(event.data)
+		const handleMessage = async (event) => {
+			console.log("Received a WebSocket message:", event.data);
+			let message = JSON.parse(event.data);
+		
+			// rudimentary notification system
+			// const RecipientName = await usernameFromUserID(message.recipient);
+			// alert("Message: " + message.body +  " from " + RecipientName)
 
 			// Handle incoming messages
 			let chatElement = document.createElement("div")
@@ -182,7 +185,10 @@ export default class Chat extends AbstractView {
 			} else {
 				recentChat.appendChild(divToMove)
 			}
-		})
+		}
+	
+		this.socket.addEventListener("message", handleMessage);
+
 
 		//deals with sending new messages to the backend when sendButton is clicked or enter is pressed
 		document.getElementById("sendButton").addEventListener("click", () => {
