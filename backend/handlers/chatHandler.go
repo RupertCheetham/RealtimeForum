@@ -18,15 +18,10 @@ var chatConnections = make(map[string][]*websocket.Conn)
 // deals with the websocket side of chat
 func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 
+	log.Println("[WebsocketChatHandler, chatHandler]  I'm here again; is that a problem?")
 	// Upgrade the HTTP connection to a WebSocket connection
 	connection := upgradeConnection(w, r)
 	defer connection.Close()
-
-	// sender, recipient := obtainSenderAndRecipient(r)
-
-	// if chat is new then generates new UUID for chat
-
-	// add current connection to list of connections that use this chatUUID
 
 	for {
 		messageType, payload, err := connection.ReadMessage()
@@ -46,7 +41,7 @@ func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 
 		if !previousChatEntryFound {
 			chatUUID = utils.GenerateNewUUID()
-
+			err = db.AddChatToDatabase(chatUUID, "", chatMsg.Sender, chatMsg.Recipient)
 			if err != nil {
 				utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
 			}
@@ -58,9 +53,7 @@ func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if messageType == websocket.TextMessage {
-			// log.Println("Message type is: ", chatMsg.Type)
-			// Process the incoming message
-			// fmt.Println("Received a WebSocket message:", string(payload))
+
 			// Handle the message and broadcast it to other clients if needed
 			if chatMsg.Type == "chat" {
 

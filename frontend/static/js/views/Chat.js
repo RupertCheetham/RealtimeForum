@@ -49,9 +49,6 @@ export default class Chat extends AbstractView {
 						this.renderHTML(user.id)
 					})
 
-					// 	userEntry.innerHTML = `
-					// <a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
-					// `
 					userEntry.appendChild(usernameLink);
 					recentChat.appendChild(userEntry)
 				}
@@ -79,19 +76,8 @@ export default class Chat extends AbstractView {
 						console.log(user.username)
 						this.renderHTML(user.id)
 
-
-						//   this.loadUserChat(user.id);
 					});
 
-
-
-
-
-
-
-					// 	userEntry.innerHTML = `
-					// <a href="/main?userId=${user.id}" class="chatUserButton">${user.username}</a>
-					// `
 					userEntry.appendChild(usernameLink);
 					alphabeticalChat.appendChild(userEntry)
 				}
