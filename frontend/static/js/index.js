@@ -1,6 +1,7 @@
 import { getCookie } from "./utils/utils.js"
 import Auth from "./views/Auth.js"
 import MainPage from "./views/MainPage.js"
+import UserPage from "./views/UserPage.js"
 
 const navigateTo = (url) => {
 	history.pushState(null, null, url)
@@ -13,6 +14,7 @@ const router = async () => {
 	const routes = [
 		{ path: "/", view: Auth },
 		{ path: "/main", view: MainPage },
+		{ path: "/user", view: UserPage },
 	]
 
 	// test each route for potential match
@@ -32,9 +34,9 @@ const router = async () => {
 		}
 	}
 
-	// const view = new match.route.view()
-	// document.querySelector("#container").innerHTML = await view.renderHTML()
+	const authView = new Auth()
 	const mainView = new MainPage()
+	const userView = new UserPage()
 
 	if (match.route.view === Auth) {
 		let userId = localStorage.getItem("id")
@@ -42,13 +44,9 @@ const router = async () => {
 		let expirationTime = new Date(cookie)
 		let currentTime = new Date()
 
-		console.log("cookie:", cookie)
-		console.log("userId:", userId)
-
 		if (!cookie && !userId) {
 			document.cookie =
 				"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
-			const authView = new Auth()
 			document.querySelector("#container").innerHTML =
 				await authView.renderHTML()
 			authView.submitForm()
@@ -59,7 +57,6 @@ const router = async () => {
 			localStorage.clear()
 			document.cookie =
 				"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
-			const authView = new Auth()
 			document.querySelector("#container").innerHTML =
 				await authView.renderHTML()
 			authView.submitForm()
@@ -68,7 +65,6 @@ const router = async () => {
 		}
 	}
 
-	// Call the submitForm and displayPosts method here
 	if (match.route.view === MainPage) {
 		let userInfo = localStorage.getItem("id")
 
@@ -83,6 +79,17 @@ const router = async () => {
 		mainView.displayChatContainer()
 		mainView.Logout()
 		mainView.reactions()
+	}
+
+	if (match.route.view === UserPage) {
+		let userInfo = localStorage.getItem("id")
+
+		if (!userInfo) {
+			window.location.href = "/"
+			return
+		}
+		document.querySelector("#container").innerHTML = await userView.renderHTML()
+		userView.Logout()
 	}
 }
 
