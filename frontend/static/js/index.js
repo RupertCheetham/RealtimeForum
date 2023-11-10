@@ -8,8 +8,6 @@ const navigateTo = (url) => {
 	router()
 }
 
-const timeout = 5
-
 const router = async () => {
 	const routes = [
 		{ path: "/", view: Auth },
@@ -89,6 +87,7 @@ const router = async () => {
 			return
 		}
 		document.querySelector("#container").innerHTML = await userView.renderHTML()
+		userView.getUserInfo()
 		userView.Logout()
 	}
 }
