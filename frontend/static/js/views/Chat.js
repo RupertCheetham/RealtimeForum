@@ -97,8 +97,6 @@ export default class Chat extends AbstractView {
 
 	async renderHTML(RecipientID) {
 
-
-
 		const chatContainer = document.getElementById("chatContainer")
 
 		if (RecipientID != 0) {

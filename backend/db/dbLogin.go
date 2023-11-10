@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"log"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -29,7 +28,6 @@ func GetLoginEntry(loginCheck UserEntry) (message map[string]any, err error) {
 		message["message"] = "Login successfully"
 		message["id"] = dbLoginCheck.Id
 		message["username"] = dbLoginCheck.Username
-		log.Println("dbLoginCheck.Id", dbLoginCheck.Id)
 	}
 
 	fmt.Println(message)

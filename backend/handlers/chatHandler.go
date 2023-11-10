@@ -14,6 +14,7 @@ import (
 )
 
 var userConnections = make(map[int]*websocket.Conn)
+var onlineUsers []*websocket.Conn
 
 // deals with the websocket side of chat
 func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
@@ -26,6 +27,7 @@ func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 	defer connection.Close()
 
 	for {
+		// Read the contents of the websocket message
 		messageType, payload, err := connection.ReadMessage()
 		if err != nil {
 			utils.HandleError("Problem with the connections in WebsocketHandler.  Probably need to figure out a different way to remove them", err)
@@ -33,43 +35,42 @@ func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Unmarshal the contents of the websocket message
 		chatMsg := payloadUnmarshaller(payload)
 
-		previousChatEntryFound, chatUUID, err := previousChatChecker(chatMsg.Sender, chatMsg.Recipient)
-		if err != nil {
-			utils.HandleError("Error with previousChatChecker in ChatHandler", err)
-		}
-
-		if !previousChatEntryFound {
-			chatUUID = utils.GenerateNewUUID()
-			err = db.AddChatToDatabase(chatUUID, "", chatMsg.Sender, chatMsg.Recipient)
-			if err != nil {
-				utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
-			}
-		}
-
-		// Check if the connection already exists in the chat
+		// Ensures that current connection (for the user) is the most recent one
 		userConnections[chatMsg.Sender] = connection
 
 		if messageType == websocket.TextMessage {
 
-			// Handle the message and broadcast it to other clients if needed
 			if chatMsg.Type == "chat" {
-
+				// Chat Stuff
+				// Check to see if the two users have communicated before
+				// Consider breaking down into one or more functions
+				previousChatEntryFound, chatUUID, err := previousChatChecker(chatMsg.Sender, chatMsg.Recipient)
+				if err != nil {
+					utils.HandleError("Error with previousChatChecker in ChatHandler", err)
+				}
+				if !previousChatEntryFound {
+					chatUUID = utils.GenerateNewUUID()
+					err = db.AddChatToDatabase(chatUUID, "", chatMsg.Sender, chatMsg.Recipient)
+					if err != nil {
+						utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
+					}
+				}
 				err = db.AddChatToDatabase(chatUUID, chatMsg.Body, chatMsg.Sender, chatMsg.Recipient)
-			}
-			if err != nil {
-				utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
+				if err != nil {
+					utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
+				}
+				broadcastToUsers(messageType, chatMsg)
+			} else if chatMsg.Type == "connection_init" {
+				// Connection Initialisation Stuff, including appending the connection to the list
+				onlineUsers = append(onlineUsers, connection)
+				log.Println("[WebsocketChatHandler] length of onlineUsers is:", len(onlineUsers))
+				// broadcastToUsers(messageType, chatMsg)
 			}
 		}
-		if chatMsg.Type == "chat" {
-
-			// Write message back to each client
-			broadcastToUsers(messageType, chatMsg)
-		}
-
 	}
-
 }
 
 var upgrader = websocket.Upgrader{
