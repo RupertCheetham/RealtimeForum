@@ -238,7 +238,9 @@ func GetUsersForChatHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
 
-	userID := r.URL.Query().Get("userId")
+	cookieValue := GetCookie(w, r)
+	userIDFromSession, _ := db.GetSessionByToken(cookieValue)
+	userID := userIDFromSession.UserId
 
 	// This code block is handling the logic for retrieving posts from the database when the HTTP request
 	// method is GET.

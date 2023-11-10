@@ -11,16 +11,12 @@ export default class Chat extends AbstractView {
 	async userList() {
 		const currentUser = localStorage.getItem("id")
 		const userContainer = document.getElementById("userContainer")
-		// userContainer.innerHTML = "";
 		const userBox = document.createElement("div")
 		userBox.id = "userBox"
 
-		const response = await fetch(
-			`https://localhost:8080/api/getusers?userId=${currentUser}`,
-			{
-				credentials: "include",
-			}
-		)
+		const response = await fetch(`https://localhost:8080/api/getusers`, {
+			credentials: "include",
+		})
 
 		// checkSessionTimeout(response)
 

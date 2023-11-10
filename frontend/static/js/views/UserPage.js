@@ -13,15 +13,15 @@ export default class UserPage extends AbstractView {
 		return `
     ${navHTML}
       <div class="contentContainer">
-        <div id="userContainer" class="contentContainer-user">Users</div>
+        <div id="userContainer" class="contentContainer-user"></div>
         <div id="postsContainer" class="contentContainer-post"></div>
-        <div id="chatContainer" class="contentContainer-chat">Chat (click on Username)</div>
+        <div id="chatContainer" class="contentContainer-chat"></div>
       </div>
     `
 	}
 
 	async getUserInfo() {
-		const response = await fetch("https://localhost:8080/api/getposts", {
+		const response = await fetch("https://localhost:8080/api/getuser", {
 			credentials: "include", // Ensure cookies are included in the request
 		})
 
@@ -47,7 +47,7 @@ export default class UserPage extends AbstractView {
 
 			postElement.innerHTML = `
       <ul>
-        <li><b>Username:</b> ${username}</li>
+        <li><b>Username:</b>${post.username}</li>
         <li><b>Img:</b> ${post.img}</li>
         <li><b>Body:</b> ${post.body}</li>
         <li><b>Categories:</b> ${post.categories}</li>
