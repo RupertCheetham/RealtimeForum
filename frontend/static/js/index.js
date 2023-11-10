@@ -46,6 +46,8 @@ const router = async () => {
 		console.log("userId:", userId)
 
 		if (!cookie && !userId) {
+			document.cookie =
+				"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
 			const authView = new Auth()
 			document.querySelector("#container").innerHTML =
 				await authView.renderHTML()
@@ -56,7 +58,7 @@ const router = async () => {
 		if (currentTime > expirationTime || !userId) {
 			localStorage.clear()
 			document.cookie =
-				"expiration=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
+				"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
 			const authView = new Auth()
 			document.querySelector("#container").innerHTML =
 				await authView.renderHTML()
