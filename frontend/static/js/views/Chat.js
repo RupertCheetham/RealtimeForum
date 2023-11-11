@@ -113,7 +113,7 @@ export default class Chat extends AbstractView {
 			await this.displayChatHistory(this.currentUserID, RecipientID)
 
 		}
-		this.connectionInitialiser(RecipientID)
+		this.chatInitialiser(RecipientID)
 		this.webSocketChat(RecipientID)
 	}
 
@@ -204,13 +204,13 @@ export default class Chat extends AbstractView {
 	}
 
 
-	connectionInitialiser(RecipientID) {
+	chatInitialiser(RecipientID) {
 
 		console.log("Priming Chat")
 		this.socket.send(
 			JSON.stringify({
-				type: "connection_init",
-				body: "Connection initiated",
+				type: "chat_init",
+				body: "",
 				sender: this.currentUserID,
 				recipient: RecipientID,
 			})

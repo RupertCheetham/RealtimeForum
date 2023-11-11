@@ -25,11 +25,12 @@ func GetLoginEntry(loginCheck UserEntry) (message map[string]any, err error) {
 		message["message"] = "Incorrect username or password"
 		return message, err
 	} else {
-		message["message"] = "Login successfully"
+		message["message"] = "Login successful"
 		message["id"] = dbLoginCheck.Id
 		message["username"] = dbLoginCheck.Username
 	}
 
-	fmt.Println(message)
+	fmt.Println(message["message"])
+	fmt.Println(message["id"], message["username"])
 	return message, err
 }
