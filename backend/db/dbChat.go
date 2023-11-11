@@ -1,9 +1,34 @@
 package db
 
 import (
+	"database/sql"
 	"realtimeForum/utils"
 	"time"
 )
+
+// Checks to see if chat between two users has taken place before, if so then returns chat UUID
+func PreviousChatChecker(firstID int, secondID int) (bool, string, error) {
+	query := `
+	SELECT ChatUUID
+	FROM CHAT
+	WHERE (SenderID = ? AND RecipientID = ?) OR (SenderID = ? AND RecipientID = ?)
+	LIMIT 1
+`
+
+	// Execute the query and try to fetch the ChatUUID
+	var chatUUID string
+	err := Database.QueryRow(query, firstID, secondID, secondID, firstID).Scan(&chatUUID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Entry doesn't exist
+			return false, "", nil
+		}
+		return false, "", err
+	}
+
+	// Entry exists, return true and the ChatUUID
+	return true, chatUUID, nil
+}
 
 // inserts new chat message to db
 func AddChatToDatabase(UUID string, Message string, Sender int, Recipient int) error {

@@ -92,7 +92,9 @@ export default class Chat extends AbstractView {
 		this.socket.addEventListener("open", (event) => {
 			event.preventDefault();
 			console.log("WebSocket connection is open.");
+			this.onlineStatusHandler()
 		});
+		
 	}
 
 	async renderHTML(RecipientID) {
@@ -104,7 +106,7 @@ export default class Chat extends AbstractView {
 			const RecipientName = await usernameFromUserID(RecipientID)
 			const chatTextBox = this.getChatTextBoxHTML()
 			chatContainer.innerHTML = `
-      <div class = "allChat"
+      <div class = "allChat">
       <h1 id="recipient" class = "chat-font"> ${RecipientName}</h1>
 			<div id="chatHistory"></div>
 			${chatTextBox}
@@ -190,10 +192,7 @@ export default class Chat extends AbstractView {
 
 		//deals with sending new messages to the backend when sendButton is clicked or enter is pressed
 		document.getElementById("sendButton").addEventListener("click", () => {
-			console.log("her3")
-			const messageInput = document.getElementById("messageInput");
-			const message = messageInput.value.trim();
-			this.sendMessage(RecipientID); // Call the sendMessage method of the Chat class
+			this.sendMessage(RecipientID);
 		});
 		document.getElementById("messageInput").addEventListener("keydown", function (event) {
 			if (event.key === "Enter") {
@@ -203,6 +202,16 @@ export default class Chat extends AbstractView {
 
 	}
 
+	async onlineStatusHandler(){
+		console.log("Notifying Server that user is online")
+		this.socket.send(
+			JSON.stringify({
+				type: "user_online",
+				body: "",
+				sender: this.currentUserID,
+			})
+		)
+	}
 
 	chatInitialiser(RecipientID) {
 
@@ -215,7 +224,6 @@ export default class Chat extends AbstractView {
 				recipient: RecipientID,
 			})
 		)
-		messageInput.value = ""
 	}
 
 

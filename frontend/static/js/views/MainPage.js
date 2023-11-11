@@ -42,6 +42,7 @@ export default class Mainpage extends AbstractView {
 
 	async runStartWebsocket(){
 		await chat.startWebsocket()
+		await chat.onlineStatusHandler()
 	}
 
 	async displayUserContainer() {
