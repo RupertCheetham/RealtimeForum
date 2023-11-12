@@ -9,15 +9,15 @@ export default class UserPage extends AbstractView {
 		return `
     ${navHTML}
       <div class="contentContainer">
-        <div id="userContainer" class="contentContainer-user"></div>
+        <div id="userContainer" class="contentContainer-user">Liked Posts</div>
         <div id="postsContainer" class="contentContainer-post"></div>
         <div id="chatContainer" class="contentContainer-chat"></div>
       </div>
     `
 	}
 
-	async getUserInfo() {
-		const response = await fetch("https://localhost:8080/api/getuser", {
+	async getAllPostsByUser() {
+		const response = await fetch("https://localhost:8080/api/getuserposts", {
 			credentials: "include", // Ensure cookies are included in the request
 		})
 
@@ -36,9 +36,4 @@ export default class UserPage extends AbstractView {
 	async Logout() {
 		nav.logout()
 	}
-	/**
-  async renderHTML() {
-    // gets slice of posts from backen
-  }
-   */
 }

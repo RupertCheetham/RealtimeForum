@@ -28,7 +28,7 @@ func main() {
 	http.HandleFunc("/chat", handlers.ChatHandler)
 	http.HandleFunc("/getChatHistory", handlers.CookieCheck(handlers.GetChatHistoryHandler, handlers.RequestTimeoutFailedMessage))
 	http.HandleFunc("/api/getusers", handlers.CookieCheck(handlers.GetUsersForChatHandler, handlers.RequestTimeoutFailedMessage))
-	http.HandleFunc("/api/getuser", handlers.CookieCheck(handlers.GetUserInfoForChatHandler, handlers.RequestTimeoutFailedMessage))
+	http.HandleFunc("/api/getuserposts", handlers.CookieCheck(handlers.GetUserInfoForChatHandler, handlers.RequestTimeoutFailedMessage))
 
 	// Specify the paths to your TLS certificate and private key files
 	certFile := "server.crt"

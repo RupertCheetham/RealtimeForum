@@ -92,7 +92,7 @@ const router = async () => {
 			return
 		}
 		document.querySelector("#container").innerHTML = await userView.renderHTML()
-		userView.getUserInfo()
+		userView.getAllPostsByUser()
 		userView.Logout()
 	}
 }
