@@ -35,6 +35,8 @@ export default class UserPage extends AbstractView {
 		const postsContainer = document.getElementById("postsContainer")
 		postsContainer.innerHTML = ""
 
+		console.log("posts:", posts)
+
 		for (const post of posts) {
 			//makes the container for the individual posts and all its contents
 			let postContainer = document.createElement("div")
@@ -44,9 +46,20 @@ export default class UserPage extends AbstractView {
 			postElement.id = "Post" + post.id
 			postElement.classList.add("post")
 			postElement.setAttribute("reactionID", post.reactionID)
+			let dateObj = new Date(post.creationDate)
+			let month = dateObj.getUTCMonth() + 1
+			let day = dateObj.getUTCDate()
+			let year = dateObj.getUTCFullYear()
+			// let time = dateObj.getTime()
+			let hour = dateObj.getUTCHours()
+			let mins = dateObj.getUTCMinutes()
+			let secs = dateObj.getUTCSeconds()
+
+			let newdate = `${day}/${month}/${year} ${hour}:${mins}:${secs} `
 
 			postElement.innerHTML = `
       <ul>
+			<li><b>Date: </b>${newdate}</li>
         <li><b>Username:</b>${post.username}</li>
         <li><b>Img:</b> ${post.img}</li>
         <li><b>Body:</b> ${post.body}</li>

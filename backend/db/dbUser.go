@@ -106,21 +106,30 @@ func GetAllUserPostsFromDatabase(userID int) ([]PostEntry, error) {
 	COALESCE(pr.Likes, 0) AS Likes, COALESCE(pr.Dislikes, 0) AS Dislikes
 FROM POSTS p
 LEFT JOIN POSTREACTIONS pr ON p.ReactionID = pr.Id
-LEFT JOIN USERS u ON p.UserId = ?
+LEFT JOIN USERS u ON p.UserId = u.ID
+WHERE p.UserId = ?
 ORDER BY p.Id DESC;
 `
-	var posts []PostEntry
-	var categoriesString string
-	var post PostEntry
-	err := Database.QueryRow(query, userID).Scan(&post.Id, &post.Username, &post.Img, &post.Body, &categoriesString, &post.CreationDate, &post.ReactionID, &post.Likes, &post.Dislikes)
+	rows, err := Database.Query(query, userID)
 	if err != nil {
-		utils.HandleError("Error scanning row from database:", err)
-		log.Println("Error scanning row from database:", err)
+		utils.HandleError("Error querying posts with likes and dislikes from database:", err)
+		log.Println("Error querying posts with likes and dislikes from database:", err)
 		return nil, err
 	}
+	defer rows.Close()
 
-	post.Categories = strings.Split(categoriesString, ",")
-	posts = append(posts, post)
+	var posts []PostEntry
+	for rows.Next() {
+		var post PostEntry
+		var categoriesString string
+		err := rows.Scan(&post.Id, &post.Username, &post.Img, &post.Body, &categoriesString, &post.CreationDate, &post.ReactionID, &post.Likes, &post.Dislikes)
+		if err != nil {
+			utils.HandleError("Error scanning row from database:", err)
+			return nil, err
+		}
+		post.Categories = strings.Split(categoriesString, ",")
+		posts = append(posts, post)
+	}
 
 	return posts, nil
 }

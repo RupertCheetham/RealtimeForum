@@ -43,6 +43,7 @@ const router = async () => {
 		let currentTime = new Date()
 
 		if (!cookie && !userId) {
+			localStorage.clear()
 			document.cookie =
 				"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
 			document.querySelector("#container").innerHTML =
@@ -65,8 +66,12 @@ const router = async () => {
 
 	if (match.route.view === MainPage) {
 		let userInfo = localStorage.getItem("id")
+		let cookie = getCookie("browserCookie")
 
-		if (!userInfo) {
+		if (!cookie && !userInfo) {
+			localStorage.clear()
+			document.cookie =
+				"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
 			window.location.href = "/"
 			return
 		}
