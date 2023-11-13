@@ -116,18 +116,7 @@ export default class Chat extends AbstractView {
 
 		chatContainer.appendChild(allChat);
 
-		// if (this.RecipientID !== undefined) {
-		// 	console.log("RecipientID", this.RecipientID);
-		// 	await this.displayChatHistory(this.RecipientID);
-		// }
 	}
-
-	// // Function to extract a query parameter from the URL
-	// async getRecipientIDFromURL() {
-	// 	const queryString = window.location.search
-	// 	const urlParams = new URLSearchParams(queryString)
-	// 	return Number(urlParams.get("userId"))
-	// }
 
 	async webSocketChat() {
 
@@ -152,30 +141,34 @@ export default class Chat extends AbstractView {
 		const handleMessage = async (event) => {
 			console.log("Received a WebSocket message:", event.data);
 			let message = JSON.parse(event.data);
-
+console.log("message.recipient", message.recipient)
+console.log("this.RecipientID", this.RecipientID)
 			// rudimentary notification system
 			// const RecipientName = await usernameFromUserID(message.recipient);
 			// alert("Message: " + message.body +  " from " + RecipientName)
+			if (message.recipient == this.RecipientID || message.sender == this.RecipientID) {
+				// Handle incoming messages
+				let chatElement = document.createElement("div")
+				const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
+				chatElement.classList.add(senderClassName)
+				const time = this.formatTimestamp(message.time)
+				chatElement.innerHTML = `
+		<div id="message-content">
+			<div id="body">${message.body}</div>
+			<div id="time"><i>${time}</i></div>
+		</div>
+	`
 
-			// Handle incoming messages
-			let chatElement = document.createElement("div")
-			const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
-			chatElement.classList.add(senderClassName)
-			const time = this.formatTimestamp(message.time)
-			chatElement.innerHTML = `
-				<div id="message-content">
-					<div id="body">${message.body}</div>
-					<div id="time"><i>${time}</i></div>
-				</div>
-			`
+				// chatHistory displays from the bottom up, this adds new messages to the bottom
+				chatHistory.insertBefore(chatElement, chatHistory.firstChild)
 
-			// chatHistory displays from the bottom up, this adds new messages to the bottom
-			chatHistory.insertBefore(chatElement, chatHistory.firstChild)
+				// and then scrolls to the bottom of chatBox
+				chatHistory.scrollTop = chatHistory.scrollHeight
 
-			// and then scrolls to the bottom of chatBox
-			chatHistory.scrollTop = chatHistory.scrollHeight
+			}
 
-			const divToMove = document.getElementById(`UserID${message, this.RecipientID}`)
+
+			const divToMove = document.getElementById(`UserID${message, message.recipient}`)
 			const recentChat = document.getElementById("recentChat")
 			const alphabeticalChat = document.getElementById("alphabeticalChat")
 
@@ -190,9 +183,17 @@ export default class Chat extends AbstractView {
 					}
 				}
 			}
-
+			console.log("recentChat", recentChat)
 			if (recentChat != null) {
-				recentChat.insertBefore(divToMove, recentChat.firstChild)
+				console.log(1)
+				const divElements = recentChat.querySelectorAll("div");
+				const numberOfDivs = divElements.length;
+				console.log("Number of divs inside parentDiv: " + numberOfDivs);
+				if (numberOfDivs > 0)
+					console.log(2)
+				console.log("Number of divs inside parentDiv: " + numberOfDivs);
+				console.log("recentChat.firstChild", recentChat.firstChild)
+				recentChat.insertBefore(divToMove, recentChat.firstChild);
 			} else {
 				recentChat.appendChild(divToMove)
 			}
@@ -360,7 +361,7 @@ export default class Chat extends AbstractView {
 				<button id="sendButton">Send</button>
 		`;
 	}
-	
+
 
 	previousTime = null
 	previousDate = null
