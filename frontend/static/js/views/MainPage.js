@@ -26,7 +26,7 @@ export default class Mainpage extends AbstractView {
       <div class="contentContainer">
         <div id="userContainer" class="contentContainer-user"><u>Users</u></div>
         <div id="postsContainer" class="contentContainer-post"></div>
-        <div id="chatContainer" class="contentContainer-chat">Chat (click on Username)</div>
+        <div id="chatContainer" class="contentContainer-chat"></div>
       </div>
     `
 	}
@@ -42,7 +42,7 @@ export default class Mainpage extends AbstractView {
 
 	async runStartWebsocket(){
 		await chat.startWebsocket()
-		await chat.onlineStatusHandler()
+		// await chat.onlineStatusHandler()
 	}
 
 	async displayUserContainer() {

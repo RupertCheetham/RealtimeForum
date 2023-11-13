@@ -26,7 +26,7 @@ func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 		messageType, payload, err := connection.ReadMessage()
 		if err != nil {
 			utils.HandleError("Problem with the connections in WebsocketHandler.", err)
-			// removeConnection(chatUUID, connection)
+			removeConnection(userConnections, connection)
 			return
 		}
 
@@ -36,46 +36,46 @@ func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 		// Ensures that current connection (for the user) is the most recent one
 		userConnections[chatMsg.Sender] = connection
 		// Consider breaking down into functions
-		if messageType == websocket.TextMessage {
 
-			if chatMsg.Type == "chat" {
-				log.Println("chat")
-				// finds users chatroom and then adds message to db
-				_, chatUUID, err := db.PreviousChatChecker(chatMsg.Sender, chatMsg.Recipient)
-				if err != nil {
-					utils.HandleError("Error with previousChatChecker 1 in WebsocketChatHandler", err)
-				}
-				err = db.AddChatToDatabase(chatUUID, chatMsg.Body, chatMsg.Sender, chatMsg.Recipient)
+		if chatMsg.Type == "chat" {
+			// finds users chatroom and then adds message to db
+			log.Println("[WebsocketChatHandler] chat")
+			_, chatUUID, err := db.PreviousChatChecker(chatMsg.Sender, chatMsg.Recipient)
+			if err != nil {
+				utils.HandleError("Error with previousChatChecker 1 in WebsocketChatHandler", err)
+			}
+			err = db.AddChatToDatabase(chatUUID, chatMsg.Body, chatMsg.Sender, chatMsg.Recipient)
+			if err != nil {
+				utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
+			}
+			broadcastToUsers(messageType, chatMsg)
+		} else if chatMsg.Type == "[WebsocketChatHandler] chat_init" {
+			// checks to see if users have chatted previously, if not then creates a room in the db
+			log.Println("chat_init")
+			previousChatEntryFound, _, err := db.PreviousChatChecker(chatMsg.Sender, chatMsg.Recipient)
+			if err != nil {
+				utils.HandleError("Error with previousChatChecker 2 in WebsocketChatHandler", err)
+			}
+			if !previousChatEntryFound {
+				chatUUID := utils.GenerateNewUUID()
+				log.Println("Initialising chat room between User", chatMsg.Sender, "and User", chatMsg.Recipient)
+				err = db.AddChatToDatabase(chatUUID, "", chatMsg.Sender, chatMsg.Recipient)
 				if err != nil {
 					utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
 				}
-				broadcastToUsers(messageType, chatMsg)
-			} else if chatMsg.Type == "chat_init" {
-				log.Println("chat_init")
-				// checks to see if users have chatted previously, if not then creates a room in the db
-				previousChatEntryFound, _, err := db.PreviousChatChecker(chatMsg.Sender, chatMsg.Recipient)
-				if err != nil {
-					utils.HandleError("Error with previousChatChecker 2 in WebsocketChatHandler", err)
-				}
-				if !previousChatEntryFound {
-					chatUUID := utils.GenerateNewUUID()
-					log.Println("Initialising chat room between User", chatMsg.Sender, "and User", chatMsg.Recipient)
-					err = db.AddChatToDatabase(chatUUID, "", chatMsg.Sender, chatMsg.Recipient)
-					if err != nil {
-						utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
-					}
-				}
-			} else if chatMsg.Type == "user_online" {
-				// If user's connection isn't in the list of userConnections then they must be freshly online! Right?
-				onlineUsers[chatMsg.Sender] = connection
-				// broadcastToUsers(messageType, chatMsg)
-				log.Println("[WebsocketChatHandler]  Added User ", chatMsg.Sender, " to onlineUsers")
-				log.Println("[WebsocketChatHandler] length of onlineUsers is:", len(onlineUsers))
-			} else if chatMsg.Type == "connection_close" {
-				onlineUsers = removeConnection(onlineUsers, connection)
-				log.Println("[WebsocketChatHandler] -TESTING- Removed User ", chatMsg.Sender, " to onlineUsers")
-				log.Println("[WebsocketChatHandler] length of onlineUsers is:", len(onlineUsers))
 			}
+		} else if chatMsg.Type == "user_online" {
+			// If user's connection isn't in the list of userConnections then they must be freshly online! Right?
+			log.Println("[WebsocketChatHandler] user_online")
+			onlineUsers[chatMsg.Sender] = connection
+			// broadcastToUsers(messageType, chatMsg)
+			log.Println("[WebsocketChatHandler]  Added User ", chatMsg.Sender, " to onlineUsers")
+			log.Println("[WebsocketChatHandler] length of onlineUsers is:", len(onlineUsers))
+		} else if chatMsg.Type == "connection_close" {
+			log.Println("[WebsocketChatHandler] connection_close")
+			onlineUsers = removeConnection(onlineUsers, connection)
+			log.Println("[WebsocketChatHandler] -TESTING- Removed User ", chatMsg.Sender, " to onlineUsers")
+			log.Println("[WebsocketChatHandler] length of onlineUsers is:", len(onlineUsers))
 		}
 	}
 }
@@ -98,17 +98,6 @@ var upgrader = websocket.Upgrader{
 		return false
 	},
 }
-
-// func connectionExists(SenderID int, conn *websocket.Conn) bool {
-// 	// Check if the connection exists for the given SenderID
-// 	existingConn, ok := userConnections[SenderID]
-// 	if !ok {
-// 		return false
-// 	}
-
-// 	// Check if the existing connection matches the provided conn
-// 	return existingConn == conn
-// }
 
 func broadcastToUsers(messageType int, message db.ChatMessage) {
 

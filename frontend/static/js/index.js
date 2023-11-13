@@ -69,7 +69,7 @@ const router = async () => {
 		mainView.runStartWebsocket()
 		mainView.displayUserContainer()
 		mainView.displayPostContainer()
-		// mainView.displayChatContainer()
+		mainView.displayChatContainer()
 		mainView.Logout()
 		mainView.reactions()
 	}
