@@ -110,11 +110,11 @@ func broadcastToUsers(messageType int, message db.ChatMessage) {
 	// Obtains the connections for each user involved in the chat
 	// Should be simple enough to turn it  into an array of connections later, to enable group chats
 	// Currently needs to only send messages if the user is online
-	senderConnection := userConnections[message.Sender]
-	err = senderConnection.WriteMessage(messageType, payload)
-	if err != nil {
-		utils.HandleError("Error sending message to a client in broadcastToChat:", err)
-	}
+	// senderConnection := userConnections[message.Sender]
+	// err = senderConnection.WriteMessage(messageType, payload)
+	// if err != nil {
+	// 	utils.HandleError("Error sending message to a client in broadcastToChat:", err)
+	// }
 
 	recipientConnection := userConnections[message.Recipient]
 	// if recipientConnection exists (if they're online) then send a message to them too

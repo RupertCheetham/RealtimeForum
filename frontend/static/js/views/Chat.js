@@ -126,7 +126,7 @@ export default class Chat extends AbstractView {
 		});
 		document.getElementById("messageInput").addEventListener("keydown", function (event) {
 			if (event.key === "Enter") {
-				this.sendMessage()
+				this.sendMessage();
 			}
 		})
 
@@ -141,8 +141,8 @@ export default class Chat extends AbstractView {
 		const handleMessage = async (event) => {
 			console.log("Received a WebSocket message:", event.data);
 			let message = JSON.parse(event.data);
-console.log("message.recipient", message.recipient)
-console.log("this.RecipientID", this.RecipientID)
+			console.log("message.recipient", message.recipient)
+			console.log("this.RecipientID", this.RecipientID)
 			// rudimentary notification system
 			// const RecipientName = await usernameFromUserID(message.recipient);
 			// alert("Message: " + message.body +  " from " + RecipientName)
@@ -168,10 +168,11 @@ console.log("this.RecipientID", this.RecipientID)
 			}
 
 
-			const divToMove = document.getElementById(`UserID${message, message.recipient}`)
+			const divToMove = document.getElementById(`UserID${message.sender}`)
+			console.log("UserID${message.recipient}", `UserID${message.sender}`)
+			console.log("divToMove", divToMove)
 			const recentChat = document.getElementById("recentChat")
 			const alphabeticalChat = document.getElementById("alphabeticalChat")
-
 			if (divToMove) {
 				if (recentChat != null) {
 					if (recentChat.contains(divToMove)) {
@@ -183,16 +184,13 @@ console.log("this.RecipientID", this.RecipientID)
 					}
 				}
 			}
+			const divElements = recentChat.querySelectorAll("div");
+			const numberOfDivs = divElements.length;
+			console.log("Number of divs inside parentDiv: " + numberOfDivs)
+			console.log("recentChat.firstChild", recentChat.firstChild)
 			console.log("recentChat", recentChat)
-			if (recentChat != null) {
-				console.log(1)
-				const divElements = recentChat.querySelectorAll("div");
-				const numberOfDivs = divElements.length;
-				console.log("Number of divs inside parentDiv: " + numberOfDivs);
-				if (numberOfDivs > 0)
-					console.log(2)
-				console.log("Number of divs inside parentDiv: " + numberOfDivs);
-				console.log("recentChat.firstChild", recentChat.firstChild)
+			if (recentChat != null && (numberOfDivs > 0)) {
+
 				recentChat.insertBefore(divToMove, recentChat.firstChild);
 			} else {
 				recentChat.appendChild(divToMove)
@@ -238,15 +236,27 @@ console.log("this.RecipientID", this.RecipientID)
 
 		if (Message !== "" && /\S/.test(Message)) {
 			console.log("Sending message:", Message)
-			this.socket.send(
-				JSON.stringify({
-					type: "chat",
-					body: Message,
-					sender: this.currentUserID,
-					recipient: this.RecipientID,
-				})
-			)
+			// Create a Date object to get the current date and time
+			const now = new Date();
+
+			// Format the date and time as a string
+			const formattedTime = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()} ${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`;
+
+			// Create a message object with the formatted time
+			const newMessage = {
+				type: "chat",
+				body: Message,
+				sender: this.currentUserID,
+				recipient: this.RecipientID,
+				time: formattedTime,
+			};
+
+
+
+			this.socket.send(JSON.stringify(newMessage));
+
 			messageInput.value = ""
+			this.appendMessageToChatHistory(newMessage)
 		}
 	}
 	// displays chat history (if any) between two users
@@ -367,6 +377,7 @@ console.log("this.RecipientID", this.RecipientID)
 	previousDate = null
 
 	formatTimestamp(timestamp) {
+		console.log("timestamp", timestamp)
 		const splitTimestamp = timestamp.split(" ") // Split the timestamp into time and date parts
 
 		const timePart = splitTimestamp[0] // "19:12:30"
