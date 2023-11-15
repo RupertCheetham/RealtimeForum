@@ -2,18 +2,16 @@ import AbstractView from "./AbstractView.js"
 import {
 	attachCommentForm,
 	attachCommentsToPost,
-	createCloseCommentButton
+	createCloseCommentButton,
 } from "./Comments.js"
 
 export default class Posts extends AbstractView {
 	async renderHTML() {
-
-		// gets slice of posts from backend
 		const response = await fetch("https://localhost:8080/api/getposts", {
-			// checkSessionTimeout(response)
-			credentials: "include", // Ensure cookies are included in the request
+			credentials: "include",
 		})
 		if (response.status == 408) {
+			localStorage.clear()
 			window.location.href = "/"
 		}
 

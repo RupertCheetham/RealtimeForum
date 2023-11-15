@@ -12,7 +12,7 @@ export default class Nav extends AbstractView {
 		return `
 			<nav id="nav" class="nav">
 				<a href="/" class="nav-link" data-link id="logout">Logout</a>
-				<span id="cookie-value">${username}</span>
+				<a href="/user" id="cookie-value">${username}</a>
 			</nav>
 		  `
 	}

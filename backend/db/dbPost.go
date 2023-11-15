@@ -28,7 +28,6 @@ LEFT JOIN USERS u ON p.UserId = u.Id
 ORDER BY p.Id ASC;
 
 `
-
 	rows, err := Database.Query(query)
 	if err != nil {
 		utils.HandleError("Error querying posts with likes and dislikes from database:", err)

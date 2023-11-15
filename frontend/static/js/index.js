@@ -1,17 +1,18 @@
+import { getCookie } from "./utils/utils.js"
 import Auth from "./views/Auth.js"
 import MainPage from "./views/MainPage.js"
+import UserPage from "./views/UserPage.js"
 
 const navigateTo = (url) => {
 	history.pushState(null, null, url)
 	router()
 }
 
-const timeout = 5
-
 const router = async () => {
 	const routes = [
 		{ path: "/", view: Auth },
 		{ path: "/main", view: MainPage },
+		{ path: "/user", view: UserPage },
 	]
 
 	// test each route for potential match
@@ -31,36 +32,46 @@ const router = async () => {
 		}
 	}
 
-	// const view = new match.route.view()
-	// document.querySelector("#container").innerHTML = await view.renderHTML()
-
+	const authView = new Auth()
 	const mainView = new MainPage()
+	const userView = new UserPage()
 
 	if (match.route.view === Auth) {
-		let userInfo = localStorage.getItem("id")
-
+		let userId = localStorage.getItem("id")
+		let cookie = getCookie("browserCookie")
+		let expirationTime = new Date(cookie)
 		let currentTime = new Date()
-		let expiration = new Date(currentTime)
-		expiration.setMinutes(currentTime.getMinutes() + timeout)
 
-		if (userInfo) {
-			window.location.pathname = "/main"
-		} else {
-			if (currentTime > expiration) {
-				localStorage.clear()
-			}
-			const authView = new Auth()
+		if (!cookie && !userId) {
+			localStorage.clear()
+			document.cookie =
+				"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
 			document.querySelector("#container").innerHTML =
 				await authView.renderHTML()
 			authView.submitForm()
+			return
+		}
+
+		if (currentTime > expirationTime || !userId) {
+			localStorage.clear()
+			document.cookie =
+				"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
+			document.querySelector("#container").innerHTML =
+				await authView.renderHTML()
+			authView.submitForm()
+		} else {
+			window.location.pathname = "/main"
 		}
 	}
 
-	// Call the submitForm and displayPosts method here
 	if (match.route.view === MainPage) {
 		let userInfo = localStorage.getItem("id")
+		let cookie = getCookie("browserCookie")
 
-		if (!userInfo) {
+		if (!cookie && !userInfo) {
+			localStorage.clear()
+			document.cookie =
+				"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
 			window.location.href = "/"
 			return
 		}
@@ -72,6 +83,18 @@ const router = async () => {
 		mainView.displayChatContainer()
 		mainView.Logout()
 		mainView.reactions()
+	}
+
+	if (match.route.view === UserPage) {
+		let userInfo = localStorage.getItem("id")
+
+		if (!userInfo) {
+			window.location.href = "/"
+			return
+		}
+		document.querySelector("#container").innerHTML = await userView.renderHTML()
+		userView.getAllPostsByUser()
+		userView.Logout()
 	}
 }
 

@@ -93,7 +93,7 @@ func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, err
 	return chatStruct, nil
 }
 
-func GetRecentChatUsersFromDatabase(userID string) (*ChatInfo, error) {
+func GetRecentChatUsersFromDatabase(userID int) (*ChatInfo, error) {
 
 	// finds userIDs that the current user has chatted with, returns them with the newest being first
 	query := `SELECT

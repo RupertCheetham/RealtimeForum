@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 	"realtimeForum/utils"
 	"time"
 )
@@ -25,7 +24,6 @@ func CreateSession(userId int, expirationTime time.Time) (session Session, err e
 
 // GetSessionByToken retrieves a session by its session token from the database.
 func GetSessionByToken(sessionToken string) (*Session, error) {
-	fmt.Println("sessionToken is:", sessionToken)
 
 	var session Session
 

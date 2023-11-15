@@ -2,8 +2,9 @@ package db
 
 import (
 	"errors"
+	"log"
 	"realtimeForum/utils"
-	"strconv"
+	"strings"
 )
 
 // Adds User to database
@@ -16,7 +17,7 @@ func AddUserToDatabase(username string, age int, gender string, firstName string
 }
 
 // returns a list of users from the DB, excluding the current user
-func GetUsersFromDatabase(userIDString string) ([]UserEntry, error) {
+func GetUsersFromDatabase(userID int) ([]UserEntry, error) {
 	rows, err := Database.Query("SELECT Id, Username FROM USERS ORDER BY Username COLLATE NOCASE ASC")
 	if err != nil {
 		utils.HandleError("Error querying USERS from database in GetUsersFromDatabase:", err)
@@ -25,11 +26,6 @@ func GetUsersFromDatabase(userIDString string) ([]UserEntry, error) {
 	defer rows.Close()
 
 	var users []UserEntry
-	userID, err := strconv.Atoi(userIDString)
-	if err != nil {
-		utils.HandleError("Error AtoIing userID in GetUsersFromDatabase:", err)
-		return nil, err
-	}
 	for rows.Next() {
 		var entry UserEntry
 		err := rows.Scan(&entry.Id, &entry.Username)
@@ -133,4 +129,71 @@ func DeleteAllUsersFromDatabase() error {
 		// fmt.Println("All users deleted")
 	}
 	return err
+}
+
+// retrieves all posts from database and returns them
+func GetAllUserPostsFromDatabase(userID int) ([]PostEntry, error) {
+	query := `
+	SELECT p.Id, u.Username, p.Img, p.Body, p.Categories, p.CreationDate, p.ReactionID,
+	COALESCE(pr.Likes, 0) AS Likes, COALESCE(pr.Dislikes, 0) AS Dislikes
+FROM POSTS p
+LEFT JOIN POSTREACTIONS pr ON p.ReactionID = pr.Id
+LEFT JOIN USERS u ON p.UserId = u.ID
+WHERE p.UserId = ?
+ORDER BY p.Id DESC;
+`
+	rows, err := Database.Query(query, userID)
+	if err != nil {
+		utils.HandleError("Error querying posts with likes and dislikes from database:", err)
+		log.Println("Error querying posts with likes and dislikes from database:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []PostEntry
+	for rows.Next() {
+		var post PostEntry
+		var categoriesString string
+		err := rows.Scan(&post.Id, &post.Username, &post.Img, &post.Body, &categoriesString, &post.CreationDate, &post.ReactionID, &post.Likes, &post.Dislikes)
+		if err != nil {
+			utils.HandleError("Error scanning row from database:", err)
+			return nil, err
+		}
+		post.Categories = strings.Split(categoriesString, ",")
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}
+
+// combines posts and comments into one submission
+func GetAllUserPostsAndCommentsFromDatabase(userID int) ([]PostEntry, error) {
+
+	posts, err := GetAllUserPostsFromDatabase(userID)
+	if err != nil {
+		utils.HandleError("Error getting posts from database in GetAllPostsAndCommentsFromDatabase:", err)
+		return nil, err
+	}
+
+	comments, err := GetAllCommentsFromDatabase()
+	if err != nil {
+		utils.HandleError("Error getting comments from database in GetAllPostsAndCommentsFromDatabase:", err)
+		return nil, err
+	}
+
+	// Create a map to group comments by their parent post ID
+	commentMap := make(map[int][]CommentEntry)
+	for _, comment := range comments {
+		commentMap[comment.ParentPostID] = append(commentMap[comment.ParentPostID], comment)
+	}
+
+	// Combine posts and comments
+	completePosts := make([]PostEntry, 0, len(posts))
+	for _, post := range posts {
+		post.Comments = commentMap[post.Id]
+		completePosts = append(completePosts, post)
+	}
+
+	return completePosts, nil
+
 }
