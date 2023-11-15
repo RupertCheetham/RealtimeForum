@@ -10,7 +10,7 @@ export default class UserPage extends AbstractView {
 		return `
     ${navHTML}
       <div class="contentContainer">
-        <div id="likedContainer" class="contentContainer-user">Liked Posts</div>
+        <div id="likedContainer" class="contentContainer-user"></div>
         <div id="postsContainer" class="contentContainer-post"></div>
         <div id="chatContainer" class="contentContainer-chat"></div>
       </div>
@@ -21,17 +21,24 @@ export default class UserPage extends AbstractView {
 		const response = await fetch("https://localhost:8080/api/getuserposts", {
 			credentials: "include", // Ensure cookies are included in the request
 		})
-
 		if (response.status == 408) {
 			localStorage.clear()
 			window.location.href = "/"
 		}
-
 		const posts = await response.json()
+
 		const postsContainer = document.getElementById("postsContainer")
-		postsContainer.innerHTML = ""
-		for (const post of posts) {
-			postClass.processPost(postsContainer, post)
+		const heading = document.createElement("h1");
+		heading.textContent = "Posts By User";
+
+		if (posts) {
+			for (const post of posts) {
+				postClass.processPost(postsContainer, post)
+			}
+
+			postsContainer.insertBefore(heading, postsContainer.firstChild);
+		} else {
+			postsContainer.appendChild(heading);
 		}
 	}
 
@@ -39,17 +46,25 @@ export default class UserPage extends AbstractView {
 		const response = await fetch("https://localhost:8080/api/getuserposts", {
 			credentials: "include", // Ensure cookies are included in the request
 		})
-
 		if (response.status == 408) {
 			localStorage.clear()
 			window.location.href = "/"
 		}
-
 		const posts = await response.json()
-		const postsContainer = document.getElementById("likedContainer")
-		postsContainer.innerHTML = ""
 
-		renderPosts(posts, postsContainer)
+		const likedContainer = document.getElementById("likedContainer")
+		const heading = document.createElement("h1");
+		heading.textContent = "Liked Posts By User";
+
+		if (posts) {
+			for (const post of posts) {
+				postClass.processPost(likedContainer, post)
+			}
+
+			likedContainer.insertBefore(heading, likedContainer.firstChild);
+		} else {
+			likedContainer.append(heading)
+		}
 	}
 
 	async Logout() {

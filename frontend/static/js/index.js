@@ -94,6 +94,7 @@ const router = async () => {
 		}
 		document.querySelector("#container").innerHTML = await userView.renderHTML()
 		userView.getAllPostsByUser()
+		userView.getLikedPostsByUser()
 		userView.Logout()
 	}
 }

@@ -7,7 +7,7 @@ import (
 	"realtimeForum/utils"
 )
 
-func GetUserInfoForChatHandler(w http.ResponseWriter, r *http.Request) {
+func GetPostsForSpecificUser(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
 
@@ -26,10 +26,6 @@ func GetUserInfoForChatHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if len(posts) > 0 {
-			json.NewEncoder(w).Encode(posts)
-		} else {
-			w.Write([]byte("No posts available"))
-		}
+		json.NewEncoder(w).Encode(posts)
 	}
 }
