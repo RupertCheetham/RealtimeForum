@@ -37,13 +37,15 @@
     color: #ffffff;
 }
 
-#recipientHeader {
-    color: lightblue;
-}
+
 
 .allChat {
     background-color: black;
+}
 
+#recipientHeader {
+    color: lightblue;
+    font-size: 25px;
 }
 
 #chatHistory {

@@ -20,10 +20,10 @@ export default class PostSubmitForm extends AbstractView {
 
         <b>Categories</b>
         <ul>
-		<label for="Dogs"><input type="checkbox" id="Dogs" name="Category" class="Category" value="Dogs"> Dogs</label>
-		<label for="Sausages"><input type="checkbox" id="Sausages" name="Category" class="Category" value="Sausages"> Sausages</label>
-		<label for="Cats"><input type="checkbox" id="Cats" name="Category" class="Category" value="Cats"> Cats</label>
-		<label for="Meows"><input type="checkbox" id="Meows" name="Category" class="Category" value="Meows"> Meows</label>
+		<label for="GoLang"><input type="checkbox" id="GoLang" name="Category" class="Category" value="GoLang"> GoLang</label>
+		<label for="JavaScript"><input type="checkbox" id="JavaScript" name="Category" class="Category" value="JavaScript"> JavaScript</label>
+		<label for="HTML"><input type="checkbox" id="HTML" name="Category" class="Category" value="HTML"> HTML</label>
+		<label for="CSS"><input type="checkbox" id="CSS" name="Category" class="Category" value="CSS"> CSS</label>
        </ul>
         <div class="post-form-input-field">
           <label for="image"><b>Image</b></label>

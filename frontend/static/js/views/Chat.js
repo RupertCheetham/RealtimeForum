@@ -14,101 +14,79 @@ export default class Chat extends AbstractView {
 		this.previousDate = null
 	}
 
+	async startWebsocket() {
+		this.socket = new WebSocket(`wss://localhost:8080/api/websocket`);
+		this.socket.addEventListener("open", (event) => {
+			event.preventDefault();
+			console.log("WebSocket connection is open.");
+			this.onlineStatusHandler()
+			this.processIncomingWebsocketMessage()
+		});
+
+	}
+
 	// List of users to click on to initialise chat
 	async userList() {
-		const userContainer = document.getElementById("userContainer")
-		const userBox = document.createElement("div")
-		userBox.id = "userBox"
-
 		const response = await fetch(
 			`https://localhost:8080/api/getusers?userId=${this.currentUserID}`,
 			{
 				credentials: "include",
 			}
 		)
-
 		const users = await response.json()
 
+		const userContainer = document.getElementById("userContainer")
+		const userBox = document.createElement("div")
+		userBox.id = "userBox"
 		const recentChat = document.createElement("div")
 		recentChat.id = "recentChat"
-
-
-		if (users.recentChat != null) {
-			for (const user of users.recentChat) {
-				if (user.id != this.currentUserID) {
-					let userEntry = document.createElement("div")
-					userEntry.classList.add("userEntry")
-					userEntry.id = `UserID${user.id}`
-
-					const usernameLink = document.createElement("a");
-					usernameLink.classList.add("usernameLink");
-					usernameLink.textContent = user.username;
-					usernameLink.addEventListener("click", (event) => {
-						event.preventDefault();
-						this.RecipientID = user.id
-						this.renderHTML()
-					})
-
-					const statusIndicator = document.createElement("div");
-					statusIndicator.id = (`statusIndicator${user.id}`)
-					statusIndicator.classList.add("status-indicator");
-					statusIndicator.style.display = "none"
-
-					userEntry.appendChild(usernameLink);
-					userEntry.appendChild(statusIndicator);
-
-					recentChat.appendChild(userEntry)
-				}
-			}
-		}
-		userBox.appendChild(recentChat)
-		userContainer.appendChild(userBox)
-
-		let alphabeticalChat = document.createElement("div")
+		const alphabeticalChat = document.createElement("div")
 		alphabeticalChat.id = "alphabeticalChat"
 
-		if (users.alphabetical != null) {
-			for (const user of users.alphabetical) {
-				if (user.id != this.currentUserID) {
-					let userEntry = document.createElement("div")
-					userEntry.classList.add("userEntry")
-					userEntry.id = `UserID${user.id}`
-
-					const usernameLink = document.createElement("a");
-					usernameLink.classList.add("usernameLink");
-					usernameLink.textContent = user.username;
-					usernameLink.addEventListener("click", (e) => {
-						e.preventDefault();
-						this.RecipientID = user.id
-						this.chatInitialiser(user.id)
-						this.renderHTML()
-					});
-
-					const statusIndicator = document.createElement("div");
-					statusIndicator.id = (`statusIndicator${user.id}`)
-					statusIndicator.classList.add("status-indicator");
-					statusIndicator.style.display = "none"
-
-					userEntry.appendChild(usernameLink);
-					userEntry.appendChild(statusIndicator);
-
-					alphabeticalChat.appendChild(userEntry)
-				}
-			}
-		}
+		userBox.appendChild(recentChat)
 		userBox.appendChild(alphabeticalChat)
 		userContainer.appendChild(userBox)
+
+		// If there's any entries in users.recentChat...
+		if (users.recentChat != null) {
+			for (const user of users.recentChat) {
+				this.processUserEntry(recentChat, user)
+			}
+		}
+
+		// If there's any entries in users.alphabetical...
+		if (users.alphabetical != null) {
+			for (const user of users.alphabetical) {
+				this.processUserEntry(alphabeticalChat, user)
+			}
+		}
 	}
 
-	async startWebsocket() {
-		this.socket = new WebSocket(`wss://localhost:8080/api/websocketChat`);
-		this.socket.addEventListener("open", (event) => {
-			event.preventDefault();
-			console.log("WebSocket connection is open.");
-			this.onlineStatusHandler()
-			this.webSocketChat()
-		});
+	processUserEntry(userContainer, user){
+		// Make a div to put the other two divs in
+		let userEntry = document.createElement("div")
+		userEntry.classList.add("userEntry")
+		userEntry.id = `UserID${user.id}`
 
+		// Div 1, the persons name with an event listener to load up the chat
+		const usernameLink = document.createElement("a");
+		usernameLink.classList.add("usernameLink");
+		usernameLink.textContent = user.username;
+		usernameLink.addEventListener("click", (event) => {
+			event.preventDefault();
+			this.RecipientID = user.id
+			this.renderHTML()
+		})
+		// Div 2, the users online status indicator, starts off as hidden
+		const statusIndicator = document.createElement("div");
+		statusIndicator.id = (`statusIndicator${user.id}`)
+		statusIndicator.classList.add("status-indicator");
+		statusIndicator.style.display = "none"
+
+		userEntry.appendChild(usernameLink);
+		userEntry.appendChild(statusIndicator);
+
+		userContainer.appendChild(userEntry)
 	}
 
 	async renderHTML() {
@@ -123,12 +101,12 @@ export default class Chat extends AbstractView {
 
 	}
 
-	async webSocketChat() {
+	async processIncomingWebsocketMessage() {
 
 
 		if (!this.socket) {
 			// Check if the socket is available
-			console.error("[webSocketChat] WebSocket connection is not open.");
+			console.error("[processIncomingWebsocketMessage] WebSocket connection is not open.");
 			return;
 		}
 

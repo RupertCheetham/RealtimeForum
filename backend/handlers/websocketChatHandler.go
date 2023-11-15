@@ -15,7 +15,7 @@ var userConnections = make(map[int]*websocket.Conn)
 var onlineUserConnections = make(map[int]*websocket.Conn)
 
 // deals with the websocket side of chat
-func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
+func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Upgrade the HTTP connection to a WebSocket connection
 	connection := upgradeConnection(w, r)
@@ -70,7 +70,7 @@ func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 			onlineUserConnections[chatMsg.Sender] = connection
 			log.Println("[WebsocketChatHandler]  Added User ", chatMsg.Sender, " to onlineUserConnections")
 			log.Println("[WebsocketChatHandler] length of onlineUserConnections is:", len(onlineUserConnections))
-			broadcastOnlineStatusToUsers(messageType, chatMsg)
+			broadcastOnlineStatusToUsers(messageType)
 		} else if chatMsg.Type == "connection_close" {
 			log.Println("[WebsocketChatHandler] connection_close")
 			onlineUserConnections = removeConnection(onlineUserConnections, connection)
@@ -118,10 +118,8 @@ func broadcastChatToUsers(messageType int, message db.ChatMessage) {
 
 }
 
-func broadcastOnlineStatusToUsers(messageType int, message db.ChatMessage) {
-
+func broadcastOnlineStatusToUsers(messageType int) {
 	// Collect the online userIDs from onlineUserConnections
-	log.Println("message.Sender", message.Sender)
 	var onlineUsers []int
 	for user := range onlineUserConnections {
 
