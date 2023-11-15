@@ -32,23 +32,31 @@ export default class Chat extends AbstractView {
 		const recentChat = document.createElement("div")
 		recentChat.id = "recentChat"
 
+
 		if (users.recentChat != null) {
 			for (const user of users.recentChat) {
 				if (user.id != this.currentUserID) {
 					let userEntry = document.createElement("div")
+					userEntry.classList.add("userEntry")
 					userEntry.id = `UserID${user.id}`
+
 					const usernameLink = document.createElement("a");
-					usernameLink.classList.add("chatUserButton");
+					usernameLink.classList.add("usernameLink");
 					usernameLink.textContent = user.username;
 					usernameLink.addEventListener("click", (event) => {
 						event.preventDefault();
-						console.log(user.username)
-						console.log(user.id)
 						this.RecipientID = user.id
 						this.renderHTML()
 					})
 
+					const statusIndicator = document.createElement("div");
+					statusIndicator.id = (`statusIndicator${user.id}`)
+					statusIndicator.classList.add("status-indicator");
+					statusIndicator.style.display = "none"
+
 					userEntry.appendChild(usernameLink);
+					userEntry.appendChild(statusIndicator);
+
 					recentChat.appendChild(userEntry)
 				}
 			}
@@ -63,12 +71,11 @@ export default class Chat extends AbstractView {
 			for (const user of users.alphabetical) {
 				if (user.id != this.currentUserID) {
 					let userEntry = document.createElement("div")
+					userEntry.classList.add("userEntry")
 					userEntry.id = `UserID${user.id}`
 
-
-					// Create a clickable username link without reloading the page
 					const usernameLink = document.createElement("a");
-					usernameLink.classList.add("chatUserButton");
+					usernameLink.classList.add("usernameLink");
 					usernameLink.textContent = user.username;
 					usernameLink.addEventListener("click", (e) => {
 						e.preventDefault();
@@ -77,7 +84,14 @@ export default class Chat extends AbstractView {
 						this.renderHTML()
 					});
 
+					const statusIndicator = document.createElement("div");
+					statusIndicator.id = (`statusIndicator${user.id}`)
+					statusIndicator.classList.add("status-indicator");
+					statusIndicator.style.display = "none"
+
 					userEntry.appendChild(usernameLink);
+					userEntry.appendChild(statusIndicator);
+
 					alphabeticalChat.appendChild(userEntry)
 				}
 			}
@@ -118,36 +132,52 @@ export default class Chat extends AbstractView {
 			return;
 		}
 
-		// when chat receives a message...
+		// when user receives a message...
 		const handleMessage = async (event) => {
 			console.log("Received a WebSocket message:", event.data);
 			let message = JSON.parse(event.data);
 
-			if (message.recipient == this.RecipientID || message.sender == this.RecipientID) {
-				// Handle incoming messages
-				let chatElement = document.createElement("div")
-				const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
-				chatElement.classList.add(senderClassName)
-				const time = this.formatTimestamp(message.time)
-				chatElement.innerHTML = `
-		<div id="message-content">
-			<div id="body">${message.body}</div>
-			<div id="time"><i>${time}</i></div>
-		</div>
-	`
+			if (message.type == "chat") {
+				console.log("chat")
+				if (message.recipient == this.RecipientID || message.sender == this.RecipientID) {
+					// Handle incoming messages
+					let chatElement = document.createElement("div")
+					const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
+					chatElement.classList.add(senderClassName)
+					const time = this.formatTimestamp(message.time)
+					chatElement.innerHTML =
+						`
+						<div id="message-content">
+							<div id="body">${message.body}</div>
+							<div id="time"><i>${time}</i></div>
+						</div>
+						`
 
-				const chatHistory = getElementById("chatHistory")
-				// chatHistory displays from the bottom up, this adds new messages to the bottom
-				chatHistory.insertBefore(chatElement, chatHistory.firstChild)
+					const chatHistory = getElementById("chatHistory")
+					// chatHistory displays from the bottom up, this adds new messages to the bottom
+					chatHistory.insertBefore(chatElement, chatHistory.firstChild)
 
-				// and then scrolls to the bottom of chatBox
-				chatHistory.scrollTop = chatHistory.scrollHeight
+					// and then scrolls to the bottom of chatBox
+					chatHistory.scrollTop = chatHistory.scrollHeight
 
+				}
+
+				this.changeUserlistOrder(message.sender)
+				this.showMessageReceivedNotification()
+			} else if (message.type == "online-notification") {
+				console.log("online-notification")
+
+				message.onlineUsers.forEach(userId => {
+					const statusIndicator = document.getElementById(`statusIndicator${userId}`)
+					if (statusIndicator) {
+						statusIndicator.style.display = "block"
+					}
+
+				});
 			}
-
-			this.changeUserlistOrder(message.sender)
-			this.showMessageReceivedNotification()
 		}
+
+
 
 		this.socket.addEventListener("message", handleMessage);
 

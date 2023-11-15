@@ -1,7 +1,37 @@
-.chatUserButton {
+.userEntry {
+    display: flex;
+    align-items: center; /* Vertically center items */
+    margin-top: 10px; /* Adjust the margin as needed for spacing between userEntries */
+}
+
+.usernameLink {
+    display: inline-block;
     font-weight: bold;
     cursor: pointer;
-  }
+  
+}
+
+.status-indicator {
+    display: inline-block;
+    vertical-align: middle;
+    align-items: center;
+    width: 8px;
+    height: 8px;
+    background-color: #4CAF50; /* Green color, adjust as needed */
+    border-radius: 50%;
+    margin-left: 6px; /* Adjust the margin as needed */
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #4CAF50; /* Green color, adjust as needed */
+    border-radius: 50%;
+    margin-left: 4px; /* Adjust the margin as needed */
+}
+
+
 
 .chat-font {
     color: #ffffff;
@@ -11,7 +41,7 @@
     color: lightblue;
 }
 
-.allChat{
+.allChat {
     background-color: black;
 
 }
@@ -19,11 +49,11 @@
 #chatHistory {
     background-color: black;
     display: flex;
-    flex-direction: column-reverse; 
+    flex-direction: column-reverse;
     height: 235px;
     overflow-y: scroll;
     scrollbar-width: auto;
-    scrollbar-color: rebeccapurple yellow; 
+    scrollbar-color: rebeccapurple yellow;
 }
 
 .sent {
@@ -40,13 +70,15 @@
 }
 
 #body {
-    flex: 2; /* "body" takes up two-thirds of the available space */
+    flex: 2;
+    /* "body" takes up two-thirds of the available space */
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 #time {
-    flex: 1; /* "time" takes up one-third of the available space */
+    flex: 1;
+    /* "time" takes up one-third of the available space */
     flex-shrink: 0;
     margin-left: 8px;
     font-size: 0.6em;
@@ -57,21 +89,30 @@
     bottom: 5%;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #4CAF50; /* Green background color */
-    color: white; /* White text color */
-    padding: 15px; /* Padding */
-    border-radius: 10px; /* Rounded corners */
-    opacity: 0; /* Initially invisible */
+    background-color: #4CAF50;
+    /* Green background color */
+    color: white;
+    /* White text color */
+    padding: 15px;
+    /* Padding */
+    border-radius: 10px;
+    /* Rounded corners */
+    opacity: 0;
+    /* Initially invisible */
 
     /* Animation */
     animation: fadeInOut 3s ease-in-out;
 }
 
 @keyframes fadeInOut {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 0;
     }
-    10%, 90% {
+
+    10%,
+    90% {
         opacity: 1;
     }
 }

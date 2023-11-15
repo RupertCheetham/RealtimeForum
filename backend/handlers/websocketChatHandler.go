@@ -121,9 +121,12 @@ func broadcastChatToUsers(messageType int, message db.ChatMessage) {
 func broadcastOnlineStatusToUsers(messageType int, message db.ChatMessage) {
 
 	// Collect the online userIDs from onlineUserConnections
+	log.Println("message.Sender", message.Sender)
 	var onlineUsers []int
 	for user := range onlineUserConnections {
+
 		onlineUsers = append(onlineUsers, user)
+
 	}
 
 	// Put it in a struct to send off
@@ -138,12 +141,7 @@ func broadcastOnlineStatusToUsers(messageType int, message db.ChatMessage) {
 	}
 
 	// Iterate over online connections and send the message
-	for user, conn := range onlineUserConnections {
-		// Skip sending to the sender
-		if user == message.Sender {
-			continue
-		}
-
+	for _, conn := range onlineUserConnections {
 		err := conn.WriteMessage(messageType, payload)
 		if err != nil {
 			utils.HandleError("Error sending message to clients in broadcastOnlineStatusToUsers:", err)
