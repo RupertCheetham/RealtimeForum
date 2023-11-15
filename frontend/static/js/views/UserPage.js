@@ -1,7 +1,8 @@
 import AbstractView from "./AbstractView.js"
 import Nav from "./Nav.js"
-import { renderPosts } from "./Post.js"
+import Post from "./Post.js"
 const nav = new Nav()
+const postClass = new Post()
 
 export default class UserPage extends AbstractView {
 	async renderHTML() {
@@ -29,8 +30,9 @@ export default class UserPage extends AbstractView {
 		const posts = await response.json()
 		const postsContainer = document.getElementById("postsContainer")
 		postsContainer.innerHTML = ""
-
-		renderPosts(posts, postsContainer)
+		for (const post of posts) {
+			postClass.processPost(postsContainer, post)
+		}
 	}
 
 	async getLikedPostsByUser() {

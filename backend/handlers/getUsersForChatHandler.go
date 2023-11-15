@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"realtimeForum/db"
 	"realtimeForum/utils"
+	"strconv"
 
 	"github.com/gorilla/websocket"
 )
@@ -14,8 +15,11 @@ func GetUsersForChatHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
 
-	userID := r.URL.Query().Get("userId")
-
+	userIDstring := r.URL.Query().Get("userId")
+	userID, err := strconv.Atoi(userIDstring)
+	if err != nil {
+		utils.HandleError("Error with Atoi in GetUsersForChatHandler:", err)
+	}
 	// This code block is handling the logic for retrieving posts from the database when the HTTP request
 	// method is GET.
 	if r.Method == http.MethodGet { // Use http.MethodGet constant for clarity
