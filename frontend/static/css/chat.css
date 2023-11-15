@@ -7,7 +7,7 @@
     color: #ffffff;
 }
 
-#recipient {
+#recipientHeader {
     color: lightblue;
 }
 
@@ -52,3 +52,26 @@
     font-size: 0.6em;
 }
 
+#notification {
+    position: fixed;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4CAF50; /* Green background color */
+    color: white; /* White text color */
+    padding: 15px; /* Padding */
+    border-radius: 10px; /* Rounded corners */
+    opacity: 0; /* Initially invisible */
+
+    /* Animation */
+    animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0%, 100% {
+        opacity: 0;
+    }
+    10%, 90% {
+        opacity: 1;
+    }
+}

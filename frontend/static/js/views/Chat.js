@@ -1,9 +1,6 @@
 import AbstractView from "./AbstractView.js"
 import { throttle, usernameFromUserID } from "../utils/utils.js"
 
-
-
-
 export default class Chat extends AbstractView {
 	constructor() {
 		super()
@@ -11,6 +8,10 @@ export default class Chat extends AbstractView {
 		this.socket = null;
 		this.currentUserID = Number(localStorage.getItem("id"))
 		this.RecipientID = undefined;
+		this.limit = 10
+		this.offset = 0
+		this.previousTime = null
+		this.previousDate = null
 	}
 
 	// List of users to click on to initialise chat
@@ -39,15 +40,12 @@ export default class Chat extends AbstractView {
 					const usernameLink = document.createElement("a");
 					usernameLink.classList.add("chatUserButton");
 					usernameLink.textContent = user.username;
-					usernameLink.addEventListener("click", (e) => {
-						e.preventDefault();
+					usernameLink.addEventListener("click", (event) => {
+						event.preventDefault();
 						console.log(user.username)
 						console.log(user.id)
 						this.RecipientID = user.id
-						// this.chatInitialiser(user.id)
-						this.displayChatHistory(user.id)
-						console.log("I have changed this.RecipientID to ", this.RecipientID)
-
+						this.renderHTML()
 					})
 
 					userEntry.appendChild(usernameLink);
@@ -74,10 +72,9 @@ export default class Chat extends AbstractView {
 					usernameLink.textContent = user.username;
 					usernameLink.addEventListener("click", (e) => {
 						e.preventDefault();
-						console.log(user.username)
 						this.RecipientID = user.id
-						console.log("I have changed this.RecipientID to ", this.RecipientID)
-						this.displayChatHistory(user.id)
+						this.chatInitialiser(user.id)
+						this.renderHTML()
 					});
 
 					userEntry.appendChild(usernameLink);
@@ -101,34 +98,18 @@ export default class Chat extends AbstractView {
 	}
 
 	async renderHTML() {
-		const chatContainer = document.getElementById("chatContainer");
-		const allChat = document.createElement("div");
-		allChat.id = "allChat";
-		const chatHistory = document.createElement("div");
-		chatHistory.id = "chatHistory";
-		chatHistory.innerHTML = "Chat (click on Username)"
-		allChat.appendChild(chatHistory)
-		const chatTextBox = document.createElement("div");
-		chatTextBox.id = "chatTextBox"
-		chatTextBox.innerHTML = this.getChatTextBoxHTML();
-		chatTextBox.style.display = "none";
-		allChat.appendChild(chatTextBox)
 
-		chatContainer.appendChild(allChat);
+		const chatContainer = document.getElementById("chatContainer");
+
+		if (this.RecipientID == undefined) {
+			chatContainer.innerHTML = "Chat (click on Username)"
+		} else {
+			await this.displayChatHistory()
+		}
 
 	}
 
 	async webSocketChat() {
-
-		//deals with sending new messages to the backend when sendButton is clicked or enter is pressed
-		document.getElementById("sendButton").addEventListener("click", () => {
-			this.sendMessage();
-		});
-		document.getElementById("messageInput").addEventListener("keydown", function (event) {
-			if (event.key === "Enter") {
-				this.sendMessage();
-			}
-		})
 
 
 		if (!this.socket) {
@@ -141,11 +122,7 @@ export default class Chat extends AbstractView {
 		const handleMessage = async (event) => {
 			console.log("Received a WebSocket message:", event.data);
 			let message = JSON.parse(event.data);
-			console.log("message.recipient", message.recipient)
-			console.log("this.RecipientID", this.RecipientID)
-			// rudimentary notification system
-			// const RecipientName = await usernameFromUserID(message.recipient);
-			// alert("Message: " + message.body +  " from " + RecipientName)
+
 			if (message.recipient == this.RecipientID || message.sender == this.RecipientID) {
 				// Handle incoming messages
 				let chatElement = document.createElement("div")
@@ -159,6 +136,7 @@ export default class Chat extends AbstractView {
 		</div>
 	`
 
+				const chatHistory = getElementById("chatHistory")
 				// chatHistory displays from the bottom up, this adds new messages to the bottom
 				chatHistory.insertBefore(chatElement, chatHistory.firstChild)
 
@@ -167,49 +145,57 @@ export default class Chat extends AbstractView {
 
 			}
 
-
-			const divToMove = document.getElementById(`UserID${message.sender}`)
-			console.log("UserID${message.recipient}", `UserID${message.sender}`)
-			console.log("divToMove", divToMove)
-			const recentChat = document.getElementById("recentChat")
-			const alphabeticalChat = document.getElementById("alphabeticalChat")
-			if (divToMove) {
-				if (recentChat != null) {
-					if (recentChat.contains(divToMove)) {
-						recentChat.removeChild(divToMove)
-					}
-				} else if (alphabeticalChat != null) {
-					if (alphabeticalChat.contains(divToMove)) {
-						alphabeticalChat.removeChild(divToMove)
-					}
-				}
-			}
-			const divElements = recentChat.querySelectorAll("div");
-			const numberOfDivs = divElements.length;
-			console.log("Number of divs inside parentDiv: " + numberOfDivs)
-			console.log("recentChat.firstChild", recentChat.firstChild)
-			console.log("recentChat", recentChat)
-			if (recentChat != null && (numberOfDivs > 0)) {
-
-				recentChat.insertBefore(divToMove, recentChat.firstChild);
-			} else {
-				recentChat.appendChild(divToMove)
-			}
+			this.changeUserlistOrder(message.sender)
+			this.showMessageReceivedNotification()
 		}
 
 		this.socket.addEventListener("message", handleMessage);
 
 	}
 
+	changeUserlistOrder(userID) {
+		const divToMove = document.getElementById(`UserID${userID}`)
+		console.log("UserID${message.recipient}", `UserID${userID}`)
+		console.log("divToMove", divToMove)
+		const recentChat = document.getElementById("recentChat")
+		const alphabeticalChat = document.getElementById("alphabeticalChat")
+		if (divToMove) {
+			if (recentChat != null) {
+				if (recentChat.contains(divToMove)) {
+					recentChat.removeChild(divToMove)
+				}
+			} else if (alphabeticalChat != null) {
+				if (alphabeticalChat.contains(divToMove)) {
+					alphabeticalChat.removeChild(divToMove)
+				}
+			}
+		}
+		const divElements = recentChat.querySelectorAll("div");
+		const numberOfDivs = divElements.length;
+
+		if (recentChat != null && (numberOfDivs > 0)) {
+
+			recentChat.insertBefore(divToMove, recentChat.firstChild);
+		} else {
+			recentChat.appendChild(divToMove)
+		}
+	}
+
+
 	async onlineStatusHandler() {
 		console.log("Notifying Server that user is online")
-		this.socket.send(
-			JSON.stringify({
-				type: "user_online",
-				body: "",
-				sender: this.currentUserID,
-			})
-		)
+
+		if (this.socket) {
+			this.socket.send(
+				JSON.stringify({
+					type: "user_online",
+					sender: this.currentUserID,
+				})
+			)
+		} else {
+			console.log("[onlineStatusHandler] Websocket not open")
+		}
+
 	}
 
 	chatInitialiser() {
@@ -228,7 +214,6 @@ export default class Chat extends AbstractView {
 			})
 		)
 	}
-
 
 	sendMessage() {
 		const messageInput = document.getElementById("messageInput")
@@ -251,32 +236,63 @@ export default class Chat extends AbstractView {
 				time: formattedTime,
 			};
 
-
-
 			this.socket.send(JSON.stringify(newMessage));
-
 			messageInput.value = ""
-			this.appendMessageToChatHistory(newMessage)
+			this.prependMessageToChatHistory(newMessage)
+			this.changeUserlistOrder(this.RecipientID)
 		}
 	}
+
 	// displays chat history (if any) between two users
 	async displayChatHistory() {
-		console.log("displayChatHistory")
-		// Make the chatTextBox visible
-		const chatTextBox = document.getElementById("chatTextBox");
-		chatTextBox.style.display = "block";
-		let messageOffset = 10
-		let limit = 10
-		const chatHistory = document.getElementById("chatHistory")
-		chatHistory.innerHTML = ""
-		console.log("[displayChatHistory] allChat", allChat)
+		this.offset = 0
+
+		const chatContainer = document.getElementById("chatContainer")
+		chatContainer.innerHTML = ""
+
+		const allChat = document.createElement("div")
+		allChat.id = "allChat"
+
 		const RecipientName = await usernameFromUserID(this.RecipientID)
-		// Create the <h1> element with RecipientName
-		const recipientHeader = document.createElement("h1");
-		recipientHeader.id = "recipient";
-		recipientHeader.className = "chat-font";
-		recipientHeader.textContent = RecipientName;
-		console.log(this.RecipientID)
+		const recipientHeader = document.createElement("div")
+		recipientHeader.id = "recipientHeader"
+		recipientHeader.innerHTML = RecipientName;
+
+		const chatHistory = document.createElement("div")
+		chatHistory.id = "chatHistory"
+
+		const chatTextBox = document.createElement("div");
+		chatTextBox.id = "chatTextBox"
+		const messageInput = document.createElement("input")
+		messageInput.id = "messageInput"
+		const sendButton = document.createElement("button")
+		sendButton.id = "sendButton"
+		sendButton.innerText = "send"
+		chatTextBox.appendChild(messageInput)
+		chatTextBox.appendChild(sendButton)
+
+		allChat.appendChild(recipientHeader)
+		allChat.appendChild(chatHistory)
+		allChat.appendChild(chatTextBox)
+
+		chatContainer.appendChild(allChat)
+
+		//deals with sending new messages to the backend when sendButton is clicked or enter is pressed
+		chatTextBox.addEventListener("click", (event) => {
+			// Check if the clicked element is the sendButton or messageInput
+			if (event.target === sendButton || event.target === messageInput) {
+				this.sendMessage();
+			}
+		});
+
+		// Alternatively, you can still keep the "Enter" key functionality for messageInput
+		messageInput.addEventListener("keydown", (event) => {
+			if (event.key === "Enter") {
+				this.sendMessage();
+			}
+		});
+
+
 
 		// Load and display an initial set of messages (e.g., 20)
 		const initialMessages = await this.fetchMessagesInChunks(
@@ -285,7 +301,7 @@ export default class Chat extends AbstractView {
 		)
 		if (initialMessages != null) {
 			for (const message of initialMessages) {
-				this.appendMessageToChatHistory(message, this.currentUserID)
+				this.appendMessageToChatHistory(message)
 			}
 		} else {
 			// If no messages then add an encouraging message
@@ -300,15 +316,15 @@ export default class Chat extends AbstractView {
 
 			if (chatHistory.scrollTop <= scrollThreshold) {
 				// Load and append more messages
-				this.loadMoreMessages(this.currentUserID, this.RecipientID, messageOffset, limit)
-				messageOffset += 10
+				this.loadMoreMessages(this.currentUserID, this.RecipientID, this.offset, this.limit)
+				this.offset += 10
 			}
 		}, 100)
 
 		chatHistory.addEventListener("scroll", throttleScroll)
 	}
 
-	async appendMessageToChatHistory(message) {
+	appendMessageToChatHistory(message) {
 		const chatHistory = document.getElementById("chatHistory")
 		const chatElement = document.createElement("div")
 		const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
@@ -321,14 +337,27 @@ export default class Chat extends AbstractView {
 		chatHistory.appendChild(chatElement)
 	}
 
-	async loadMoreMessages(messageOffset, limit) {
+	async prependMessageToChatHistory(message) {
+		const chatHistory = document.getElementById("chatHistory")
+		const chatElement = document.createElement("div")
+		const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
+		chatElement.classList.add(senderClassName)
+		const time = this.formatTimestamp(message.time)
+		chatElement.innerHTML = `<div id="message-content">
+				<div id="body">${message.body}</div>
+				<div id="time"><i>${time}</i></div>
+			</div>`
+		chatHistory.insertBefore(chatElement, chatHistory.firstChild)
+	}
+
+	async loadMoreMessages() {
 		if (!this.canScroll) {
 			return
 		}
 
 		const nextMessages = await this.fetchMessagesInChunks(
-			messageOffset,
-			limit
+			this.offset,
+			this.limit
 		)
 		if (nextMessages != null) {
 			if (nextMessages.length > 0) {
@@ -342,9 +371,9 @@ export default class Chat extends AbstractView {
 		}
 	}
 
-	async fetchMessagesInChunks(offset, limit) {
+	async fetchMessagesInChunks() {
 		const response = await fetch(
-			`https://localhost:8080/getChatHistory?user1=${this.currentUserID}&user2=${this.RecipientID}&offset=${offset}&limit=${limit}`,
+			`https://localhost:8080/getChatHistory?user1=${this.currentUserID}&user2=${this.RecipientID}&offset=${this.offset}&limit=${this.limit}`,
 			{
 				credentials: "include", // Ensure cookies are included in the request
 			}
@@ -372,12 +401,7 @@ export default class Chat extends AbstractView {
 		`;
 	}
 
-
-	previousTime = null
-	previousDate = null
-
 	formatTimestamp(timestamp) {
-		console.log("timestamp", timestamp)
 		const splitTimestamp = timestamp.split(" ") // Split the timestamp into time and date parts
 
 		const timePart = splitTimestamp[0] // "19:12:30"
@@ -414,4 +438,20 @@ export default class Chat extends AbstractView {
 		this.previousDate = currentDate
 		return formattedTimestamp
 	}
+
+	showMessageReceivedNotification() {
+		// Create a notification element
+		const notification = document.createElement("div");
+		notification.id = "notification";
+		notification.innerText = "New Message Received";
+
+		// Append the notification to the body
+		document.body.appendChild(notification);
+
+		setTimeout(() => {
+			// Remove the notification element after 5 seconds
+			notification.remove();
+		}, 5000);
+	}
+
 }

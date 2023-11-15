@@ -74,3 +74,8 @@ type ChatInfo struct {
 	RecentChat   []UserEntry `json:"recentChat"`
 	Alphabetical []UserEntry `json:"alphabetical"`
 }
+
+type OnlineUserStruct struct {
+	Type        string `json:"type"`
+	OnlineUsers []int  `json:"onlineUsers"`
+}

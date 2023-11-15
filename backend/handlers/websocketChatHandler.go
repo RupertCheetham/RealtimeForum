@@ -12,7 +12,7 @@ import (
 )
 
 var userConnections = make(map[int]*websocket.Conn)
-var onlineUsers = make(map[int]*websocket.Conn)
+var onlineUserConnections = make(map[int]*websocket.Conn)
 
 // deals with the websocket side of chat
 func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
@@ -48,10 +48,10 @@ func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
 			}
-			broadcastToUsers(messageType, chatMsg)
-		} else if chatMsg.Type == "[WebsocketChatHandler] chat_init" {
+			broadcastChatToUsers(messageType, chatMsg)
+		} else if chatMsg.Type == "chat_init" {
 			// checks to see if users have chatted previously, if not then creates a room in the db
-			log.Println("chat_init")
+			log.Println("[WebsocketChatHandler]  chat_init")
 			previousChatEntryFound, _, err := db.PreviousChatChecker(chatMsg.Sender, chatMsg.Recipient)
 			if err != nil {
 				utils.HandleError("Error with previousChatChecker 2 in WebsocketChatHandler", err)
@@ -67,15 +67,15 @@ func WebsocketChatHandler(w http.ResponseWriter, r *http.Request) {
 		} else if chatMsg.Type == "user_online" {
 			// If user's connection isn't in the list of userConnections then they must be freshly online! Right?
 			log.Println("[WebsocketChatHandler] user_online")
-			onlineUsers[chatMsg.Sender] = connection
-			// broadcastToUsers(messageType, chatMsg)
-			log.Println("[WebsocketChatHandler]  Added User ", chatMsg.Sender, " to onlineUsers")
-			log.Println("[WebsocketChatHandler] length of onlineUsers is:", len(onlineUsers))
+			onlineUserConnections[chatMsg.Sender] = connection
+			log.Println("[WebsocketChatHandler]  Added User ", chatMsg.Sender, " to onlineUserConnections")
+			log.Println("[WebsocketChatHandler] length of onlineUserConnections is:", len(onlineUserConnections))
+			broadcastOnlineStatusToUsers(messageType, chatMsg)
 		} else if chatMsg.Type == "connection_close" {
 			log.Println("[WebsocketChatHandler] connection_close")
-			onlineUsers = removeConnection(onlineUsers, connection)
+			onlineUserConnections = removeConnection(onlineUserConnections, connection)
 			log.Println("[WebsocketChatHandler] -TESTING- Removed User ", chatMsg.Sender, " to onlineUsers")
-			log.Println("[WebsocketChatHandler] length of onlineUsers is:", len(onlineUsers))
+			log.Println("[WebsocketChatHandler] length of onlineUsers is:", len(onlineUserConnections))
 		}
 	}
 }
@@ -99,32 +99,57 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func broadcastToUsers(messageType int, message db.ChatMessage) {
+func broadcastChatToUsers(messageType int, message db.ChatMessage) {
 
 	// changes the message to a JSON, for sending to frontend
 	payload, err := json.Marshal(message)
 	if err != nil {
-		utils.HandleError("There has been an issue with marshalling in broadcastToUsers", err)
+		utils.HandleError("There has been an issue with marshalling in broadcastChatToUsers", err)
 	}
-
-	// Obtains the connections for each user involved in the chat
-	// Should be simple enough to turn it  into an array of connections later, to enable group chats
-	// Currently needs to only send messages if the user is online
-	// senderConnection := userConnections[message.Sender]
-	// err = senderConnection.WriteMessage(messageType, payload)
-	// if err != nil {
-	// 	utils.HandleError("Error sending message to a client in broadcastToChat:", err)
-	// }
 
 	recipientConnection := userConnections[message.Recipient]
 	// if recipientConnection exists (if they're online) then send a message to them too
 	if recipientConnection != nil {
 		err = recipientConnection.WriteMessage(messageType, payload)
 		if err != nil {
-			utils.HandleError("Error sending message to a client in broadcastToChat:", err)
+			utils.HandleError("Error sending message to a client in broadcastChatToUsers:", err)
 		}
 	}
 
+}
+
+func broadcastOnlineStatusToUsers(messageType int, message db.ChatMessage) {
+
+	// Collect the online userIDs from onlineUserConnections
+	var onlineUsers []int
+	for user := range onlineUserConnections {
+		onlineUsers = append(onlineUsers, user)
+	}
+
+	// Put it in a struct to send off
+	var usersToSend db.OnlineUserStruct
+	usersToSend.Type = "online-notification"
+	usersToSend.OnlineUsers = onlineUsers
+
+	// changes the message to a JSON, for sending to frontend
+	payload, err := json.Marshal(usersToSend)
+	if err != nil {
+		utils.HandleError("There has been an issue with marshalling in broadcastOnlineStatusToUsers", err)
+	}
+
+	// Iterate over online connections and send the message
+	for user, conn := range onlineUserConnections {
+		// Skip sending to the sender
+		if user == message.Sender {
+			continue
+		}
+
+		err := conn.WriteMessage(messageType, payload)
+		if err != nil {
+			utils.HandleError("Error sending message to clients in broadcastOnlineStatusToUsers:", err)
+			removeConnection(onlineUserConnections, conn)
+		}
+	}
 }
 
 // unpacks websocket's Payload and adds time for return

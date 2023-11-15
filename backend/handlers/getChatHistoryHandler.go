@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"realtimeForum/db"
 	"realtimeForum/utils"
@@ -18,6 +20,9 @@ func GetChatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 	offsetString := r.URL.Query().Get("offset")
 	limitString := r.URL.Query().Get("limit")
 	user1, err := strconv.Atoi(User1String)
+
+	log.Println("User1String", User1String)
+	log.Println("User2String", User2String)
 
 	// converts the values to ints
 	if err != nil {
@@ -42,16 +47,18 @@ func GetChatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.HandleError("There has been a problem with previousChatChecker in GetChatHistoryHandler", err)
 	}
-
+	log.Println("chatUUID", chatUUID)
 	if previousChatEntryFound {
 		chatHistory, err = db.GetChatFromDatabase(chatUUID, offset, limit)
 	}
+	log.Println("(len(chatHistory))", (len(chatHistory)))
 	if err != nil {
 		utils.HandleError("Error retrieving chat history from the database:", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
+	fmt.Println()
 	// Serialize chat history to JSON and send it as the response
 	w.Header().Set("Content-Type", "application/json")
 	if err = json.NewEncoder(w).Encode(chatHistory); err != nil {
