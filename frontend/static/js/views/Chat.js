@@ -19,7 +19,7 @@ export default class Chat extends AbstractView {
 		this.socket.addEventListener("open", (event) => {
 			event.preventDefault();
 			console.log("WebSocket connection is open.");
-			this.onlineStatusHandler()
+			this.onlineNotifier()
 			this.processIncomingWebsocketMessage()
 		});
 
@@ -62,7 +62,7 @@ export default class Chat extends AbstractView {
 		}
 	}
 
-	processUserEntry(userContainer, user){
+	processUserEntry(userContainer, user) {
 		// Make a div to put the other two divs in
 		let userEntry = document.createElement("div")
 		userEntry.classList.add("userEntry")
@@ -76,6 +76,10 @@ export default class Chat extends AbstractView {
 			event.preventDefault();
 			this.RecipientID = user.id
 			this.renderHTML()
+			if (userContainer.id == "alphabeticalChat") {
+				this.chatInitialiser()
+			}
+
 		})
 		// Div 2, the users online status indicator, starts off as hidden
 		const statusIndicator = document.createElement("div");
@@ -103,7 +107,6 @@ export default class Chat extends AbstractView {
 
 	async processIncomingWebsocketMessage() {
 
-
 		if (!this.socket) {
 			// Check if the socket is available
 			console.error("[processIncomingWebsocketMessage] WebSocket connection is not open.");
@@ -116,55 +119,56 @@ export default class Chat extends AbstractView {
 			let message = JSON.parse(event.data);
 
 			if (message.type == "chat") {
-				console.log("chat")
-				if (message.recipient == this.RecipientID || message.sender == this.RecipientID) {
-					// Handle incoming messages
-					let chatElement = document.createElement("div")
-					const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
-					chatElement.classList.add(senderClassName)
-					const time = this.formatTimestamp(message.time)
-					chatElement.innerHTML =
-						`
-						<div id="message-content">
-							<div id="body">${message.body}</div>
-							<div id="time"><i>${time}</i></div>
-						</div>
-						`
-
-					const chatHistory = getElementById("chatHistory")
-					// chatHistory displays from the bottom up, this adds new messages to the bottom
-					chatHistory.insertBefore(chatElement, chatHistory.firstChild)
-
-					// and then scrolls to the bottom of chatBox
-					chatHistory.scrollTop = chatHistory.scrollHeight
-
-				}
-
-				this.changeUserlistOrder(message.sender)
-				this.showMessageReceivedNotification()
+				this.chatHandler(message)
 			} else if (message.type == "online-notification") {
-				console.log("online-notification")
-
-				message.onlineUsers.forEach(userId => {
-					const statusIndicator = document.getElementById(`statusIndicator${userId}`)
-					if (statusIndicator) {
-						statusIndicator.style.display = "block"
-					}
-
-				});
+				this.onlineHandler(message)
 			}
 		}
 
-
-
 		this.socket.addEventListener("message", handleMessage);
+
+	}
+	// Handle incoming chat messages
+	chatHandler(message) {
+		if (message.sender == this.RecipientID) {
+
+			const chatHistory = getElementById("chatHistory")
+			const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
+			const time = this.formatTimestamp(message.time)
+			const chatElement = document.createElement("div")
+			chatElement.classList.add(senderClassName)
+			chatElement.innerHTML =
+				`
+			<div id="message-content">
+				<div id="body">${message.body}</div>
+				<div id="time"><i>${time}</i></div>
+			</div>
+			`
+
+			// chatHistory displays from the bottom up, this adds new messages to the bottom
+			chatHistory.insertBefore(chatElement, chatHistory.firstChild)
+			// and then scrolls to the bottom of chatBox
+			chatHistory.scrollTop = chatHistory.scrollHeight
+
+		}
+
+		this.changeUserlistOrder(message.sender)
+		this.showMessageReceivedNotification()
+	}
+
+	onlineHandler(message) {
+		message.onlineUsers.forEach(userId => {
+			const statusIndicator = document.getElementById(`statusIndicator${userId}`)
+			if (statusIndicator) {
+				statusIndicator.style.display = "block"
+			}
+
+		});
 
 	}
 
 	changeUserlistOrder(userID) {
 		const divToMove = document.getElementById(`UserID${userID}`)
-		console.log("UserID${message.recipient}", `UserID${userID}`)
-		console.log("divToMove", divToMove)
 		const recentChat = document.getElementById("recentChat")
 		const alphabeticalChat = document.getElementById("alphabeticalChat")
 		if (divToMove) {
@@ -190,7 +194,7 @@ export default class Chat extends AbstractView {
 	}
 
 
-	async onlineStatusHandler() {
+	async onlineNotifier() {
 		console.log("Notifying Server that user is online")
 
 		if (this.socket) {
@@ -201,7 +205,7 @@ export default class Chat extends AbstractView {
 				})
 			)
 		} else {
-			console.log("[onlineStatusHandler] Websocket not open")
+			console.log("[onlineNotifier] Websocket not open")
 		}
 
 	}

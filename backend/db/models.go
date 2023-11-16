@@ -2,22 +2,34 @@ package db
 
 import "time"
 
-type UserEntry struct {
-	Id        int    `json:"id"`
-	Username  string `json:"username"`
-	Age       int    `json:"age"`
-	Gender    string `json:"gender"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+type ChatInfo struct {
+	RecentChat   []UserEntry `json:"recentChat"`
+	Alphabetical []UserEntry `json:"alphabetical"`
 }
 
-type Session struct {
-	SessionID      string
-	UserId         int
-	CreationTime   time.Time
-	ExpirationTime time.Time
+type ChatMessage struct {
+	Type      string `json:"type"`
+	Body      string `json:"body"`
+	Sender    int    `json:"sender"`
+	Recipient int    `json:"recipient"`
+	Time      string `json:"time"`
+}
+
+type CommentEntry struct {
+	Id           int    `json:"id"`
+	ParentPostID int    `json:"parentPostId"`
+	UserId       int    `json:"userID"`
+	Username     string `json:"username"`
+	Body         string `json:"body"`
+	CreationDate string `json:"creationDate"`
+	ReactionID   int    `json:"reactionID"`
+	Likes        int    `json:"commentLikes"`
+	Dislikes     int    `json:"commentDislikes"`
+}
+
+type OnlineUserStruct struct {
+	Type        string `json:"type"`
+	OnlineUsers []int  `json:"onlineUsers"`
 }
 
 type PostEntry struct {
@@ -34,16 +46,12 @@ type PostEntry struct {
 	Comments     []CommentEntry `json:"comments"`
 }
 
-type CommentEntry struct {
-	Id           int    `json:"id"`
-	ParentPostID int    `json:"parentPostId"`
-	UserId       int    `json:"userID"`
-	Username     string `json:"username"`
-	Body         string `json:"body"`
-	CreationDate string `json:"creationDate"`
-	ReactionID   int    `json:"reactionID"`
-	Likes        int    `json:"commentLikes"`
-	Dislikes     int    `json:"commentDislikes"`
+type Reaction struct {
+	Id          int    `json:"id"`
+	Likes       int    `json:"likes"`
+	Dislikes    int    `json:"dislikes"`
+	WhoLiked    string `json:"wholiked"`
+	WhoDisliked string `json:"whodisliked"`
 }
 
 type ReactionEntry struct {
@@ -54,28 +62,20 @@ type ReactionEntry struct {
 	ReactionID int    `json:"reactionID"`
 }
 
-type Reaction struct {
-	Id          int    `json:"id"`
-	Likes       int    `json:"likes"`
-	Dislikes    int    `json:"dislikes"`
-	WhoLiked    string `json:"wholiked"`
-	WhoDisliked string `json:"whodisliked"`
+type Session struct {
+	SessionID      string
+	UserId         int
+	CreationTime   time.Time
+	ExpirationTime time.Time
 }
 
-type ChatMessage struct {
-	Type      string `json:"type"`
-	Body      string `json:"body"`
-	Sender    int    `json:"sender"`
-	Recipient int    `json:"recipient"`
-	Time      string `json:"time"`
-}
-
-type ChatInfo struct {
-	RecentChat   []UserEntry `json:"recentChat"`
-	Alphabetical []UserEntry `json:"alphabetical"`
-}
-
-type OnlineUserStruct struct {
-	Type        string `json:"type"`
-	OnlineUsers []int  `json:"onlineUsers"`
+type UserEntry struct {
+	Id        int    `json:"id"`
+	Username  string `json:"username"`
+	Age       int    `json:"age"`
+	Gender    string `json:"gender"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
 }
