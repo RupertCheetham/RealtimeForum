@@ -49,7 +49,7 @@ func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, err
 		SELECT SenderID, Body, Timestamp
 		FROM CHAT
 		WHERE ChatUUID = ?
-		ORDER BY Timestamp DESC
+		ORDER BY Id DESC
 		LIMIT ? OFFSET ?
 	`
 

@@ -9,7 +9,7 @@ export default class Chat extends AbstractView {
 		this.currentUserID = Number(localStorage.getItem("id"))
 		this.RecipientID = undefined;
 		this.limit = 10
-		this.offset = 0
+		this.offset = 10
 		this.previousTime = null
 		this.previousDate = null
 	}
@@ -76,9 +76,9 @@ export default class Chat extends AbstractView {
 			event.preventDefault();
 			this.RecipientID = user.id
 			this.renderHTML()
-			if (userContainer.id == "alphabeticalChat") {
-				this.chatInitialiser()
-			}
+			// if (userContainer.id == "alphabeticalChat") {
+			// 	this.chatInitialiser()
+			// }
 
 		})
 		// Div 2, the users online status indicator, starts off as hidden
@@ -211,22 +211,22 @@ export default class Chat extends AbstractView {
 
 	}
 
-	chatInitialiser() {
-		if (!this.socket) {
-			// Check if the socket is available
-			console.error("[chatInitialiser] WebSocket connection is not open.");
-			return;
-		}
-		console.log("Priming Chat")
-		this.socket.send(
-			JSON.stringify({
-				type: "chat_init",
-				body: "",
-				sender: this.currentUserID,
-				recipient: this.RecipientID,
-			})
-		)
-	}
+	// chatInitialiser() {
+	// 	if (!this.socket) {
+	// 		// Check if the socket is available
+	// 		console.error("[chatInitialiser] WebSocket connection is not open.");
+	// 		return;
+	// 	}
+	// 	console.log("Priming Chat")
+	// 	this.socket.send(
+	// 		JSON.stringify({
+	// 			type: "chat_init",
+	// 			body: "",
+	// 			sender: this.currentUserID,
+	// 			recipient: this.RecipientID,
+	// 		})
+	// 	)
+	// }
 
 	sendMessage() {
 		const messageInput = document.getElementById("messageInput")
@@ -258,7 +258,7 @@ export default class Chat extends AbstractView {
 
 	// displays chat history (if any) between two users
 	async displayChatHistory() {
-		this.offset = 0
+		this.offset = 10
 
 		const chatContainer = document.getElementById("chatContainer")
 		chatContainer.innerHTML = ""
@@ -384,9 +384,9 @@ export default class Chat extends AbstractView {
 		}
 	}
 
-	async fetchMessagesInChunks() {
+	async fetchMessagesInChunks(offset, limit) {
 		const response = await fetch(
-			`https://localhost:8080/getChatHistory?user1=${this.currentUserID}&user2=${this.RecipientID}&offset=${this.offset}&limit=${this.limit}`,
+			`https://localhost:8080/getChatHistory?user1=${this.currentUserID}&user2=${this.RecipientID}&offset=${offset}&limit=${limit}`,
 			{
 				credentials: "include", // Ensure cookies are included in the request
 			}
