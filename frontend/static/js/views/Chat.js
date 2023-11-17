@@ -131,8 +131,9 @@ export default class Chat extends AbstractView {
 	// Handle incoming chat messages
 	chatHandler(message) {
 		if (message.sender == this.RecipientID) {
-
-			const chatHistory = getElementById("chatHistory")
+			console.log(3)
+			const chatHistory = document.getElementById("chatHistory")
+			console.log(4, chatHistory)
 			const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
 			const time = this.formatTimestamp(message.time)
 			const chatElement = document.createElement("div")
@@ -269,10 +270,10 @@ export default class Chat extends AbstractView {
 		const recipientHeader = document.createElement("div")
 		recipientHeader.id = "recipientHeader"
 		recipientHeader.innerHTML = RecipientName;
-
+		console.log(1)
 		const chatHistory = document.createElement("div")
 		chatHistory.id = "chatHistory"
-
+		console.log(2, chatHistory)
 		const chatTextBox = document.createElement("div");
 		chatTextBox.id = "chatTextBox"
 		const messageInput = document.createElement("input")
