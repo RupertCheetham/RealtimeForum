@@ -51,7 +51,6 @@ func GetChatHistoryHandler(w http.ResponseWriter, r *http.Request) {
 	if previousChatEntryFound {
 		chatHistory, err = db.GetChatFromDatabase(chatUUID, offset, limit)
 	}
-	log.Println("(len(chatHistory))", (len(chatHistory)))
 	if err != nil {
 		utils.HandleError("Error retrieving chat history from the database:", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)

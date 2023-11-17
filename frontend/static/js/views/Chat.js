@@ -23,6 +23,34 @@ export default class Chat extends AbstractView {
 			this.processIncomingWebsocketMessage()
 		});
 
+		// Event listener for the logout button click
+		const logoutButton = document.getElementById("logout"); // Replace "logoutButton" with the actual ID of your logout button
+		if (logoutButton) {
+			logoutButton.addEventListener("click", () => {
+				console.log("here!")
+				this.closeWebSocket();
+			});
+		}
+
+		// Event listener for page refresh
+		window.addEventListener("beforeunload", () => {
+			console.log("reloaded here")
+			this.closeWebSocket();
+		});
+	}
+
+	closeWebSocket() {
+		if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+			this.socket.send(
+				JSON.stringify({
+					type: "connection_close",
+					sender: this.currentUserID,
+				})
+			)
+			this.socket.close();
+			console.log("WebSocket connection is closed.");
+		}
+
 	}
 
 	// List of users to click on to initialise chat
@@ -84,7 +112,7 @@ export default class Chat extends AbstractView {
 		// Div 2, the users online status indicator, starts off as hidden
 		const statusIndicator = document.createElement("div");
 		statusIndicator.id = (`statusIndicator${user.id}`)
-		statusIndicator.classList.add("status-indicator");
+		statusIndicator.classList.add("statusIndicator");
 		statusIndicator.style.display = "none"
 
 		userEntry.appendChild(usernameLink);
@@ -121,7 +149,7 @@ export default class Chat extends AbstractView {
 			if (message.type == "chat") {
 				this.chatHandler(message)
 			} else if (message.type == "online-notification") {
-				this.onlineHandler(message)
+				this.onlineHandler(message.onlineUsers)
 			}
 		}
 
@@ -157,16 +185,49 @@ export default class Chat extends AbstractView {
 		this.showMessageReceivedNotification()
 	}
 
-	onlineHandler(message) {
-		message.onlineUsers.forEach(userId => {
-			const statusIndicator = document.getElementById(`statusIndicator${userId}`)
-			if (statusIndicator) {
-				statusIndicator.style.display = "block"
-			}
+// 	onlineHandler(message) {
 
+// 		console.log("[onlineHandler]",  message.onlineUsers)
+// 		// sets all status indicators to offline
+// 		const allStatusIndicators = document.getElementsByClassName("statusIndicator");
+// 		[...allStatusIndicators].forEach(statusIndicator => {
+// // if (statusIndicator.id) == 
+
+// 			statusIndicator.style.display = "none";
+// 		});
+	
+// 		// activates only the users that are online
+// 		message.onlineUsers.forEach(userId => {
+// 			const onlineStatusIndicator = document.getElementById(`statusIndicator${userId}`);
+// 			if (onlineStatusIndicator) {
+// 				onlineStatusIndicator.style.display = "block";
+// 			}
+// 		});
+// 	}
+	
+
+
+
+	 onlineHandler(message) {
+		console.log("[onlineHandler]", message);
+
+		setTimeout(() => {
+
+					// sets all status indicators to offline unless their userID is in the list of online users
+		const allStatusIndicators = document.getElementsByClassName("statusIndicator");
+		[...allStatusIndicators].forEach(statusIndicator => {
+			console.log("statusIndicator:",statusIndicator)
+			const userId = parseInt(statusIndicator.id.replace("statusIndicator", ""), 10);
+	
+			statusIndicator.style.display = message.includes(userId) ? "block" : "none";
+			// console.log("statusIndicator.id", statusIndicator.id)
+			// console.log("statusIndicator.style.display", statusIndicator.style.display)
 		});
+		console.log("[onlineHandler] EOF")
+		}, 1500)
 
 	}
+	
 
 	changeUserlistOrder(userID) {
 		const divToMove = document.getElementById(`UserID${userID}`)
@@ -210,23 +271,6 @@ export default class Chat extends AbstractView {
 		}
 
 	}
-
-	// chatInitialiser() {
-	// 	if (!this.socket) {
-	// 		// Check if the socket is available
-	// 		console.error("[chatInitialiser] WebSocket connection is not open.");
-	// 		return;
-	// 	}
-	// 	console.log("Priming Chat")
-	// 	this.socket.send(
-	// 		JSON.stringify({
-	// 			type: "chat_init",
-	// 			body: "",
-	// 			sender: this.currentUserID,
-	// 			recipient: this.RecipientID,
-	// 		})
-	// 	)
-	// }
 
 	sendMessage() {
 		const messageInput = document.getElementById("messageInput")
@@ -416,7 +460,7 @@ export default class Chat extends AbstractView {
 
 	formatTimestamp(timestamp) {
 		const splitTimestamp = timestamp.split(" ") // Split the timestamp into time and date parts
-console.log("timestamp", timestamp)
+		console.log("timestamp", timestamp)
 		const timePart = splitTimestamp[0] // "19:12:30"
 		const datePart = splitTimestamp[1] // "25-10-2023"
 

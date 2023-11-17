@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"log"
 	"realtimeForum/utils"
 	"time"
 )
@@ -89,7 +88,6 @@ func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, err
 
 			// Assign the formatted time to the message
 			message.Time = formattedTime
-			log.Println("formattedTime", formattedTime)
 
 			chatStruct = append(chatStruct, message)
 		}

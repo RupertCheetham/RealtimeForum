@@ -83,6 +83,7 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 		} else if chatMsg.Type == "connection_close" {
 			log.Println("[WebsocketChatHandler] connection_close")
 			onlineUserConnections = removeConnection(onlineUserConnections, connection)
+			broadcastOnlineStatusToUsers(messageType)
 			log.Println("[WebsocketChatHandler] -TESTING- Removed User ", chatMsg.Sender, " to onlineUsers")
 			log.Println("[WebsocketChatHandler] length of onlineUsers is:", len(onlineUserConnections))
 		}
