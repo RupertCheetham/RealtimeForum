@@ -237,8 +237,8 @@ export default class Chat extends AbstractView {
 			// Create a Date object to get the current date and time
 			const now = new Date();
 
-			// Format the date and time as a string
-			const formattedTime = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()} ${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`;
+			// Format the date and time as a string, adding a 0 to the left of the numbers, if they were to be single digit
+			const formattedTime = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} ${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`;
 
 			// Create a message object with the formatted time
 			const newMessage = {
@@ -416,7 +416,7 @@ export default class Chat extends AbstractView {
 
 	formatTimestamp(timestamp) {
 		const splitTimestamp = timestamp.split(" ") // Split the timestamp into time and date parts
-
+console.log("timestamp", timestamp)
 		const timePart = splitTimestamp[0] // "19:12:30"
 		const datePart = splitTimestamp[1] // "25-10-2023"
 
@@ -425,7 +425,8 @@ export default class Chat extends AbstractView {
 
 		const hours = time[0]
 		const minutes = time[1]
-
+		console.log("hours", hours)
+		console.log("minutes", String(minutes))
 		// Split up the date
 		const dateParts = datePart.split("-")
 		const day = dateParts[0]

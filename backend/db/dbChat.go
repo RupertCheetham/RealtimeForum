@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"log"
 	"realtimeForum/utils"
 	"time"
 )
@@ -77,14 +78,18 @@ func GetChatFromDatabase(UUID string, offset int, limit int) ([]ChatMessage, err
 				return nil, parseErr
 			}
 
-			// Add an hour to the time
-			timeWithHourAdded := timeObj.Add(time.Hour)
+			// // Add an hour to the time, when daylight savings are active
+			// timeWithHourAdded := timeObj.Add(time.Hour)
 
-			// Format the time as a string in the desired format
-			formattedTime := timeWithHourAdded.Format("15:04:05 02-01-2006")
+			// // Format the time as a string in the desired format
+			// formattedTime := timeWithHourAdded.Format("15:04:05 02-01-2006")
+
+			// TIme when daylight savings are not active
+			formattedTime := timeObj.Format("15:04:05 02-01-2006")
 
 			// Assign the formatted time to the message
 			message.Time = formattedTime
+			log.Println("formattedTime", formattedTime)
 
 			chatStruct = append(chatStruct, message)
 		}
