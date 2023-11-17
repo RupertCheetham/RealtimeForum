@@ -132,7 +132,7 @@ export default class Chat extends AbstractView {
 	chatHandler(message) {
 		if (message.sender == this.RecipientID) {
 
-			const chatHistory = getElementById("chatHistory")
+			const chatHistory = document.getElementById("chatHistory")
 			const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
 			const time = this.formatTimestamp(message.time)
 			const chatElement = document.createElement("div")
