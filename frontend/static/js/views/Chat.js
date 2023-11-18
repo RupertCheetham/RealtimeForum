@@ -160,14 +160,9 @@ export default class Chat extends AbstractView {
 	// Handle incoming chat messages
 	chatHandler(message) {
 		if (message.sender == this.RecipientID) {
-<<<<<<< HEAD
-
-			const chatHistory = document.getElementById("chatHistory")
-=======
 			console.log(3)
 			const chatHistory = document.getElementById("chatHistory")
 			console.log(4, chatHistory)
->>>>>>> Rupert
 			const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
 			let messageUsername;
 			if (senderClassName === "received") {
