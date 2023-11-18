@@ -8,8 +8,9 @@ export default class Chat extends AbstractView {
 		this.socket = null;
 		this.currentUserID = Number(localStorage.getItem("id"))
 		this.RecipientID = undefined;
+		this.RecipientName = undefined;
 		this.limit = 10
-		this.offset = 0
+		this.offset = 10
 		this.previousTime = null
 		this.previousDate = null
 	}
@@ -22,6 +23,34 @@ export default class Chat extends AbstractView {
 			this.onlineNotifier()
 			this.processIncomingWebsocketMessage()
 		});
+
+		// Event listener for the logout button click
+		const logoutButton = document.getElementById("logout"); // Replace "logoutButton" with the actual ID of your logout button
+		if (logoutButton) {
+			logoutButton.addEventListener("click", () => {
+				console.log("here!")
+				this.closeWebSocket();
+			});
+		}
+
+		// Event listener for page refresh
+		window.addEventListener("beforeunload", () => {
+			console.log("reloaded here")
+			this.closeWebSocket();
+		});
+	}
+
+	closeWebSocket() {
+		if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+			this.socket.send(
+				JSON.stringify({
+					type: "connection_close",
+					sender: this.currentUserID,
+				})
+			)
+			this.socket.close();
+			console.log("WebSocket connection is closed.");
+		}
 
 	}
 
@@ -76,15 +105,15 @@ export default class Chat extends AbstractView {
 			event.preventDefault();
 			this.RecipientID = user.id
 			this.renderHTML()
-			if (userContainer.id == "alphabeticalChat") {
-				this.chatInitialiser()
-			}
+			// if (userContainer.id == "alphabeticalChat") {
+			// 	this.chatInitialiser()
+			// }
 
 		})
 		// Div 2, the users online status indicator, starts off as hidden
 		const statusIndicator = document.createElement("div");
 		statusIndicator.id = (`statusIndicator${user.id}`)
-		statusIndicator.classList.add("status-indicator");
+		statusIndicator.classList.add("statusIndicator");
 		statusIndicator.style.display = "none"
 
 		userEntry.appendChild(usernameLink);
@@ -121,7 +150,7 @@ export default class Chat extends AbstractView {
 			if (message.type == "chat") {
 				this.chatHandler(message)
 			} else if (message.type == "online-notification") {
-				this.onlineHandler(message)
+				this.onlineHandler(message.onlineUsers)
 			}
 		}
 
@@ -131,18 +160,33 @@ export default class Chat extends AbstractView {
 	// Handle incoming chat messages
 	chatHandler(message) {
 		if (message.sender == this.RecipientID) {
+<<<<<<< HEAD
 
 			const chatHistory = document.getElementById("chatHistory")
+=======
+			console.log(3)
+			const chatHistory = document.getElementById("chatHistory")
+			console.log(4, chatHistory)
+>>>>>>> Rupert
 			const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
+			let messageUsername;
+			if (senderClassName === "received") {
+				messageUsername = this.RecipientName;
+			} else {
+				messageUsername = "You";
+			}
 			const time = this.formatTimestamp(message.time)
 			const chatElement = document.createElement("div")
 			chatElement.classList.add(senderClassName)
 			chatElement.innerHTML =
 				`
-			<div id="message-content">
-				<div id="body">${message.body}</div>
-				<div id="time"><i>${time}</i></div>
-			</div>
+				<div id="message-content">
+				<div id="recipient">${messageUsername}:</div>
+					<div id="body-time-container">
+					 <div id="body">${message.body}</div>
+					   <div id="time"><i>${time}</i></div>
+				   </div>
+				</div>
 			`
 
 			// chatHistory displays from the bottom up, this adds new messages to the bottom
@@ -156,16 +200,27 @@ export default class Chat extends AbstractView {
 		this.showMessageReceivedNotification()
 	}
 
-	onlineHandler(message) {
-		message.onlineUsers.forEach(userId => {
-			const statusIndicator = document.getElementById(`statusIndicator${userId}`)
-			if (statusIndicator) {
-				statusIndicator.style.display = "block"
-			}
 
-		});
+	onlineHandler(message) {
+		console.log("[onlineHandler]", message);
+
+		setTimeout(() => {
+
+			// sets all status indicators to offline unless their userID is in the list of online users
+			const allStatusIndicators = document.getElementsByClassName("statusIndicator");
+			[...allStatusIndicators].forEach(statusIndicator => {
+				console.log("statusIndicator:", statusIndicator)
+				const userId = parseInt(statusIndicator.id.replace("statusIndicator", ""), 10);
+
+				statusIndicator.style.display = message.includes(userId) ? "block" : "none";
+				// console.log("statusIndicator.id", statusIndicator.id)
+				// console.log("statusIndicator.style.display", statusIndicator.style.display)
+			});
+			console.log("[onlineHandler] EOF")
+		}, 1500)
 
 	}
+
 
 	changeUserlistOrder(userID) {
 		const divToMove = document.getElementById(`UserID${userID}`)
@@ -210,23 +265,6 @@ export default class Chat extends AbstractView {
 
 	}
 
-	chatInitialiser() {
-		if (!this.socket) {
-			// Check if the socket is available
-			console.error("[chatInitialiser] WebSocket connection is not open.");
-			return;
-		}
-		console.log("Priming Chat")
-		this.socket.send(
-			JSON.stringify({
-				type: "chat_init",
-				body: "",
-				sender: this.currentUserID,
-				recipient: this.RecipientID,
-			})
-		)
-	}
-
 	sendMessage() {
 		const messageInput = document.getElementById("messageInput")
 		const Message = messageInput.value.trim()
@@ -236,8 +274,8 @@ export default class Chat extends AbstractView {
 			// Create a Date object to get the current date and time
 			const now = new Date();
 
-			// Format the date and time as a string
-			const formattedTime = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()} ${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`;
+			// Format the date and time as a string, adding a 0 to the left of the numbers, if they were to be single digit
+			const formattedTime = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')} ${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`;
 
 			// Create a message object with the formatted time
 			const newMessage = {
@@ -257,7 +295,7 @@ export default class Chat extends AbstractView {
 
 	// displays chat history (if any) between two users
 	async displayChatHistory() {
-		this.offset = 0
+		this.offset = 10
 
 		const chatContainer = document.getElementById("chatContainer")
 		chatContainer.innerHTML = ""
@@ -265,14 +303,14 @@ export default class Chat extends AbstractView {
 		const allChat = document.createElement("div")
 		allChat.id = "allChat"
 
-		const RecipientName = await usernameFromUserID(this.RecipientID)
+		this.RecipientName = await usernameFromUserID(this.RecipientID)
 		const recipientHeader = document.createElement("div")
 		recipientHeader.id = "recipientHeader"
-		recipientHeader.innerHTML = RecipientName;
-
+		recipientHeader.innerHTML = this.RecipientName;
+		console.log(1)
 		const chatHistory = document.createElement("div")
 		chatHistory.id = "chatHistory"
-
+		console.log(2, chatHistory)
 		const chatTextBox = document.createElement("div");
 		chatTextBox.id = "chatTextBox"
 		const messageInput = document.createElement("input")
@@ -324,14 +362,14 @@ export default class Chat extends AbstractView {
 
 		// Add a scroll event listener to the chat history container
 		const throttleScroll = throttle(() => {
-			const scrollThreshold = chatHistory.scrollHeight * 0.3
+			const scrollThreshold = chatHistory.scrollHeight * 0.9
 
-			if (chatHistory.scrollTop <= scrollThreshold) {
+			if (chatHistory.scrollTop = scrollThreshold) {
 				// Load and append more messages
 				this.loadMoreMessages(this.currentUserID, this.RecipientID, this.offset, this.limit)
 				this.offset += 10
 			}
-		}, 100)
+		}, 1000)
 
 		chatHistory.addEventListener("scroll", throttleScroll)
 	}
@@ -341,24 +379,66 @@ export default class Chat extends AbstractView {
 		const chatElement = document.createElement("div")
 		const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
 		chatElement.classList.add(senderClassName)
+		let messageUsername;
+		if (senderClassName === "received") {
+			messageUsername = this.RecipientName;
+		} else {
+			messageUsername = "You";
+		}
 		const time = this.formatTimestamp(message.time)
-		chatElement.innerHTML = `<div id="message-content">
-				<div id="body">${message.body}</div>
-				<div id="time"><i>${time}</i></div>
-			</div>`
+		chatElement.innerHTML = `
+		<div id="message-content">
+    		<div id="recipient">${messageUsername}:</div>
+   			 <div id="body-time-container">
+     			<div id="body">${message.body}</div>
+       			<div id="time"><i>${time}</i></div>
+   			</div>
+		</div>
+		`
 		chatHistory.appendChild(chatElement)
 	}
 
 	async prependMessageToChatHistory(message) {
-		const chatHistory = document.getElementById("chatHistory")
-		const chatElement = document.createElement("div")
-		const senderClassName = message.sender === this.currentUserID ? "sent" : "received"
-		chatElement.classList.add(senderClassName)
-		const time = this.formatTimestamp(message.time)
-		chatElement.innerHTML = `<div id="message-content">
-				<div id="body">${message.body}</div>
-				<div id="time"><i>${time}</i></div>
-			</div>`
+		const chatHistory = document.getElementById("chatHistory");
+		const chatElement = document.createElement("div");
+		const senderClassName = message.sender === this.currentUserID ? "sent" : "received";
+		chatElement.classList.add(senderClassName);
+
+		let messageUsername;
+		if (senderClassName === "received") {
+			messageUsername = this.RecipientName;
+		} else {
+			messageUsername = "You";
+		}
+
+		const time = this.formatTimestamp(message.time);
+		const messageContent = document.createElement("div");
+		messageContent.id = "message-content";
+
+		const recipientDiv = document.createElement("div");
+		recipientDiv.id = "recipient";
+		recipientDiv.textContent = `${messageUsername}:`;
+
+		const bodyTimeContainerDiv = document.createElement("div");
+		bodyTimeContainerDiv.id = "body-time-container";
+
+		const bodyDiv = document.createElement("div");
+		bodyDiv.id = "body";
+		bodyDiv.textContent = message.body;
+
+		const timeDiv = document.createElement("div");
+		timeDiv.id = "time";
+		timeDiv.innerHTML = `<i>${time}</i>`;
+
+		bodyTimeContainerDiv.appendChild(bodyDiv);
+		bodyTimeContainerDiv.appendChild(timeDiv);
+
+		messageContent.appendChild(recipientDiv);
+		messageContent.appendChild(bodyTimeContainerDiv);
+
+		chatElement.appendChild(messageContent);
+
+		// Set background color based on senderClassName
 		chatHistory.insertBefore(chatElement, chatHistory.firstChild)
 	}
 
@@ -383,9 +463,9 @@ export default class Chat extends AbstractView {
 		}
 	}
 
-	async fetchMessagesInChunks() {
+	async fetchMessagesInChunks(offset, limit) {
 		const response = await fetch(
-			`https://localhost:8080/getChatHistory?user1=${this.currentUserID}&user2=${this.RecipientID}&offset=${this.offset}&limit=${this.limit}`,
+			`https://localhost:8080/getChatHistory?user1=${this.currentUserID}&user2=${this.RecipientID}&offset=${offset}&limit=${limit}`,
 			{
 				credentials: "include", // Ensure cookies are included in the request
 			}
@@ -415,7 +495,7 @@ export default class Chat extends AbstractView {
 
 	formatTimestamp(timestamp) {
 		const splitTimestamp = timestamp.split(" ") // Split the timestamp into time and date parts
-
+		console.log("timestamp", timestamp)
 		const timePart = splitTimestamp[0] // "19:12:30"
 		const datePart = splitTimestamp[1] // "25-10-2023"
 
@@ -424,7 +504,8 @@ export default class Chat extends AbstractView {
 
 		const hours = time[0]
 		const minutes = time[1]
-
+		console.log("hours", hours)
+		console.log("minutes", String(minutes))
 		// Split up the date
 		const dateParts = datePart.split("-")
 		const day = dateParts[0]

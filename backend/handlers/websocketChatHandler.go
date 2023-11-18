@@ -38,11 +38,20 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 		// Consider breaking down into functions
 
 		if chatMsg.Type == "chat" {
+			var chatUUID string
 			// finds users chatroom and then adds message to db
 			log.Println("[WebsocketChatHandler] chat")
-			_, chatUUID, err := db.PreviousChatChecker(chatMsg.Sender, chatMsg.Recipient)
+			previousChatEntryFound, chatUUID, err := db.PreviousChatChecker(chatMsg.Sender, chatMsg.Recipient)
 			if err != nil {
 				utils.HandleError("Error with previousChatChecker 1 in WebsocketChatHandler", err)
+			}
+			if !previousChatEntryFound {
+				chatUUID = utils.GenerateNewUUID()
+				log.Println("Initialising chat room between User", chatMsg.Sender, "and User", chatMsg.Recipient)
+				// err = db.AddChatToDatabase(chatUUID, "", chatMsg.Sender, chatMsg.Recipient)
+				if err != nil {
+					utils.HandleError("There has been an issue with AddChatToDatabase in ChatHandler", err)
+				}
 			}
 			err = db.AddChatToDatabase(chatUUID, chatMsg.Body, chatMsg.Sender, chatMsg.Recipient)
 			if err != nil {
@@ -74,6 +83,7 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 		} else if chatMsg.Type == "connection_close" {
 			log.Println("[WebsocketChatHandler] connection_close")
 			onlineUserConnections = removeConnection(onlineUserConnections, connection)
+			broadcastOnlineStatusToUsers(messageType)
 			log.Println("[WebsocketChatHandler] -TESTING- Removed User ", chatMsg.Sender, " to onlineUsers")
 			log.Println("[WebsocketChatHandler] length of onlineUsers is:", len(onlineUserConnections))
 		}
@@ -131,6 +141,8 @@ func broadcastOnlineStatusToUsers(messageType int) {
 	var usersToSend db.OnlineUserStruct
 	usersToSend.Type = "online-notification"
 	usersToSend.OnlineUsers = onlineUsers
+
+	log.Println("onlineUsers", onlineUsers)
 
 	// changes the message to a JSON, for sending to frontend
 	payload, err := json.Marshal(usersToSend)

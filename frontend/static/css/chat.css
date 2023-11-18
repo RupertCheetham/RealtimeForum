@@ -1,43 +1,34 @@
 .userEntry {
     display: flex;
-    align-items: center; /* Vertically center items */
-    margin-top: 10px; /* Adjust the margin as needed for spacing between userEntries */
+    align-items: center;
+    /* Vertically center items */
+    margin-top: 10px;
+    /* Adjust the margin as needed for spacing between userEntries */
 }
 
 .usernameLink {
     display: inline-block;
     font-weight: bold;
     cursor: pointer;
-  
+
 }
 
-.status-indicator {
+.statusIndicator {
     display: inline-block;
     vertical-align: middle;
     align-items: center;
     width: 8px;
     height: 8px;
-    background-color: #4CAF50; /* Green color, adjust as needed */
+    background-color: #4CAF50;
+    /* Green color, adjust as needed */
     border-radius: 50%;
-    margin-left: 6px; /* Adjust the margin as needed */
+    margin-left: 6px;
+    /* Adjust the margin as needed */
 }
-
-.status-indicator {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    background-color: #4CAF50; /* Green color, adjust as needed */
-    border-radius: 50%;
-    margin-left: 4px; /* Adjust the margin as needed */
-}
-
-
 
 .chat-font {
     color: #ffffff;
 }
-
-
 
 .allChat {
     background-color: black;
@@ -52,39 +43,54 @@
     background-color: black;
     display: flex;
     flex-direction: column-reverse;
-    height: 235px;
+    height: 535px;
     overflow-y: scroll;
     scrollbar-width: auto;
     scrollbar-color: rebeccapurple yellow;
 }
 
 .sent {
+    background-color: green;
     color: #ffffff;
 }
 
 .received {
+    background-color:  #ffffff;;
     color: green;
 }
 
 #message-content {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column; /* Stack the children vertically */
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 3px;
+}
+
+#recipient {
+    margin-bottom: 8px; /* Add space between recipient and body */
+    align-self: flex-start; /* Align recipient to the left */
+}
+
+#body-time-container {
+    display: flex;
+    width: 100%;
 }
 
 #body {
-    flex: 2;
-    /* "body" takes up two-thirds of the available space */
+    flex: 3; /* Takes up 75% of the container */
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 #time {
-    flex: 1;
-    /* "time" takes up one-third of the available space */
+    flex: 1; /* Takes up 25% of the container */
     flex-shrink: 0;
     margin-left: 8px;
     font-size: 0.6em;
 }
+
+
 
 #notification {
     position: fixed;
