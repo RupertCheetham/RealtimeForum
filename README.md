@@ -18,24 +18,31 @@ A new database will be created during the initialization process.
 
 ## Features
 
+- Registration
 - View posts, likes/dislikes, categories, and comments.
 - Register an account to:
-  - Create posts with images and gifs, optionally assigning categories.
   - Like/dislike posts and comments.
-  - Access your posts and liked posts via your username.
-- Implemented Google and GitHub authentication.
+  - Access your posts and liked posts via your username in the top left of the screen.
+  - Realtime Chat by clicking on a user from the list on the left (need to log in to 2 different users, 1 per browser)
+
 
 ## Skills Acquired
 
-- Intermediate Golang
+- JS
+- Node.JS
+- HTML
+- Sessions and cookies
+- Communication between a frontend and a backend server
+- Golang
 - HTML and CSS
+- DOM
 - HTTPS security certificates and keys
-- Database creation and management (SQL), including image storage
-- Google and GitHub authentication
 
 ## Team Members
 
-- Nikoi K. - [GitHub](https://github.com/kn1ko1)
 - Martin F. - [GitHub](https://github.com/m-fenton)
 - Michael A. - [GitHub](https://github.com/11ma)
+- Nikoi K. - [GitHub](https://github.com/kn1ko1)
 - Captain Rupert C. - [GitHub](https://github.com/Cheethamthing)
+
+
