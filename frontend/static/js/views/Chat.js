@@ -364,7 +364,7 @@ export default class Chat extends AbstractView {
 				this.loadMoreMessages(this.currentUserID, this.RecipientID, this.offset, this.limit)
 				this.offset += 10
 			}
-		}, 1000)
+		}, 5000)
 
 		chatHistory.addEventListener("scroll", throttleScroll)
 	}
