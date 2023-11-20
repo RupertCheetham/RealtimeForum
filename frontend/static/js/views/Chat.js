@@ -13,6 +13,7 @@ export default class Chat extends AbstractView {
 		this.offset = 10
 		this.previousTime = null
 		this.previousDate = null
+		this._typingIndicator = null
 	}
 
 	async startWebsocket() {
@@ -204,14 +205,13 @@ export default class Chat extends AbstractView {
 			// sets all status indicators to offline unless their userID is in the list of online users
 			const allStatusIndicators = document.getElementsByClassName("statusIndicator");
 			[...allStatusIndicators].forEach(statusIndicator => {
-				console.log("statusIndicator:", statusIndicator)
+				
 				const userId = parseInt(statusIndicator.id.replace("statusIndicator", ""), 10);
 
 				statusIndicator.style.display = message.includes(userId) ? "block" : "none";
-				// console.log("statusIndicator.id", statusIndicator.id)
-				// console.log("statusIndicator.style.display", statusIndicator.style.display)
+				
 			});
-			console.log("[onlineHandler] EOF")
+		
 		}, 1500)
 
 	}
@@ -299,13 +299,35 @@ export default class Chat extends AbstractView {
 		allChat.id = "allChat"
 
 		this.RecipientName = await usernameFromUserID(this.RecipientID)
+
+
 		const recipientHeader = document.createElement("div")
 		recipientHeader.id = "recipientHeader"
-		recipientHeader.innerHTML = this.RecipientName;
-		console.log(1)
+
+		const recipientHeaderName = document.createElement("div")
+		recipientHeaderName.id = "recipientHeaderName"
+		recipientHeaderName.innerHTML = this.RecipientName;
+
+		const recipientHeaderIsTyping = document.createElement("div")
+		recipientHeaderIsTyping.id = "recipientHeaderIsTyping"
+recipientHeaderIsTyping.innerHTML = 
+		`<div class="typing">
+        <span class="typing__bullet"></span>
+        <span class="typing__bullet"></span>
+        <span class="typing__bullet"></span>
+    </div>
+</div>`
+
+this._typingIndicator = document.querySelector('.typing');
+
+const typing = document.getElementsByClassName("typing")
+console.log(document.getElementsByClassName("typing"))
+
+recipientHeader.appendChild(recipientHeaderName)
+recipientHeader.appendChild(recipientHeaderIsTyping)
+		
 		const chatHistory = document.createElement("div")
 		chatHistory.id = "chatHistory"
-		console.log(2, chatHistory)
 		const chatTextBox = document.createElement("div");
 		chatTextBox.id = "chatTextBox"
 		const messageInput = document.createElement("input")
@@ -367,6 +389,11 @@ export default class Chat extends AbstractView {
 		}, 5000)
 
 		chatHistory.addEventListener("scroll", throttleScroll)
+
+		
+			this.initTypingIndicator(typing);
+		
+		
 	}
 
 	appendMessageToChatHistory(message) {
@@ -542,4 +569,66 @@ export default class Chat extends AbstractView {
 		}, 5000);
 	}
 
+	
+	
+	
+   
+    idleTime = 400
+    idleTimer = null
+    inputValue
+    indicatorState = {
+        active : 'is-typing-active',
+        init : 'is-typing-init'
+    };
+
+showIndicator(typing){
+	console.log("this is _typingIndicator", this._typingIndicator)
+    // this._typingIndicator.classList.add(indicatorState.init);
+	// console.log("this is 2nd _typingIndicator", this._typingIndicator)
+	typing.classList.add(indicatorState.init);
 }
+
+activateIndicator(el){
+    this._typingIndicator.classList.add(indicatorState.active);
+    inputValue = el.value;
+    this.detectIdle(el);
+}
+
+removeIndicator(){
+    this._typingIndicator.classList.remove(indicatorState.init, indicatorState.active);
+}
+
+detectIdle(el){
+    if (idleTimer) {
+        this.clearInterval(idleTimer);
+    }
+    
+    idleTimer = setTimeout(function(){
+        if (this.getInputCurrentValue(el) === inputValue) {
+            _typingIndicator.classList.remove(indicatorState.active);
+        }
+    }, idleTime);
+}
+
+ getInputCurrentValue(el){
+    var currentValue = el.value;
+    return currentValue;
+}
+
+initTypingIndicator() {
+	const _input = document.getElementById('messageInput')
+    _input.onfocus = () => {
+        this.showIndicator();
+    };
+
+    _input.onkeyup = () => {
+        this.activateIndicator(this);
+    };
+
+    _input.onblur = () => {
+        this.removeIndicator();
+    };
+}
+
+}
+
