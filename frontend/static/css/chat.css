@@ -81,7 +81,10 @@
     flex: 3; /* Takes up 75% of the container */
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: pre-wrap; /* Wrap the text, preserving spaces and newlines */
+    word-wrap: break-word; /* Allow breaking of long words */
 }
+
 
 #time {
     flex: 1; /* Takes up 25% of the container */
