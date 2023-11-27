@@ -14,6 +14,13 @@ export default class Chat extends AbstractView {
 		this.previousTime = null
 		this.previousDate = null
 		this._typingIndicator = null
+		this.idleTime = 400
+		this.idleTimer = null
+		this.inputValue
+		this.indicatorState = {
+			active : 'is-typing-active',
+			init : 'is-typing-init'
+		};
 	}
 
 	async startWebsocket() {
@@ -310,17 +317,29 @@ export default class Chat extends AbstractView {
 
 		const recipientHeaderIsTyping = document.createElement("div")
 		recipientHeaderIsTyping.id = "recipientHeaderIsTyping"
-recipientHeaderIsTyping.innerHTML = 
-		`<div class="typing">
+
+const typing = document.createElement("div")
+typing.classList.add("typing")
+
+typing.innerHTML = `
+<span class="typing__bullet"></span>
         <span class="typing__bullet"></span>
         <span class="typing__bullet"></span>
-        <span class="typing__bullet"></span>
-    </div>
-</div>`
+		`
+
+// recipientHeaderIsTyping.innerHTML = 
+// 		`<div class="typing">
+//         <span class="typing__bullet"></span>
+//         <span class="typing__bullet"></span>
+//         <span class="typing__bullet"></span>
+//     </div>
+// </div>`
+
+recipientHeaderIsTyping.appendChild(typing)
 
 this._typingIndicator = document.querySelector('.typing');
 
-const typing = document.getElementsByClassName("typing")
+// const typing = document.getElementsByClassName("typing")
 console.log(document.getElementsByClassName("typing"))
 
 recipientHeader.appendChild(recipientHeaderName)
@@ -517,7 +536,7 @@ recipientHeader.appendChild(recipientHeaderIsTyping)
 
 	formatTimestamp(timestamp) {
 		const splitTimestamp = timestamp.split(" ") // Split the timestamp into time and date parts
-		console.log("timestamp", timestamp)
+	
 		const timePart = splitTimestamp[0] // "19:12:30"
 		const datePart = splitTimestamp[1] // "25-10-2023"
 
@@ -526,8 +545,7 @@ recipientHeader.appendChild(recipientHeaderIsTyping)
 
 		const hours = time[0]
 		const minutes = time[1]
-		console.log("hours", hours)
-		console.log("minutes", String(minutes))
+		
 		// Split up the date
 		const dateParts = datePart.split("-")
 		const day = dateParts[0]
@@ -573,41 +591,36 @@ recipientHeader.appendChild(recipientHeaderIsTyping)
 	
 	
    
-    idleTime = 400
-    idleTimer = null
-    inputValue
-    indicatorState = {
-        active : 'is-typing-active',
-        init : 'is-typing-init'
-    };
+   
 
-showIndicator(typing){
-	console.log("this is _typingIndicator", this._typingIndicator)
-    // this._typingIndicator.classList.add(indicatorState.init);
-	// console.log("this is 2nd _typingIndicator", this._typingIndicator)
-	typing.classList.add(indicatorState.init);
+showIndicator(){
+	const typing = document.getElementsByClassName("typing")
+	typing[0].classList.add(this.indicatorState.init);
 }
 
 activateIndicator(el){
-    this._typingIndicator.classList.add(indicatorState.active);
-    inputValue = el.value;
+	const typing = document.getElementsByClassName("typing")
+    typing[0].classList.add(this.indicatorState.active);
+    this.inputValue = el.value;
     this.detectIdle(el);
 }
 
 removeIndicator(){
-    this._typingIndicator.classList.remove(indicatorState.init, indicatorState.active);
+	const typing = document.getElementsByClassName("typing")
+    typing[0].classList.remove(this.indicatorState.init, this.indicatorState.active);
 }
 
 detectIdle(el){
-    if (idleTimer) {
-        this.clearInterval(idleTimer);
+	const typing = document.getElementsByClassName("typing")
+    if (this.idleTimer) {
+        clearInterval(this.idleTimer);
     }
     
-    idleTimer = setTimeout(function(){
-        if (this.getInputCurrentValue(el) === inputValue) {
-            _typingIndicator.classList.remove(indicatorState.active);
+    this.idleTimer = setTimeout(() => {
+        if (this.getInputCurrentValue(el) === this.inputValue) {
+            typing[0].classList.remove(this.indicatorState.active);
         }
-    }, idleTime);
+    }, this.idleTime);
 }
 
  getInputCurrentValue(el){
