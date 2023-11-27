@@ -37,7 +37,11 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 		userConnections[chatMsg.Sender] = connection
 		// Consider breaking down into functions
 
-		if chatMsg.Type == "chat" {
+		if chatMsg.Type == "typing" {
+			recipientID := chatMsg.Recipient
+			log.Println("we are printing recipientID, in typing", recipientID)
+			// forwardTypingStatus(recipientID, message["isTyping"].(bool))
+		} else if chatMsg.Type == "chat" {
 			var chatUUID string
 			// finds users chatroom and then adds message to db
 			log.Println("[WebsocketChatHandler] chat")
@@ -187,4 +191,20 @@ func removeConnection(mapOfConnections map[int]*websocket.Conn, connectionToRemo
 		}
 	}
 	return mapOfConnections
+}
+
+func forwardTypingStatus(recipientID int, isTyping string) {
+	// Assuming you have a function to get the WebSocket connection of the recipient
+	recipientConnection := userConnections[recipientID]
+
+	if recipientConnection != nil {
+		// Forward the typing status to the recipient
+		message := map[string]interface{}{
+			"type":     "typing",
+			"isTyping": isTyping,
+		}
+		if err := recipientConnection.WriteJSON(message); err != nil {
+			// Handle error
+		}
+	}
 }

@@ -596,6 +596,7 @@ recipientHeader.appendChild(recipientHeaderIsTyping)
 showIndicator(){
 	const typing = document.getElementsByClassName("typing")
 	typing[0].classList.add(this.indicatorState.init);
+	this.sendTypingStatus("focusTyping");
 }
 
 activateIndicator(el){
@@ -603,6 +604,7 @@ activateIndicator(el){
     typing[0].classList.add(this.indicatorState.active);
     this.inputValue = el.value;
     this.detectIdle(el);
+	this.sendTypingStatus("typing");
 }
 
 removeIndicator(){
@@ -621,6 +623,8 @@ detectIdle(el){
             typing[0].classList.remove(this.indicatorState.active);
         }
     }, this.idleTime);
+
+	this.sendTypingStatus("notTyping");
 }
 
  getInputCurrentValue(el){
@@ -643,5 +647,41 @@ initTypingIndicator() {
     };
 }
 
+sendTypingStatus(typingStatus) {
+	
+    const message = {
+        type: "typing",
+        isTyping: typingStatus,
+        sender: this.currentUserID,
+        recipient: this.RecipientID,
+    };
+    this.socket.send(JSON.stringify(message));
 }
+
+
+}
+
+
+
+
+// function sendTypingStatus(typingStatus) {
+	
+//     const message = {
+//         type: "typing",
+//         isTyping: typingStatus,
+//         sender: this.currentUserID,
+//         recipient: this.RecipientID,
+//     };
+//     this.socket.send(JSON.stringify(message));
+// }
+
+
+// // Call this function when the sender focuses on chat box
+// sendTypingStatus("focusTyping");
+
+// // Call this function when the sender starts typing
+// sendTypingStatus("typing");
+
+// // Call this function when the sender stops typing
+// sendTypingStatus("notTyping");
 
