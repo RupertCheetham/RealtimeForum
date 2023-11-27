@@ -37,6 +37,7 @@
 #recipientHeader {
     color: lightblue;
     font-size: 25px;
+    display: flex;
 }
 
 #chatHistory {

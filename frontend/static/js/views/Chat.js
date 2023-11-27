@@ -366,7 +366,7 @@ recipientHeader.appendChild(recipientHeaderIsTyping)
 		//deals with sending new messages to the backend when sendButton is clicked or enter is pressed
 		chatTextBox.addEventListener("click", (event) => {
 			// Check if the clicked element is the sendButton or messageInput
-			if (event.target === sendButton || event.target === messageInput) {
+			if (event.target === sendButton) {
 				this.sendMessage();
 			}
 		});
