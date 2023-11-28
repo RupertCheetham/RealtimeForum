@@ -1,129 +1,214 @@
 .userEntry {
-    display: flex;
-    align-items: center;
-    /* Vertically center items */
-    margin-top: 10px;
-    /* Adjust the margin as needed for spacing between userEntries */
+  display: flex;
+  align-items: center;
+  /* Vertically center items */
+  margin-top: 10px;
+  /* Adjust the margin as needed for spacing between userEntries */
 }
 
 .usernameLink {
-    display: inline-block;
-    font-weight: bold;
-    cursor: pointer;
+  display: inline-block;
+  font-weight: bold;
+  cursor: pointer;
 
 }
 
 .statusIndicator {
-    display: inline-block;
-    vertical-align: middle;
-    align-items: center;
-    width: 8px;
-    height: 8px;
-    background-color: #4CAF50;
-    /* Green color, adjust as needed */
-    border-radius: 50%;
-    margin-left: 6px;
-    /* Adjust the margin as needed */
+  display: inline-block;
+  vertical-align: middle;
+  align-items: center;
+  width: 8px;
+  height: 8px;
+  background-color: #4CAF50;
+  /* Green color, adjust as needed */
+  border-radius: 50%;
+  margin-left: 6px;
+  /* Adjust the margin as needed */
 }
 
 .chat-font {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 .allChat {
-    background-color: black;
+  background-color: black;
 }
 
 #recipientHeader {
-    color: lightblue;
-    font-size: 25px;
+  color: lightblue;
+  font-size: 25px;
+  display: flex;
 }
 
 #chatHistory {
-    background-color: black;
-    display: flex;
-    flex-direction: column-reverse;
-    height: 535px;
-    overflow-y: scroll;
-    scrollbar-width: auto;
-    scrollbar-color: rebeccapurple yellow;
+  background-color: black;
+  display: flex;
+  flex-direction: column-reverse;
+  height: 535px;
+  overflow-y: scroll;
+  scrollbar-width: auto;
+  scrollbar-color: rebeccapurple yellow;
 }
 
 .sent {
-    background-color: green;
-    color: #ffffff;
+  background-color: green;
+  color: #ffffff;
 }
 
 .received {
-    background-color:  #ffffff;;
-    color: green;
+  background-color:  #ffffff;;
+  color: green;
 }
 
 #message-content {
-    display: flex;
-    flex-direction: column; /* Stack the children vertically */
-    align-items: center;
-    border: 1px solid #ccc;
-    padding: 3px;
+  display: flex;
+  flex-direction: column; /* Stack the children vertically */
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 3px;
 }
 
 #recipient {
-    margin-bottom: 8px; /* Add space between recipient and body */
-    align-self: flex-start; /* Align recipient to the left */
+  margin-bottom: 8px; /* Add space between recipient and body */
+  align-self: flex-start; /* Align recipient to the left */
 }
 
 #body-time-container {
-    display: flex;
-    width: 100%;
+  display: flex;
+  width: 100%;
 }
 
 #body {
-    flex: 3; /* Takes up 75% of the container */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: pre-wrap; /* Wrap the text, preserving spaces and newlines */
-    word-wrap: break-word; /* Allow breaking of long words */
+  flex: 3; /* Takes up 75% of the container */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre-wrap; /* Wrap the text, preserving spaces and newlines */
+  word-wrap: break-word; /* Allow breaking of long words */
 }
 
 
 #time {
-    flex: 1; /* Takes up 25% of the container */
-    flex-shrink: 0;
-    margin-left: 8px;
-    font-size: 0.6em;
+  flex: 1; /* Takes up 25% of the container */
+  flex-shrink: 0;
+  margin-left: 8px;
+  font-size: 0.6em;
 }
 
 
 
 #notification {
-    position: fixed;
-    bottom: 5%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #4CAF50;
-    /* Green background color */
-    color: white;
-    /* White text color */
-    padding: 15px;
-    /* Padding */
-    border-radius: 10px;
-    /* Rounded corners */
-    opacity: 0;
-    /* Initially invisible */
+  position: fixed;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4CAF50;
+  /* Green background color */
+  color: white;
+  /* White text color */
+  padding: 15px;
+  /* Padding */
+  border-radius: 10px;
+  /* Rounded corners */
+  opacity: 0;
+  /* Initially invisible */
 
-    /* Animation */
-    animation: fadeInOut 3s ease-in-out;
+  /* Animation */
+  animation: fadeInOut 3s ease-in-out;
 }
 
 @keyframes fadeInOut {
 
-    0%,
-    100% {
-        opacity: 0;
-    }
+  0%,
+  100% {
+      opacity: 0;
+  }
 
-    10%,
-    90% {
-        opacity: 1;
-    }
+  10%,
+  90% {
+      opacity: 1;
+  }
+}
+
+
+.typing {
+  display: none;
+  padding: 10px;
+  font-size: 0;
+  -webkit-animation: fadeInUp 200ms linear 1 both;
+          animation: fadeInUp 200ms linear 1 both;
+  /* States */
+}
+.typing__bullet {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: white;
+  transition: all 300ms linear;
+}
+.typing__bullet:not(:last-child) {
+  margin-right: 3px;
+}
+.typing.is-typing-init {
+  display: inline-block;
+}
+.typing.is-typing-active .typing__bullet {
+  background-color: white;
+  -webkit-animation: bounce 600ms linear infinite both;
+          animation: bounce 600ms linear infinite both;
+}
+.typing.is-typing-active .typing__bullet:nth-child(2) {
+  -webkit-animation-delay: 150ms;
+          animation-delay: 150ms;
+}
+.typing.is-typing-active .typing__bullet:nth-child(3) {
+  -webkit-animation-delay: 300ms;
+          animation-delay: 300ms;
+}
+/**
+ * Animations
+ */
+@-webkit-keyframes bounce {
+  0%,
+  80%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(-100%);
+  }
+}
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(-100%);
+  }
+}
+@-webkit-keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(50%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(50%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
