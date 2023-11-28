@@ -153,10 +153,20 @@ export default class Chat extends AbstractView {
       let message = JSON.parse(event.data);
 
       if (message.type == "typing") {
-        console.log("this is message.sender1", message.sender);
         if (this.RecipientID == message.sender) {
-          console.log("this is message.sender2", message.sender);
-          this.showIndicator();
+          if (message.body == "isTyping") {
+            this.activateIndicatorReact()
+            console.log("isTyping")
+          } else if (message.body == "focus") {
+            this.showIndicatorReact()
+            console.log("focus")
+          } else if (message.body == "removeIndicator") {
+            this.removeIndicatorReact()
+            console.log("removeIndicator")
+          } else if (message.body == "removeActive") {
+            this.detectIdleReact()
+            console.log("removeActive")
+          }
         }
       } else if (message.type == "chat") {
         this.chatHandler(message);
@@ -164,7 +174,6 @@ export default class Chat extends AbstractView {
         this.onlineHandler(message.onlineUsers);
       }
     };
-
     this.socket.addEventListener("message", handleMessage);
   }
   // Handle incoming chat messages
@@ -371,9 +380,9 @@ export default class Chat extends AbstractView {
       }
     });
 
-    messageInput.addEventListener("input", (event) => {
-      this.sendTypingStatus("typing")
-    });
+    // messageInput.addEventListener("input", (event) => {
+    //   this.sendTypingStatus("isTyping")
+    // });
 
     // Load and display an initial set of messages (e.g., 20)
     const initialMessages = await this.fetchMessagesInChunks(0, 10);
@@ -407,7 +416,7 @@ export default class Chat extends AbstractView {
     chatHistory.addEventListener("scroll", throttleScroll);
 
 
-    // this.initTypingIndicator(typing);
+    this.initTypingIndicator(typing);
   }
 
   appendMessageToChatHistory(message) {
@@ -584,23 +593,18 @@ export default class Chat extends AbstractView {
   }
 
   showIndicator() {
-    const typing = document.getElementsByClassName("typing");
-    typing[0].classList.add(this.indicatorState.init);
-
+    this.sendTypingStatus("focus")
   }
 
   showIndicatorReact() {
     const typing = document.getElementsByClassName("typing");
     typing[0].classList.add(this.indicatorState.init);
-    sendTypingStatus("focus")
   }
 
 
   activateIndicator(el) {
-    const typing = document.getElementsByClassName("typing");
-    typing[0].classList.add(this.indicatorState.active);
     this.inputValue = el.value;
-    sendTypingStatus("IsTyping")
+    this.sendTypingStatus("isTyping")
     this.detectIdle(el);
   }
 
@@ -610,6 +614,10 @@ export default class Chat extends AbstractView {
   }
 
   removeIndicator() {
+    this.sendTypingStatus("removeIndicator")
+  }
+
+  removeIndicatorReact() {
     const typing = document.getElementsByClassName("typing");
     typing[0].classList.remove(
       this.indicatorState.init,
@@ -618,14 +626,13 @@ export default class Chat extends AbstractView {
   }
 
   detectIdle(el) {
-    const typing = document.getElementsByClassName("typing");
     if (this.idleTimer) {
       clearInterval(this.idleTimer);
     }
 
     this.idleTimer = setTimeout(() => {
       if (this.getInputCurrentValue(el) === this.inputValue) {
-        typing[0].classList.remove(this.indicatorState.active);
+        this.sendTypingStatus("removeActive")
       }
     }, this.idleTime);
   }
@@ -644,14 +651,17 @@ export default class Chat extends AbstractView {
     const _input = document.getElementById("messageInput");
     _input.onfocus = () => {
       this.showIndicator();
+      console.log("onfocus")
     };
 
     _input.onkeyup = () => {
       this.activateIndicator(this);
+      console.log("onkeyup")
     };
 
     _input.onblur = () => {
       this.removeIndicator();
+      console.log("onblur")
     };
   }
 
