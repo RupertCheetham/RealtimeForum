@@ -40,82 +40,6 @@
   display: flex;
 }
 
-#chatHistory {
-  background-color: black;
-  display: flex;
-  flex-direction: column-reverse;
-  height: 535px;
-  overflow-y: scroll;
-  scrollbar-width: auto;
-  scrollbar-color: rebeccapurple yellow;
-}
-
-.sent {
-  background-color: green;
-  color: #ffffff;
-}
-
-.received {
-  background-color:  #ffffff;;
-  color: green;
-}
-
-#message-content {
-  display: flex;
-  flex-direction: column; /* Stack the children vertically */
-  align-items: center;
-  border: 1px solid #ccc;
-  padding: 3px;
-}
-
-#recipient {
-  margin-bottom: 8px; /* Add space between recipient and body */
-  align-self: flex-start; /* Align recipient to the left */
-}
-
-#body-time-container {
-  display: flex;
-  width: 100%;
-}
-
-#body {
-  flex: 3; /* Takes up 75% of the container */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: pre-wrap; /* Wrap the text, preserving spaces and newlines */
-  word-wrap: break-word; /* Allow breaking of long words */
-}
-
-
-#time {
-  flex: 1; /* Takes up 25% of the container */
-  flex-shrink: 0;
-  margin-left: 8px;
-  font-size: 0.6em;
-}
-
-
-
-#notification {
-  position: fixed;
-  bottom: 5%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #4CAF50;
-  /* Green background color */
-  color: white;
-  /* White text color */
-  padding: 15px;
-  /* Padding */
-  border-radius: 10px;
-  /* Rounded corners */
-  opacity: 0;
-  /* Initially invisible */
-
-  /* Animation */
-  animation: fadeInOut 3s ease-in-out;
-}
-
 @keyframes fadeInOut {
 
   0%,
@@ -212,3 +136,80 @@
     transform: translateY(0);
   }
 }
+
+#chatHistory {
+  background-color: black;
+  display: flex;
+  flex-direction: column-reverse;
+  height: 535px;
+  overflow-y: scroll;
+  scrollbar-width: auto;
+  scrollbar-color: rebeccapurple yellow;
+}
+
+.sent {
+  background-color: green;
+  color: #ffffff;
+}
+
+.received {
+  background-color:  #ffffff;;
+  color: green;
+}
+
+#message-content {
+  display: flex;
+  flex-direction: column; /* Stack the children vertically */
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 3px;
+}
+
+#recipient {
+  margin-bottom: 8px; /* Add space between recipient and body */
+  align-self: flex-start; /* Align recipient to the left */
+}
+
+#body-time-container {
+  display: flex;
+  width: 100%;
+}
+
+#body {
+  flex: 3; /* Takes up 75% of the container */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre-wrap; /* Wrap the text, preserving spaces and newlines */
+  word-wrap: break-word; /* Allow breaking of long words */
+}
+
+
+#time {
+  flex: 1; /* Takes up 25% of the container */
+  flex-shrink: 0;
+  margin-left: 8px;
+  font-size: 0.6em;
+}
+
+
+
+#notification {
+  position: fixed;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4CAF50;
+  /* Green background color */
+  color: white;
+  /* White text color */
+  padding: 15px;
+  /* Padding */
+  border-radius: 10px;
+  /* Rounded corners */
+  opacity: 0;
+  /* Initially invisible */
+
+  /* Animation */
+  animation: fadeInOut 3s ease-in-out;
+}
+
