@@ -10,10 +10,14 @@ export default class Nav extends AbstractView {
 		const username = localStorage.getItem("username")
 
 		return `
-			<nav id="nav" class="nav">
-				<a href="/" class="nav-link" data-link id="logout">Logout</a>
-				<a href="/user" id="cookie-value">${username}</a>
-			</nav>
+		<header>
+			<div class="nav-container">
+				<div class="nav-wrapper">
+					<a href="/" class="nav-link" data-link id="logout">Logout</a>
+					<a href="/user" id="cookie-value">${username}</a>
+				</div>
+			</div>
+		</header>
 		  `
 	}
 

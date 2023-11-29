@@ -71,7 +71,7 @@ export default class Chat extends AbstractView {
     );
     const users = await response.json();
 
-    const userContainer = document.getElementById("userContainer");
+    const contentContainerLeft = document.getElementById("contentContainerLeft");
     const userBox = document.createElement("div");
     userBox.id = "userBox";
     const recentChat = document.createElement("div");
@@ -81,7 +81,7 @@ export default class Chat extends AbstractView {
 
     userBox.appendChild(recentChat);
     userBox.appendChild(alphabeticalChat);
-    userContainer.appendChild(userBox);
+    contentContainerLeft.appendChild(userBox);
 
     // If there's any entries in users.recentChat...
     if (users.recentChat != null) {
@@ -112,9 +112,6 @@ export default class Chat extends AbstractView {
       event.preventDefault();
       this.RecipientID = user.id;
       this.renderHTML();
-      // if (userContainer.id == "alphabeticalChat") {
-      // 	this.chatInitialiser()
-      // }
     });
     // Div 2, the users online status indicator, starts off as hidden
     const statusIndicator = document.createElement("div");
@@ -129,10 +126,10 @@ export default class Chat extends AbstractView {
   }
 
   async renderHTML() {
-    const chatContainer = document.getElementById("chatContainer");
+    const contentContainerRight = document.getElementById("contentContainerRight");
 
     if (this.RecipientID == undefined) {
-      chatContainer.innerHTML = "Chat (click on Username)";
+      contentContainerRight.innerHTML = "Chat (click on Username)";
     } else {
       await this.displayChatHistory();
     }
@@ -310,8 +307,8 @@ export default class Chat extends AbstractView {
   async displayChatHistory() {
     this.offset = 10;
 
-    const chatContainer = document.getElementById("chatContainer");
-    chatContainer.innerHTML = "";
+    const contentContainerRight = document.getElementById("contentContainerRight");
+    contentContainerRight.innerHTML = "";
 
     const allChat = document.createElement("div");
     allChat.id = "allChat";
@@ -363,7 +360,7 @@ export default class Chat extends AbstractView {
     allChat.appendChild(chatHistory);
     allChat.appendChild(chatTextBox);
 
-    chatContainer.appendChild(allChat);
+    contentContainerRight.appendChild(allChat);
 
     //deals with sending new messages to the backend when sendButton is clicked or enter is pressed
     chatTextBox.addEventListener("click", (event) => {

@@ -46,17 +46,16 @@ const router = async () => {
 			localStorage.clear()
 			document.cookie =
 				"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
-			document.querySelector("#container").innerHTML =
+				document.body.innerHTML =
 				await authView.renderHTML()
 			authView.submitForm()
 			return
 		}
-
 		if (currentTime > expirationTime || !userId) {
 			localStorage.clear()
 			document.cookie =
 				"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
-			document.querySelector("#container").innerHTML =
+				document.body.innerHTML =
 				await authView.renderHTML()
 			authView.submitForm()
 		} else {
@@ -75,7 +74,7 @@ const router = async () => {
 			window.location.href = "/"
 			return
 		}
-		document.querySelector("#container").innerHTML = await mainView.renderHTML()
+		document.body.innerHTML = await mainView.renderHTML();
 		mainView.attachPostSubmitForm()
 		mainView.runStartWebsocket()
 		mainView.displayUserContainer()

@@ -22,12 +22,20 @@ export default class Mainpage extends AbstractView {
 		const postForm = await postSubmitForm.renderHTML()
 		return `
     ${navHTML}
-	  ${postForm}
-      <div class="contentContainer">
-        <div id="userContainer" class="contentContainer-user"><u>Users</u></div>
-        <div id="postsContainer" class="contentContainer-post"></div>
-        <div id="chatContainer" class="contentContainer-chat"></div>
-      </div>
+	  <div class="home">
+	 	<div class="container">
+     		<div class="contentContainer">
+       			<div id="contentContainerLeft" class="contentContainerLeft"><u>Users</u></div>
+				<div id="contentContainerMid" class="contentContainerMid">
+					<div id="postFormContainer" class="contentContainer-postForm">
+						${postForm}
+					</div>
+					<div id="postsContainer" class="contentContainer-post"></div>
+				</div>
+				<div id="contentContainerRight" class="contentContainerRight"></div>
+			</div>
+		</div>
+	  </div>
     `
 	}
 
@@ -40,7 +48,7 @@ export default class Mainpage extends AbstractView {
 		await postSubmitForm.handlePostSubmission()
 	}
 
-	async runStartWebsocket(){
+	async runStartWebsocket() {
 		await chat.startWebsocket()
 		// await chat.onlineStatusHandler()
 	}

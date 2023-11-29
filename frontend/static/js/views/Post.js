@@ -17,7 +17,6 @@ export default class Posts extends AbstractView {
 
 		const posts = await response.json()
 		const postsContainer = document.getElementById("postsContainer")
-		postsContainer.innerHTML = ""
 
 		for (const post of posts) {
 			this.processPost(postsContainer, post)
