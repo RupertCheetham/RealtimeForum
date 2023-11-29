@@ -154,7 +154,7 @@ ORDER BY p.Id DESC;
 	for rows.Next() {
 		var post PostEntry
 		var categoriesString string
-		err := rows.Scan(&post.Id, &post.Username, &post.Img, &post.Body, &categoriesString, &post.CreationDate, &post.ReactionID, &post.Likes, &post.Dislikes)
+		err := rows.Scan(&post.Id, &post.Username, &post.Body, &categoriesString, &post.CreationDate, &post.ReactionID, &post.Likes, &post.Dislikes)
 		if err != nil {
 			utils.HandleError("Error scanning row from database:", err)
 			return nil, err

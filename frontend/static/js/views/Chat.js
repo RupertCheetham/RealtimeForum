@@ -74,6 +74,8 @@ export default class Chat extends AbstractView {
     const contentContainerLeft = document.getElementById("contentContainerLeft");
     const userBox = document.createElement("div");
     userBox.id = "userBox";
+    userBox.classList.add("userBox");
+    userBox.innerHTML = "Users";
     const recentChat = document.createElement("div");
     recentChat.id = "recentChat";
     const alphabeticalChat = document.createElement("div");
@@ -194,7 +196,7 @@ export default class Chat extends AbstractView {
 				<div id="message-content">
 				<div id="recipient">${messageUsername}:</div>
 					<div id="body-time-container">
-					 <div id="body">${message.body}</div>
+					 <div id="body-message">${message.body}</div>
 					   <div id="time"><i>${time}</i></div>
 				   </div>
 				</div>
@@ -433,7 +435,7 @@ export default class Chat extends AbstractView {
 		<div id="message-content">
     		<div id="recipient">${messageUsername}:</div>
    			 <div id="body-time-container">
-     			<div id="body">${message.body}</div>
+     			<div id="body-message">${message.body}</div>
        			<div id="time"><i>${time}</i></div>
    			</div>
 		</div>
@@ -467,7 +469,7 @@ export default class Chat extends AbstractView {
     bodyTimeContainerDiv.id = "body-time-container";
 
     const bodyDiv = document.createElement("div");
-    bodyDiv.id = "body";
+    bodyDiv.id = "body-message";
     bodyDiv.textContent = message.body;
 
     const timeDiv = document.createElement("div");

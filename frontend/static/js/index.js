@@ -91,7 +91,7 @@ const router = async () => {
 			window.location.href = "/"
 			return
 		}
-		document.querySelector("#container").innerHTML = await userView.renderHTML()
+		document.body.innerHTML = await userView.renderHTML()
 		userView.getAllPostsByUser()
 		userView.getLikedPostsByUser()
 		userView.Logout()

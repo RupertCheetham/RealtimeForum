@@ -7,9 +7,9 @@ import (
 )
 
 // adds a post to the database
-func AddPostToDatabase(userID int, img string, body string, categories string) error {
+func AddPostToDatabase(userID int, body string, categories string) error {
 
-	_, err := Database.Exec("INSERT INTO POSTS (UserId, Img, Body, Categories) VALUES (?, ?, ?, ?)", userID, img, body, categories)
+	_, err := Database.Exec("INSERT INTO POSTS (UserId, Body, Categories) VALUES (?, ?, ?)", userID, body, categories)
 	if err != nil {
 		utils.HandleError("Error adding post to database in addPostToDatabase:", err)
 		log.Println("Error adding post to database in addPostToDatabase:", err)
@@ -20,7 +20,7 @@ func AddPostToDatabase(userID int, img string, body string, categories string) e
 // retrieves all posts from database and returns them
 func GetAllPostsFromDatabase() ([]PostEntry, error) {
 	query := `
-	SELECT p.Id, u.Username, p.Img, p.Body, p.Categories, p.CreationDate, p.ReactionID,
+	SELECT p.Id, u.Username, p.Body, p.Categories, p.CreationDate, p.ReactionID,
 	COALESCE(pr.Likes, 0) AS Likes, COALESCE(pr.Dislikes, 0) AS Dislikes
 FROM POSTS p
 LEFT JOIN POSTREACTIONS pr ON p.ReactionID = pr.Id
@@ -40,7 +40,7 @@ ORDER BY p.Id ASC;
 	for rows.Next() {
 		var post PostEntry
 		var categoriesString string
-		err := rows.Scan(&post.Id, &post.Username, &post.Img, &post.Body, &categoriesString, &post.CreationDate, &post.ReactionID, &post.Likes, &post.Dislikes)
+		err := rows.Scan(&post.Id, &post.Username, &post.Body, &categoriesString, &post.CreationDate, &post.ReactionID, &post.Likes, &post.Dislikes)
 		if err != nil {
 			utils.HandleError("Error scanning row from database:", err)
 			return nil, err

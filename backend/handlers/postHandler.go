@@ -26,9 +26,9 @@ func AddPostHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("Received post:", post.UserId, post.Img, post.Body, post.Categories)
+		log.Println("Received post:", post.UserId, post.Body, post.Categories)
 		categoriesStringed := strings.Join(post.Categories, ",")
-		err = db.AddPostToDatabase(post.UserId, post.Img, post.Body, categoriesStringed)
+		err = db.AddPostToDatabase(post.UserId, post.Body, categoriesStringed)
 		if err != nil {
 			utils.HandleError("Problem adding to POSTS in AddPostHandler", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)

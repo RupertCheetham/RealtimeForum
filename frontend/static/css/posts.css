@@ -1,71 +1,3 @@
-.post-form {
-	width: 100%;
-	background-color: #5995fd;
-	border: none;
-	outline: none;
-	border-radius: 49px;
-	color: #fff;
-	text-transform: uppercase;
-	font-weight: 600;
-	margin: 10px 0;
-	transition: 0.5s;
-}
-
-.post-form-input-field {
-	max-width: 380px;
-	width: 100%;
-	background-color: #f0f0f0;
-	margin: 10px 0;
-	height: 55px;
-	border-radius: 55px;
-	display: grid;
-	grid-template-columns: 15% 85%;
-	padding: 0 0.4rem;
-	position: relative;
-}
-
-.post-form-input-field i {
-	text-align: center;
-	line-height: 55px;
-	color: #acacac;
-	transition: 0.5s;
-	font-size: 1.1rem;
-}
-
-.post-form-input-field input {
-	background: none;
-	outline: none;
-	border: none;
-	line-height: 1;
-	font-weight: 600;
-	font-size: 1.1rem;
-	color: #333;
-}
-
-.post-form-input-field input::placeholder {
-	color: #aaa;
-	font-weight: 500;
-}
-
-.postSubmitButton {
-	width: 150px;
-	background-color: #8bb3f8;
-	border: none;
-	outline: none;
-	height: 49px;
-	border-radius: 49px;
-	color: #fff;
-	text-transform: uppercase;
-	font-weight: 600;
-	margin: 10px 0;
-	cursor: pointer;
-	transition: 0.5s;
-}
-
-.postSubmitButton:hover {
-	background-color: #4d84e2;
-}
-
 .postContainer {
 	width: 100%;
 	background-color: #8bb3f8;
@@ -75,8 +7,37 @@
 	/* color: #fff; */
 	text-transform: uppercase;
 	font-weight: 600;
-	margin: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 	transition: 0.5s;
+}
+
+.postContent {
+	border-top-right-radius: 49px;
+	border-top-left-radius: 49px;
+	width: 100%;
+	background-color: #b5ccf3;
+	font-weight: 600;
+	margin: auto;
+}
+
+.postName{
+	padding: 20px;
+	text-transform: capitalize;
+}
+
+.postBody{
+	padding: 20px;
+}
+
+.postCategories{
+	padding: 20px;
+}
+
+.reaction-button{
+	margin-left: 20px;
+	margin-bottom: 20px;
+	padding: 2px;
 }
 
 .commentContainer {
@@ -85,21 +46,9 @@
 	border: none;
 	outline: none;
 	border-radius: 49px;
-	/* color: #fff; */
-	text-transform: uppercase;
 	font-weight: 600;
 	margin: 10px;
 }
 
-.postContent {
-	width: 100%;
-	background-color: #b5ccf3;
-	border: none;
-	outline: none;
-	border-radius: 49px;
-	/* color: #fff; */
-	text-transform: uppercase;
-	font-weight: 600;
-	margin: auto;
-}
+
 

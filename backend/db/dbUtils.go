@@ -63,19 +63,19 @@ func AddExampleEntries() {
 			}
 
 			// Adds example posts to POSTS
-			AddPostToDatabase(1, "no-image", "This is the message body", "various, categories")
+			AddPostToDatabase(1, "This is the message body", "various, categories")
 			if err != nil {
 				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
 			}
-			AddPostToDatabase(2, "no-image", "This is the another message body", "various, categories")
+			AddPostToDatabase(2, "This is the another message body", "various, categories")
 			if err != nil {
 				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
 			}
-			AddPostToDatabase(3, "no-image", "This is the third body", "category")
+			AddPostToDatabase(3, "This is the third body", "category")
 			if err != nil {
 				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
 			}
-			AddPostToDatabase(4, "no-image", "giggle, giggle, giggle", "various, categories")
+			AddPostToDatabase(4, "giggle, giggle, giggle", "various, categories")
 			if err != nil {
 				log.Fatalf("Error adding entry to POST table in AddExampleEntries: %v", err)
 			}

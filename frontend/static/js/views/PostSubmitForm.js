@@ -25,16 +25,6 @@ export default class PostSubmitForm extends AbstractView {
 		<label for="HTML"><input type="checkbox" id="HTML" name="Category" class="Category" value="HTML"> HTML</label>
 		<label for="CSS"><input type="checkbox" id="CSS" name="Category" class="Category" value="CSS"> CSS</label>
        </ul>
-        <div class="post-form-input-field">
-          <label for="image"><b>Image</b></label>
-          <input
-            type="text"
-            placeholder="Enter Image String"
-            name="image"
-            id="image"
-            required
-          />
-        </div>
       
       <button class="postSubmitButton" id="submit">Submit Post</button>
     </form>
@@ -57,8 +47,7 @@ export default class PostSubmitForm extends AbstractView {
 					(categoriesCheckboxes) => categoriesCheckboxes.value
 				)
 
-				const image = document.getElementById("image").value
-				console.log("submitted post:", postText, categories, image)
+				console.log("submitted post:", postText, categories)
 
 				try {
 					const response = await fetch("https://localhost:8080/api/addposts", {
@@ -69,7 +58,6 @@ export default class PostSubmitForm extends AbstractView {
 						},
 						body: JSON.stringify({
 							userID: currentUserID,
-							img: image,
 							body: postText,
 							categories: categories,
 							
@@ -85,7 +73,6 @@ export default class PostSubmitForm extends AbstractView {
 						checkboxes.forEach((checkbox) => {
 							checkbox.checked = false
 						})
-						document.getElementById("image").value = ""
 						const postsContainer = document.getElementById("postsContainer")
 						const posts = new Posts()
 						const highestNumber = await this.newHighestPostContainerNumber();
@@ -93,7 +80,6 @@ export default class PostSubmitForm extends AbstractView {
 							id: highestNumber,
 							userID: currentUserID, 
 							username: localStorage.getItem("username"),
-							img: image,
 							body: postText,
 							categories: categories,
 							reactionID: 0, // Reaction ID

@@ -23,11 +23,11 @@ export default class Mainpage extends AbstractView {
 		return `
     ${navHTML}
 	  <div class="home">
-	 	<div class="container">
+	 	<div id ="container" class="container">
      		<div class="contentContainer">
-       			<div id="contentContainerLeft" class="contentContainerLeft"><u>Users</u></div>
+       			<div id="contentContainerLeft" class="contentContainerLeft"></div>
 				<div id="contentContainerMid" class="contentContainerMid">
-					<div id="postFormContainer" class="contentContainer-postForm">
+					<div id="postFormContainer" class="postFormContainer">
 						${postForm}
 					</div>
 					<div id="postsContainer" class="contentContainer-post"></div>

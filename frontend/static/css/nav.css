@@ -1,22 +1,3 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    list-style: none;
-    text-decoration: none;
-    font-family: 'poppins', sans-serif;
-}
-
-:root{
-    --background: #d1deec;
-    --foreground: #f1f3f5;
-    --white: #fff;
-    --black: #000;
-    --grey: #6e6e6e;
-    --shadow: #76767663;
-    --border: #cfcfcf
-}
-
 header{
     width: 100%;
     height: 150px;
@@ -27,14 +8,6 @@ header{
 
 
 .nav-container{
-	/* width: 100%;
-	background-color: #5995fd;
-	border: none;
-	outline: none;
-	max-height: 20%;
-	color: #fff;
-	text-transform: uppercase;
-	font-weight: 600; */
 	width: 95%;
     background: var(--white);
     height: 100px;
