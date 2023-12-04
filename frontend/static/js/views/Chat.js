@@ -331,7 +331,7 @@ export default class Chat extends AbstractView {
     typing.classList.add("typing");
 
     typing.innerHTML = `
-<span class="typing__bullet"></span>
+        <span class="typing__bullet"></span>
         <span class="typing__bullet"></span>
         <span class="typing__bullet"></span>
 		`;
@@ -339,9 +339,6 @@ export default class Chat extends AbstractView {
     recipientHeaderIsTyping.appendChild(typing);
 
     this._typingIndicator = document.querySelector(".typing");
-
-    // const typing = document.getElementsByClassName("typing")
-    console.log(document.getElementsByClassName("typing"));
 
     recipientHeader.appendChild(recipientHeaderName);
     recipientHeader.appendChild(recipientHeaderIsTyping);
@@ -379,10 +376,6 @@ export default class Chat extends AbstractView {
       }
     });
 
-    // messageInput.addEventListener("input", (event) => {
-    //   this.sendTypingStatus("isTyping")
-    // });
-
     // Load and display an initial set of messages (e.g., 20)
     const initialMessages = await this.fetchMessagesInChunks(0, 10);
     if (initialMessages != null) {
@@ -398,9 +391,9 @@ export default class Chat extends AbstractView {
 
     // Add a scroll event listener to the chat history container
     const throttleScroll = throttle(() => {
-      const scrollThreshold = chatHistory.scrollHeight * 0.9;
+      const scrollThreshold = 0.9; // 90% of the chatHistory's scroll height
 
-      if ((chatHistory.scrollTop = scrollThreshold)) {
+if (chatHistory.scrollTop <= scrollThreshold * chatHistory.scrollHeight) {
         // Load and append more messages
         this.loadMoreMessages(
           this.currentUserID,

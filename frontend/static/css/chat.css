@@ -26,10 +26,8 @@
   width: 8px;
   height: 8px;
   background-color: #4CAF50;
-  /* Green color, adjust as needed */
   border-radius: 50%;
   margin-left: 6px;
-  /* Adjust the margin as needed */
 }
 
 .chat-font {
