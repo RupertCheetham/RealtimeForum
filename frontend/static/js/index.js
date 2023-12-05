@@ -45,7 +45,7 @@ const router = async () => {
 		if (!cookie && !userId) {
 			localStorage.clear()
 			document.cookie =
-				"browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
+  "browserCookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=None; Secure";
 				document.body.innerHTML =
 				await authView.renderHTML()
 			authView.submitForm()

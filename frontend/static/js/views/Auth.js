@@ -204,7 +204,10 @@ export default class Auth extends AbstractView {
 					let currentTime = new Date()
 					let expiration = new Date(currentTime)
 					expiration.setMinutes(currentTime.getMinutes() + timeout)
-					document.cookie = "browserCookie=" + expiration
+					// document.cookie = "browserCookie=" + expiration
+					// Setting the "SameSite=None" and "Secure" attributes for the cookie
+					document.cookie = `browserCookie=; expires=${expiration}; path=/; SameSite=None; Secure`;
+
 					let message = await response.json()
 					localStorage.clear()
 					localStorage.setItem("id", message.id)
