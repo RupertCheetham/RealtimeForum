@@ -79,6 +79,6 @@ Password: r
 - Martin F. - [GitHub](https://github.com/m-fenton)
 - Michael A. - [GitHub](https://github.com/11ma)
 - Nikoi K. - [GitHub](https://github.com/kn1ko1)
-- Captain Rupert C. - [GitHub](https://github.com/Cheethamthing)
+- Rupert C. (Captain) - [GitHub](https://github.com/RupertCheetham)
 
 
