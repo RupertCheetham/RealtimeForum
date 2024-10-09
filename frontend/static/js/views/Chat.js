@@ -128,78 +128,29 @@ export default class Chat extends AbstractView {
     userContainer.appendChild(userEntry);
   }
 
-  async renderHTML() {
-    const chatContainer = document.getElementById("chatContainer");
+	async renderHTML() {
 
-    if (this.RecipientID == undefined) {
-      chatContainer.innerHTML = "Chat (click on Username)";
-    } else {
-      await this.displayChatHistory();
-    }
-  }
-
-  async processIncomingWebsocketMessage() {
-    if (!this.socket) {
-      // Check if the socket is available
-      console.error(
-        "[processIncomingWebsocketMessage] WebSocket connection is not open."
-      );
-      return;
-    }
-
-    // when user receives a message...
-    const handleMessage = async (event) => {
-      console.log("Received a WebSocket message:", event.data);
-      let message = JSON.parse(event.data);
-
-      if (message.type == "typing") {
-        if (this.RecipientID == message.sender) {
-          if (message.body == "isTyping") {
-            this.activateIndicatorReact()
-            console.log("isTyping")
-          } else if (message.body == "focus") {
-            this.showIndicatorReact()
-            console.log("focus")
-          } else if (message.body == "removeIndicator") {
-            this.removeIndicatorReact()
-            console.log("removeIndicator")
-          } else if (message.body == "removeActive") {
-            this.detectIdleReact()
-            console.log("removeActive")
-          }
-        }
-      } else if (message.type == "chat") {
-        this.chatHandler(message);
-      } else if (message.type == "online-notification") {
-        this.onlineHandler(message.onlineUsers);
-      }
-    };
-    this.socket.addEventListener("message", handleMessage);
-  }
-  // Handle incoming chat messages
-  chatHandler(message) {
-    if (message.sender == this.RecipientID) {
-      console.log(3);
-      const chatHistory = document.getElementById("chatHistory");
-      console.log(4, chatHistory);
-      const senderClassName =
-        message.sender === this.currentUserID ? "sent" : "received";
-      let messageUsername;
-      if (senderClassName === "received") {
-        messageUsername = this.RecipientName;
-      } else {
-        messageUsername = "You";
-      }
-      const time = this.formatTimestamp(message.time);
-      const chatElement = document.createElement("div");
-      chatElement.classList.add(senderClassName);
-      chatElement.innerHTML = `
-				<div id="message-content">
-				<div id="recipient">${messageUsername}:</div>
-					<div id="body-time-container">
-					 <div id="body">${message.body}</div>
-					   <div id="time"><i>${time}</i></div>
-				   </div>
+		const nav = new Nav() // Create an instance of the Nav class
+		const navHTML = await nav.renderHTML() // Get the HTML content for the navigation
+		const RecipientID = await this.getRecipientIDFromURL()
+		const Recipient = await usernameFromUserID(RecipientID)
+		const chatTextBox = getChatTextBoxHTML();
+		return `
+		<body>
+			${navHTML}
+			<!DOCTYPE html>
+        	<html>
+       	 	<h1 id="chat-font" class = "chat-font"> cHaT iS hErE</h1>
+			<div id="chatContainer" class="chatContainer">
+				<div class="user-info">
+				<img src="frontend/static/js/views/icons8-user-94.png" />
+					<h1 id="recipient" class = "chat-font"> ${Recipient}</h1>
+				</div>
+				<div class="chat-box">
+				<!-- Chat messages go here -->
+				</div>
+				<div class="inputContainer">
+				${chatTextBox}
 				</div>
 			`;
 
