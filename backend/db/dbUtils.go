@@ -19,10 +19,7 @@ func WipeDatabaseOnCommand() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "new" {
 			// Rollback the last migration (uncomment if needed)
-			err := RunMigrations(Database, "./db/migrations", "down")
-			if err != nil {
-				log.Fatalf("Error applying 'down' migrations: %v", err)
-			}
+			RunMigrations(Database, "./db/migrations", "down")
 			fmt.Println("Dropped all tables")
 		}
 	}
@@ -41,18 +38,21 @@ func AddExampleEntries() {
 			if err != nil {
 				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
 			}
+			err = AddUserToDatabase("Knikoi", 40, "Male", "Kwashie", "Nikoi", "nikoi.doe@example.com", string(hashPassword))
 
 			//hashPassword, _ = bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
 			err = AddUserToDatabase("Knikoi", 40, "Male", "Kwashie", "Nikoi", "john.doe@example.com", string(hashPassword))
 			if err != nil {
 				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
 			}
+			err = AddUserToDatabase("Mfenton", 35, "Male", "Martin", "Fenton", "martin.doe@example.com", string(hashPassword))
 
 			//hashPassword, _ = bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
 			err = AddUserToDatabase("Mfenton", 35, "Male", "Martin", "Fenton", "john.doe@example.com", string(hashPassword))
 			if err != nil {
 				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
 			}
+			err = AddUserToDatabase("Madeleke", 20, "Male", "Mike", "A", "mike.doe@example.com", string(hashPassword))
 
 			//hashPassword, _ = bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
 			err = AddUserToDatabase("Madeleke", 20, "Male", "Mike", "A", "john.doe@example.com", string(hashPassword))
@@ -62,6 +62,11 @@ func AddExampleEntries() {
 
 			//hashPassword, _ = bcrypt.GenerateFromPassword([]byte("t"), bcrypt.DefaultCost)
 			err = AddUserToDatabase("t", 255, "Male", "Mr", "E", "john.doe@example.com", string(hashPassword))
+			if err != nil {
+				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
+			}
+			hashPassword, _ = bcrypt.GenerateFromPassword([]byte("r"), bcrypt.DefaultCost)
+			err = AddUserToDatabase("r", 0, "Male", "Mr", "E", "donavon.doe@example.com", string(hashPassword))
 			if err != nil {
 				log.Fatalf("Error adding entry to USERS table in AddExampleEntries: %v", err)
 			}

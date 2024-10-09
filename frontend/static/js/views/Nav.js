@@ -1,5 +1,4 @@
 import AbstractView from "./AbstractView.js"
-import { userNameFromSessionID } from "../utils/utils.js";
 
 export default class Nav extends AbstractView {
 	constructor() {
@@ -8,18 +7,28 @@ export default class Nav extends AbstractView {
 	}
 
 	async renderHTML() {
-		
-		const username = await userNameFromSessionID()
+		const username = localStorage.getItem("username")
 
 		return `
-		<nav id="nav" class="nav">
-			<a href="/" class="nav-link" data-link id="logout">Logout</a>
-			<a href="/main" class="nav-link" data-link>Home</a>
-			<a href="/chat" class="nav-link" data-link>Chat</a>
-			<span id="username">${username}</span>
-		</nav>
-    `
+			<nav id="nav" class="nav">
+				<a href="/" class="nav-link" data-link id="logout">Logout</a>
+				<a href="/user" id="cookie-value">${username}</a>
+			</nav>
+		  `
 	}
 
-	
+	async logout() {
+		let logoutbtn = document.getElementById("logout")
+		logoutbtn.addEventListener("click", (event) => {
+			event.preventDefault()
+			localStorage.clear()
+			fetch("https://localhost:8080/api/logout", {
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+				},
+				credentials: "include", // Ensure cookies are included in the request
+			})
+		})
+	}
 }

@@ -11,8 +11,6 @@ import (
 // Adds a reaction to the database, if post/comment doesn't have any.
 // Updates the parent post/comment's ReactionID to relevant reactiontable's ID
 func AddReactionToDatabase(reactionParentClass string, parentID int, userID int, reaction string) {
-
-	fmt.Println(reactionParentClass, parentID, reaction)
 	// Fills in the table details, depending upon if the reaction's parent class is "post" or "comment"
 	tableName := ""
 	postOrCommentTable := ""
@@ -39,7 +37,6 @@ func AddReactionToDatabase(reactionParentClass string, parentID int, userID int,
 		whoDisliked = whoDisliked + strconv.Itoa(userID)
 	} else {
 		// Just in case I make a type in the HTML
-		log.Println("Invalid reaction in AddReactionToDatabase:", reaction)
 		utils.HandleError("Invalid reaction in AddReactionToDatabase:", nil)
 	}
 
@@ -48,7 +45,6 @@ func AddReactionToDatabase(reactionParentClass string, parentID int, userID int,
 	_, err := Database.Exec(query, likes, dislikes, whoLiked, whoDisliked)
 	if err != nil {
 		utils.HandleError("Error adding reaction to database in AddReactionToDatabase:", err)
-		log.Println("Error adding reaction to database in AddReactionToDatabase:", err)
 	}
 
 	// Update the ReactionID of the specified post/comment (e.g. post 5),
@@ -58,13 +54,13 @@ func AddReactionToDatabase(reactionParentClass string, parentID int, userID int,
 	_, err = Database.Exec(updateQuery, parentID)
 	if err != nil {
 		utils.HandleError("Error updating ReactionID in database in AddReactionToDatabase:", err)
-		log.Println("Error updating ReactionID in AddReactionToDatabase:", err)
 	}
 }
 
 // Updates values already in the reaction table
 func UpdateReactionInDatabase(reactionParentClass string, rowID int, userID int, reaction string) {
 
+	log.Println("reactionParentClass", reactionParentClass, "rowID", rowID, "userID", userID, "reaction", reaction)
 	tableName := ""
 	if reactionParentClass == "post" {
 		tableName = "POSTREACTIONS"
@@ -83,7 +79,6 @@ func UpdateReactionInDatabase(reactionParentClass string, rowID int, userID int,
 	err := Database.QueryRow(selectQuery, rowID).Scan(&likes, &dislikes, &whoLiked, &whoDisliked)
 	if err != nil {
 		utils.HandleError("Error retrieving values from REACTIONS in UpdateReactionInDatabase:", err)
-		log.Println("Error retrieving values from REACTIONS in UpdateReactionInDatabase:", err)
 		return
 	}
 
@@ -101,28 +96,23 @@ func UpdateReactionInDatabase(reactionParentClass string, rowID int, userID int,
 	_, err = Database.Exec(updateQuery, likes, dislikes, whoLiked, whoDisliked, rowID)
 	if err != nil {
 		utils.HandleError("Error updating values in REACTIONS in UpdateReactionInDatabase:", err)
-		log.Println("Error updating values in REACTIONS in UpdateReactionInDatabase:", err)
 		return
 	}
 }
 
 // Tweaks the values of likes/dislikes as needed
 func ReactionAdjuster(userID int, actionToIncrement int, oppositeAction int, actionUsers string, oppositeActionUsers string) (int, int, string, string) {
-
 	userIDstring := strconv.Itoa(userID)
-
 	// If the reaction is a repeat of a previous reaction then nothing changes
 	if actionAlreadyPerformed(userIDstring, actionToIncrement, oppositeAction, actionUsers, oppositeActionUsers) {
 		return actionToIncrement, oppositeAction, actionUsers, oppositeActionUsers
 	}
-
 	oppositeActionAlreadyPerformed, user := oppositeActionChecker(userIDstring, oppositeActionUsers)
 	// If the User has already performed the opposite reaction then undoes the opposite reaction
 	if oppositeActionAlreadyPerformed {
 		oppositeAction = oppositeAction - 1
 		oppositeActionUsers = removeUserIDFromOppositeActionUsers(oppositeActionUsers, user)
 	}
-
 	// Finally, performs the action (like/dislike)
 	actionUsers = addUsertoActionUsers(actionUsers, userIDstring)
 	actionToIncrement = actionToIncrement + 1
@@ -168,4 +158,32 @@ func addUsertoActionUsers(actionUsers string, userIDstring string) string {
 	actionUsers = actionUsers + "," + userIDstring
 	actionUsers = strings.TrimPrefix(actionUsers, ",")
 	return actionUsers
+}
+
+func ObtainNewRowID(tableName string) int {
+	var rowID int
+
+	query := fmt.Sprintf("SELECT Id FROM %s ORDER BY Id DESC LIMIT 1", tableName)
+	err := Database.QueryRow(query).Scan(&rowID)
+
+	if err != nil {
+		utils.HandleError("Error querying latest ReactionID in ReactionHandlerGetMethod:", err)
+	}
+	return rowID
+}
+
+// Returns the likes and dislikes for a given post/comment, from the relevant table
+func GetLikesAndDislikes(tableName string, rowID int) (int, int, error) {
+
+	fmt.Println("tableName", tableName, ".  rowID", rowID)
+	query := fmt.Sprintf("SELECT Likes, Dislikes FROM %s WHERE Id = ?", tableName)
+
+	var likes, dislikes int
+	err := Database.QueryRow(query, rowID).Scan(&likes, &dislikes)
+	if err != nil {
+		utils.HandleError("there was a problem in GetLikesAndDislikes", err)
+		return 0, 0, err
+	}
+
+	return likes, dislikes, nil
 }

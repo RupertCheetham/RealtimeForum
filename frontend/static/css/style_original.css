@@ -1,11 +1,10 @@
-/*@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");*/
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap");
 
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
 }
-
 
 body,
 input {
@@ -23,10 +22,10 @@ input {
 .container-nostyle {
 	position: relative;
 	width: 100%;
-	background-color: #ffffff;
+	background-color: #fff;
 	min-height: 100vh;
 	overflow: hidden;
-}z
+}
 
 .forms-container {
 	position: absolute;
@@ -114,9 +113,7 @@ form.sign-up-form {
 
 form.sign-in-form {
 	z-index: 2;
-} */
-
-
+}
 
 .title {
 	font-size: 2.2rem;
@@ -124,36 +121,9 @@ form.sign-in-form {
 	margin-bottom: 10px;
 }
 
-/*.input-field-container {
-	max-height: 400px; /* Set a maximum height as needed 
-	height: auto;
-	overflow-y: auto;  Enable vertical scrolling if content exceeds max height 
-}*/
-
-.sign-up-form {
-	position: absolute;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	left: 50%;
-	width: 75%;
-	max-height: 800px; /* Set a maximum height as needed */
-	height: auto;
-	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
-	/*transition-property: width;*/
-}
-#step2-form {
-	top: 12px;
-	left: 900px
-}
-
-.sign-in-form {
-	position: absolute;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	left: 50%;
-	width: 75%;
-	max-height: 800px; /* Set a maximum height as needed */
-	height: auto;
+.input-field-container {
+	max-height: 400px; /* Set a maximum height as needed */
+	height: 400px;
 	overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
 }
 
@@ -249,32 +219,6 @@ form.sign-in-form {
 	left: 0;
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-}
-
-/* Step two Style for your "Back" and "Next" buttons */
-.button-container {
-    display: flex;
-    align-items: center;
-    margin-top: 0px; /* Adjust this margin as needed */
-}
-
-#next-step2-btn {
-	width: 120px;
-}
-
-#back-step1-btn {
-    width: 120px; /* Adjust the width as needed */
-	margin-right: 0px; /* Add margin to separate the buttons */
-}
-
-#submit-btn {
-    margin-left: 50px; /* Add margin to separate the buttons */
-	width: 120px;
-}
-
-#step-1 {
-    /* Initially show only the first step */
-    display: block;
 }
 
 .auth-container:before {
@@ -399,7 +343,7 @@ form.sign-in-form {
 		width: 100%;
 		top: 95%;
 		transform: translate(-50%, -100%);
-		transition: 1s 0.8s ;
+		transition: 1s 0.8s ease-in-out;
 	}
 
 	.signin-signup,

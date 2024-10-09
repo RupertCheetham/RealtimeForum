@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"realtimeForum/db"
@@ -15,11 +14,11 @@ func ReactionHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS headers for this handler
 	SetupCORS(&w, r)
 
-	if r.Method == "POST" {
+	if r.Method == http.MethodPost {
 		ReactionHandlerPostMethod(w, r)
 	}
 
-	if r.Method == "GET" {
+	if r.Method == http.MethodGet {
 		ReactionHandlerGetMethod(w, r)
 	}
 
@@ -27,7 +26,6 @@ func ReactionHandler(w http.ResponseWriter, r *http.Request) {
 
 // This deals with posting decoding reaction data and sending it to the relevant functions
 func ReactionHandlerPostMethod(w http.ResponseWriter, r *http.Request) {
-
 	var reactionEntry db.ReactionEntry
 	err := json.NewDecoder(r.Body).Decode(&reactionEntry)
 	if err != nil {
@@ -73,13 +71,12 @@ func ReactionHandlerGetMethod(w http.ResponseWriter, r *http.Request) {
 	// the row ID will be the latest entry into the relevant reaction table
 	// this function updates the supplied rowID to the new, correct value
 	if rowID == 0 {
-		rowID = obtainNewRowID(tableName)
+		rowID = db.ObtainNewRowID(tableName)
 	}
 
-	likes, dislikes, err := GetLikesAndDislikes(tableName, rowID)
+	likes, dislikes, err := db.GetLikesAndDislikes(tableName, rowID)
 
 	if err != nil {
-		log.Println("There was a problem with GetLikesAndDislikes in ReactionHandler")
 		utils.HandleError("There was a problem with GetLikesAndDislikes in ReactionHandler", err)
 	}
 
@@ -102,34 +99,4 @@ func ReactionHandlerGetMethod(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	w.Write(jsonResponse)
-}
-
-func obtainNewRowID(tableName string) int {
-
-	var rowID int
-
-	query := fmt.Sprintf("SELECT Id FROM %s ORDER BY Id DESC LIMIT 1", tableName)
-	err := db.Database.QueryRow(query).Scan(&rowID)
-
-	if err != nil {
-		log.Println("Error querying latest ReactionID in ReactionHandlerGetMethod:", err)
-		utils.HandleError("Error querying latest ReactionID in ReactionHandlerGetMethod:", err)
-	}
-	return rowID
-}
-
-// Returns the likes and dislikes for a given post/comment, from the relevant table
-func GetLikesAndDislikes(tableName string, rowID int) (int, int, error) {
-
-	query := fmt.Sprintf("SELECT Likes, Dislikes FROM %s WHERE Id = ?", tableName)
-
-	var likes, dislikes int
-	err := db.Database.QueryRow(query, rowID).Scan(&likes, &dislikes)
-	if err != nil {
-		log.Println("there was a problem in GetLikesAndDislikes", err)
-		utils.HandleError("there was a problem in GetLikesAndDislikes", err)
-		return 0, 0, err
-	}
-
-	return likes, dislikes, nil
 }
